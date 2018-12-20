@@ -3,18 +3,16 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="js/semantic.min.js"></script>
+    <script src="js/init.js"></script>
 </head>
 
 <body>
-    <form class="ui form" action="/search_classes" method="POST">
-        <div class="field">
-            <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
-        </div>
+    <form class="ui form" action="/search" method="GET">
         <button class="ui button" type="submit">
-            <i class="search icon"></i>
-            Search
+            Start Planning!
         </button>
     </form>
 </body>

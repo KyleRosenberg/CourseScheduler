@@ -1,0 +1,19 @@
+.search_bar{
+    height:100%;
+    width:350px;
+}
+
+.search_head{
+    background-color: rgba(206, 182, 128);
+    color:white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+}
+
+.search_content{
+    background-color: #E7E7E7;
+    height: 100%;
+    padding:12px;
+    text-align: center;
+}

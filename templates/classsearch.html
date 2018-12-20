@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="js/semantic.min.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/init.js"></script>
+</head>
+
+<body>
+    <div class="search_bar">
+        <div class="search_head">
+            <h2>Search Classes</h2>
+        </div>
+        <div class="search_content">
+            <form class="ui form" action="/search" method="POST">
+                <div class="field">
+                    <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
+                </div>
+                <div class="field">
+                    <div class="ui selection dropdown">
+                        <input type="hidden" name="srcdb">
+                        <div style="color:rgb(0, 0, 0)" class="default text">Spring 2019</div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <div class="item" data-value="2191">
+                                Spring 2019
+                            </div>
+                            <div class="item" data-value="2194">
+                                Summer 2019
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="type" value="keyword">
+                <button class="ui dark grey button" type="submit">
+                    <i class="search icon"></i>
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

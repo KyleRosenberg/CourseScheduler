@@ -22,6 +22,23 @@ def css(filename):
 def js(filename):
     return send_from_directory(app.config['JS_FOLDER'], filename)
 
+@app.route('/search', methods=['GET'])
+def display_search():
+    return send_from_directory(app.config['HTML_FOLDER'], 'classsearch.html')
+
+@app.route('/search', methods=['POST'])
+def search():
+    print(request.form)
+    res = default()
+    try:
+        t = request.form['type']
+    except:
+        return default()
+    if t =='keyword':
+        cg = CourseGrabber()
+        res = cg.doSearch(request.form, request.form['srcdb'])
+    return res
+
 @app.route('/')
 def default():
     return send_from_directory(app.config['HTML_FOLDER'], 'index.html')

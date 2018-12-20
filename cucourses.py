@@ -7,7 +7,7 @@ class CourseGrabber:
     def __init__(self):
         pass
 
-    def doSearch(self, fields, semester=2191):
+    def doSearch(self, fields, semester="2191"):
         url = "https://classes.colorado.edu/api/"
         querystring = {"page":"fose","route":"search"}
         headers = {
@@ -16,7 +16,10 @@ class CourseGrabber:
             'Postman-Token': "44ff740c-90b5-4cb0-ae59-c0a53a2bd4b3"
         }
         c = []
+        ignore = ['srcdb', 'type']
         for f in fields:
+            if f in ignore:
+                continue
             c.append({"field":f, "value":fields[f]})
         payload = {
             "other": {"srcdb":str(semester)},
