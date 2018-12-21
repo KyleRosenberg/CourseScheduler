@@ -43,3 +43,6 @@ def search():
 @app.route('/')
 def default():
     return send_from_directory(app.config['HTML_FOLDER'], 'index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=True)
