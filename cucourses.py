@@ -27,3 +27,21 @@ class CourseGrabber:
         }
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
         return r.text
+
+    def getSections(self, fields):
+        url = "https://classes.colorado.edu/api/"
+        querystring = {"page":"fose","route":"details"}
+        headers = {
+            'Content-Type': "application/json",
+            'cache-control': "no-cache",
+            'Postman-Token': "44ff740c-90b5-4cb0-ae59-c0a53a2bd4b3"
+        }
+        c = {}
+        ignore = ['type']
+        for f in fields:
+            if f in ignore:
+                continue
+            c[f] = fields[f]
+        payload = c
+        r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
+        return r.text

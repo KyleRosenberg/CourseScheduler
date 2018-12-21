@@ -28,15 +28,16 @@ def display_search():
 
 @app.route('/search', methods=['POST'])
 def search():
-    print(request.form)
     res = default()
     try:
         t = request.form['type']
     except:
         return default()
-    if t =='keyword':
-        cg = CourseGrabber()
+    cg = CourseGrabber()
+    if t == 'keyword':
         res = cg.doSearch(request.form, request.form['srcdb'])
+    if t == 'view_sections':
+        res = cg.getSections(request.form)
     return res
 
 @app.route('/')

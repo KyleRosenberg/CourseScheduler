@@ -8,6 +8,7 @@
     <script src="js/semantic.min.js"></script>
     <script src="js/dropdown.js"></script>
     <script src="js/init.js"></script>
+    <script src="js/search.js"></script>
 </head>
 
 <body>
@@ -16,7 +17,7 @@
             <h2>Search Classes</h2>
         </div>
         <div class="search_content">
-            <form class="ui form" action="/search" method="POST">
+            <form class="ui form" action="javascript:void(0);">
                 <div class="field">
                     <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
                 </div>
@@ -26,22 +27,42 @@
                         <div style="color:rgb(0, 0, 0)" class="default text">Spring 2019</div>
                         <i class="dropdown icon"></i>
                         <div class="menu">
+                            <div class="item" data-value="2194">
+                                Summer 2019
+                            </div>
                             <div class="item" data-value="2191">
                                 Spring 2019
                             </div>
-                            <div class="item" data-value="2194">
-                                Summer 2019
+                            <div class="item" data-value="2187">
+                                Fall 2018
+                            </div>
+                            <div class="item" data-value="2184">
+                                Summer 2018
+                            </div>
+                            <div class="item" data-value="2181">
+                                Spring 2018
+                            </div>
+                            <div class="item" data-value="2177">
+                                Fall 2017
                             </div>
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="type" value="keyword">
-                <button class="ui dark grey button" type="submit">
+                <button id="submit_search" class="ui dark grey button" type="submit">
                     <i class="search icon"></i>
                     Search
                 </button>
             </form>
+            <div class="ui section divider"></div>
+            <div class="search_results">
+                <div class="ui cards" style="width:100%">
+
+                </div>
+            </div>
         </div>
+    </div>
+    <div>
+
     </div>
 </body>
 

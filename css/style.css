@@ -1,6 +1,7 @@
 .search_bar{
     height:100%;
     width:350px;
+    background-color: #E7E7E7;
 }
 
 .search_head{
@@ -13,7 +14,24 @@
 
 .search_content{
     background-color: #E7E7E7;
-    height: 100%;
+    /* Firefox */
+    height: -moz-calc(100% - 50px);
+    /* WebKit */
+    height: -webkit-calc(100% - 50px);
+    /* Opera */
+    height: -o-calc(100% - 50px);
+    /* Standard */
+    height: calc(100% - 50px);
     padding:12px;
+    overflow-y:scroll;
+    overflow-x:hidden;
     text-align: center;
+}
+
+.search_results{
+    width:105%;
+}
+
+.ui.cards>.card{
+    width:100%
 }
