@@ -35,3 +35,16 @@
 .ui.cards>.card{
     width:100%
 }
+
+.ui.loader {
+    position:relative;
+}
+
+.info_head{
+    width:100%;
+    margin-top:2px;
+    padding:2px;
+    background-color:#565A5C;
+    color:white;
+    display:block;
+}

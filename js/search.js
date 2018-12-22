@@ -10,6 +10,7 @@ $(document).ready(function(event) {
             alert('Search query cannot be blank');
             return;
         }
+        $('.search_results .loader').addClass('active')
         $.ajax({
             type:'POST',
             url:'/search',
@@ -37,6 +38,7 @@ function proc_keyword_data(data){
     while (i<class_list.length){
         counts = {}
         curr_class = class_list[i].code;
+        curr_title = class_list[i].title
         while (i < class_list.length && class_list[i].code==curr_class){
             key = class_list[i].schd
             if (key in counts){
@@ -70,7 +72,21 @@ function proc_keyword_data(data){
         card_html += `</div></div><div class="ui bottom attached button" onclick="view_sections(${i})">View Sections</div></div>`
         card = $.parseHTML(card_html)
         $('.search_results .ui.cards').append(card)
+        $(card).popup({
+            html: `<h3>${curr_class} - ${curr_title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
+            position: 'right center',
+            on: 'click',
+            target: '.search_bar',
+            setFluidWidth: false,
+            onShow: function(){
+                $(this).css({'top': '0px', 'max-width':'600px', 'max-height':'100%', 'overflow-y':'scroll'});
+            },
+            onVisible: function(){
+                $(this).css({'top': '0px', 'max-width':'600px', 'max-height':'100%', 'overflow-y':'scroll'});
+            }
+        });
     }
+    $('.loader').removeClass('active')
 }
 
 function view_sections(i){
@@ -94,7 +110,18 @@ function view_sections(i){
             'srcdb':srcdb
         },
         success: function(data){
-            console.log(data)
+            $('#popup_temp').removeClass('active');
+            data = JSON.parse(data)
+            popup_html = `<a class="ui black right ribbon label">Last Updated: ${data.last_updated}</a><br/>`
+            popup_html += `<strong>Credit Hours:</strong> ${data.hours_text}<br/>`;
+            if (data.restrict_info!="")
+                popup_html += `<span class="info_head">Registration Restrictions</span> <p>${data.restrict_info}</p>`
+            if (data.clssnotes!="")
+                popup_html += `<span class="info_head">Class Notes</span> <p>${data.clssnotes}</p>`
+            popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
+            popup_html += `<span class="info_head">All Sections</span> ${data.all_sections}`
+            $('.ui.popup').append(popup_html);
+            $('#popup_temp').removeClass('active');
         }
     });
 }
