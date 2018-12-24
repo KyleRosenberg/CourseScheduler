@@ -1,3 +1,17 @@
+body{
+    background-image: url('https://classes.colorado.edu/background.jpg');
+    background-size:cover;
+    height:100%;
+    /* Firefox */
+    width: -moz-calc(100% - 350px);
+    /* WebKit */
+    width: -webkit-calc(100% - 350px);
+    /* Opera */
+    width: -o-calc(100% - 350px);
+    /* Standard */
+    width: calc(100% - 350px);
+}
+
 .search_bar{
     height:100%;
     width:350px;

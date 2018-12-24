@@ -79,10 +79,10 @@ function proc_keyword_data(data){
             target: '.search_bar',
             setFluidWidth: false,
             onShow: function(){
-                $(this).css({'top': '0px', 'max-width':'600px', 'max-height':'100%', 'overflow-y':'scroll'});
+                $(this).css({'top': '0px', 'max-width':'850px', 'max-height':'100%', 'overflow-y':'scroll', 'overflow-x':'hidden'});
             },
             onVisible: function(){
-                $(this).css({'top': '0px', 'max-width':'600px', 'max-height':'100%', 'overflow-y':'scroll'});
+                $(this).css({'top': '0px', 'max-width':'850px', 'max-height':'100%', 'overflow-y':'scroll', 'overflow-x':'hidden'});
             }
         });
     }
@@ -114,12 +114,37 @@ function view_sections(i){
             data = JSON.parse(data)
             popup_html = `<a class="ui black right ribbon label">Last Updated: ${data.last_updated}</a><br/>`
             popup_html += `<strong>Credit Hours:</strong> ${data.hours_text}<br/>`;
+            if (data.seats=="Varies by section")
+                popup_html += "<strong>Max Seats:</strong>"
+            popup_html += `${data.seats}<br/>`
             if (data.restrict_info!="")
                 popup_html += `<span class="info_head">Registration Restrictions</span> <p>${data.restrict_info}</p>`
             if (data.clssnotes!="")
                 popup_html += `<span class="info_head">Class Notes</span> <p>${data.clssnotes}</p>`
             popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
-            popup_html += `<span class="info_head">All Sections</span> ${data.all_sections}`
+            bad_section_element = $.parseHTML(data.all_sections);
+            headers = $($(bad_section_element).children()[0]).children();
+            table = '<table class="ui celled table"><thead><tr><th>Saved</th>'
+            for (j = 0; j<headers.length; j++){
+                table += `<th>${headers[j].innerText}</th>`;
+            }
+            table += '</tr></thead>'
+            rows = $(bad_section_element).children().slice(1)
+            for (r = 0; r<rows.length; r++){
+                console.log(rows[r])
+                cells = rows[r].children
+                id = cells[0].innerText
+                id = id.substring(id.indexOf(':')+1)
+                table += `<tr><td><div class="ui checkbox"><input type="checkbox" name="${id}"><label></label></div></td>`
+                for (c = 0; c<cells.length; c++){
+                    txt = cells[c].innerText
+                    txt = txt.substring(txt.indexOf(':')+1)
+                    table += `<td>${txt}</td>`;
+                }
+                table += '</tr>'
+            }
+            table += '</table>'
+            popup_html += table
             $('.ui.popup').append(popup_html);
             $('#popup_temp').removeClass('active');
         }
