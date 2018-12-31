@@ -2,6 +2,7 @@ class_list = []
 srcdb = ''
 
 saved_classes = {}
+calendar_classes = {}
 
 $(document).ready(function(event) {
     $('input[name=srcdb]').val('2191');
@@ -23,10 +24,108 @@ $(document).ready(function(event) {
             },
             success: proc_keyword_data
         });
-
     });
-
+    $('#sidebar_button').click(function(){
+        $('.ui.sidebar').sidebar('toggle');
+    });
+    generateTable();
 });
+
+function generateTable(){
+    let columns = 6;
+    let rows = (10+12-8)*4; //(9pm - 8pm)
+    for (var r = 0; r<rows; r++){
+        hour = (Math.floor(r/4)+8)
+        let row = $.parseHTML('<tr></tr>');
+        if (r%4==0){
+            $(row).append($.parseHTML(`<td class="warning" rowspan="4">${hour%12==0?12:hour%12}:00${hour>11?'pm':'am'}</td>`))
+        }
+        for (var c = 1; c<columns; c++){
+            $(row).append($.parseHTML('<td></td>'))
+        }
+        $('.calendar').append(row)
+    }
+}
+
+function getTimes(course){
+    ele = $(course.meeting_html)[0]
+    ele = ele.innerText
+    time = ele.substring(0, ele.indexOf(' in'));
+    days = '';
+    if (time.search('F')>-1){
+        days = '1' + days;
+        time = time.replace('F', '')
+    } else days = '0' + days;
+    if (time.search('Th')>-1){
+        days = '1' + days;
+        time = time.replace('Th', '')
+    } else days = '0' + days;
+    if (time.search('W')>-1){
+        days = '1' + days;
+        time = time.replace('W', '')
+    } else days = '0' + days;
+    if (time.search('T')>-1){
+        days = '1' + days;
+        time = time.replace('T', '')
+    } else days = '0' + days;
+    if (time.search('M')>-1){
+        days = '1' + days;
+        time = time.replace('M', '')
+    } else days = '0' + days;
+    t1 = time.substring(1, time.indexOf('-'))
+    t2 = time.substring(time.indexOf('-')+1)
+
+    ind1 = 0;
+    off1 = 0;
+    ind2 = 0;
+    off2 = 0;
+    if (t1.search(':')>-1){
+        ind1 += parseInt(t1.substring(0, t1.search(':')))-8;
+        off1 = Math.round(parseInt(t1.substring(t1.search(':')+1, t1.search('m')-1))/15);
+    } else {
+        ind1 += parseInt(t1.substring(0, t1.search('m')-1))-8;
+    }
+    if (t2.search(':')>-1){
+        ind2 += parseInt(t2.substring(0, t2.search(':')))-8;
+        off2 = Math.round(parseInt(t2.substring(t2.search(':')+1, t2.search('m')-1))/15);
+    } else {
+        ind2 += parseInt(t2.substring(0, t2.search('m')-1))-8;
+    }
+    if (ind1<12 && t1.search('pm')>-1){
+        ind1+=12;
+    }
+    if (ind2<12 && t2.search('pm')>-1){
+        ind2+=12;
+    }
+    ind1*=4;
+    ind2*=4;
+    console.log(course);
+    return {
+        'start':ind1+off1+1,
+        'end':ind2+off2+1,
+        'days':days,
+        'name':`${course.code} - ${course.section}`
+    }
+}
+
+function addClassToCalendar(course){
+    course = JSON.parse(course);
+    times = getTimes(course);
+    console.log(times);
+}
+
+function removeClassFromCalendar(course){
+
+}
+
+function toggleShowCourse(div){
+    crn = $(div).attr('name').trim();
+    if (crn in calendar_classes){
+        removeClassFromCalendar(calendar_classes[crn]);
+    } else {
+        addClassToCalendar(saved_classes[crn]);
+    }
+}
 
 function proc_keyword_data(data){
     data = JSON.parse(data)
@@ -179,7 +278,7 @@ function class_saved(id){
 
 function selectCourseRow(course){
     code = $('.ui.popup h3')[0].innerText.slice(0, 9);
-    crn = course[0].name.trim();
+    crn = course.children[1].innerText;
     $.ajax({
         type:'POST',
         url:'/search',
@@ -250,7 +349,7 @@ function updateCourseList(){
         ele = $(v.meeting_html)[0]
         ele = ele.innerText
         time = ele.substring(0, ele.indexOf(' in'));
-        html = `<div class="item"><div class="right floated content"><div class="ui mini button" style="padding:10px;">
+        html = `<div class="item"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
             Toggle</div></div><div id="course_item" class="ui label" style="padding:1px;padding-top:10px;">${code}
             <div class="detail">${time}</div></div></div>`;
         dis.append(html);

@@ -1,6 +1,6 @@
-body{
-    background-image: url('https://classes.colorado.edu/background.jpg');
-    background-size:cover;
+body.pushable{
+    background-image: url('https://classes.colorado.edu/background.jpg')!important;
+    background-size:cover!important;
     height:100%;
 }
 
@@ -92,4 +92,16 @@ body{
     border-radius: 5px;
     vertical-align: middle;
     padding:7%;
+}
+
+#sidebar_button{
+    position:absolute;
+    float:right;
+    top:0px;
+    right:0px;
+    margin-right: 0px;
+}
+
+.pusher{
+    height:100%;
 }

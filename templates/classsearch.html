@@ -11,317 +11,103 @@
     <script src="js/search.js"></script>
 </head>
 
-<body>
-    <div class="search_bar">
+<body class="pushable">
+    <div class="ui right sidebar" style="width:20%;height:100%;background-color:#E7E7E7;">
         <div class="search_head">
-            <h2>Search Classes</h2>
+            <h2>Saved Courses</h2>
         </div>
-        <div class="search_content">
-            <form class="ui form" action="javascript:void(0);">
-                <div class="field">
-                    <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
-                </div>
-                <div class="field">
-                    <div class="ui selection dropdown">
-                        <input type="hidden" name="srcdb">
-                        <div style="color:rgb(0, 0, 0)" class="default text">Spring 2019</div>
-                        <i class="dropdown icon"></i>
-                        <div class="menu">
-                            <div class="item" data-value="2194">
-                                Summer 2019
-                            </div>
-                            <div class="item" data-value="2191">
-                                Spring 2019
-                            </div>
-                            <div class="item" data-value="2187">
-                                Fall 2018
-                            </div>
-                            <div class="item" data-value="2184">
-                                Summer 2018
-                            </div>
-                            <div class="item" data-value="2181">
-                                Spring 2018
-                            </div>
-                            <div class="item" data-value="2177">
-                                Fall 2017
+        <div id="save_display" class="ui middle aligned divided list">
+
+        </div>
+    </div>
+    <div class="pusher">
+        <div class="search_bar">
+            <div class="search_head">
+                <h2>Search Classes</h2>
+            </div>
+            <div class="search_content">
+                <form class="ui form" action="javascript:void(0);">
+                    <div class="field">
+                        <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
+                    </div>
+                    <div class="field">
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="srcdb">
+                            <div style="color:rgb(0, 0, 0)" class="default text">Spring 2019</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="2194">
+                                    Summer 2019
+                                </div>
+                                <div class="item" data-value="2191">
+                                    Spring 2019
+                                </div>
+                                <div class="item" data-value="2187">
+                                    Fall 2018
+                                </div>
+                                <div class="item" data-value="2184">
+                                    Summer 2018
+                                </div>
+                                <div class="item" data-value="2181">
+                                    Spring 2018
+                                </div>
+                                <div class="item" data-value="2177">
+                                    Fall 2017
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <button id="submit_search" class="ui dark grey button" type="submit">
-                    <i class="search icon"></i>
-                    Search
-                </button>
-            </form>
-            <div class="ui section divider"></div>
-            <div class="search_results">
-                <div class="ui text loader">Getting Results..
-
-
-                    .</div>
-                <div class="ui cards" style="width:100%">
+                    <button id="submit_search" class="ui dark grey button" type="submit">
+                        <i class="search icon"></i>
+                        Search
+                    </button>
+                </form>
+                <div class="ui section divider"></div>
+                <div class="search_results">
+                    <div class="ui text loader">Getting Results...</div>
+                    <div class="ui cards" style="width:100%">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="main_view">
-        <div class="ui top attached tabular menu">
-            <a class="active item" data-tab="first">Calendar View</a>
-            <a class="item" data-tab="second">Map View</a>
-        </div>
-        <div class="ui bottom attached active tab segment" id="fixedheight" data-tab="first" style="height:90%;;width:75%;float:left">
-            <table class="ui yellow celled table calendar" style="height:100%;">
-                <col width="10%">
-                <col width="18%">
-                <col width="18%">
-                <col width="18%">
-                <col width="18%">
-                <col width="18%">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wendesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="padding:0px">
-                        <td rowspan="4">8:00am</td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: red">Early Class RIP</div>
-                        </td>
-                        <td rowspan="4"></td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: red">Early Class RIP</div>
-                        </td>
-                        <td rowspan="4"></td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: red">Early Class RIP</div>
-                        </td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">9:00am</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="1"></td>
-                        <td rowspan="1"></td>
-                        <td rowspan="1"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="5">
-                            <div class="event" style="--color: orange">Next Class</div>
-                        </td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: orange">Next Class</div>
-                        </td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: orange">Next Class</div>
-                        </td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">10:00am</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="1"></td>
-                        <td rowspan="1"></td>
-                        <td rowspan="1"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">11:00am</td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: blue">Last Class</div>
-                        </td>
-                        <td rowspan="4"></td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: blue">Last Class</div>
-                        </td>
-                        <td rowspan="4"></td>
-                        <td rowspan="5">
-                            <div class="event" style="--color: blue">Last Class</div>
-                        </td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">12:00am</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="3"></td>
-                        <td rowspan="3"></td>
-                        <td rowspan="3"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">1:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">2:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">3:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">4:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">5:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">6:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">7:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">8:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td rowspan="4">9:00pm</td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                        <td rowspan="4"></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-        <div class="ui bottom attached tab segment" data-tab="second" style="height: 90%;width:75%;float:left">
-            Second
-        </div>
-        <div style="position:absolute;float:right;width:25%;height:100%;top:0px;left:75%;background-color: #E7E7E7;">
-            <div class="search_head">
-                <h2>Saved Classes</h2>
+        <div class="main_view">
+            <div class="ui button" id="sidebar_button">
+                Saved Courses
+                <i class="right arrow icon"></i>
             </div>
-            <div id="save_display" class="ui middle aligned divided list">
-                
+            <div class="ui top attached tabular menu" style="margin-top:0px;">
+                <a class="active item" data-tab="first">Calendar View</a>
+                <a class="item" data-tab="second">Map View</a>
+            </div>
+            <div class="ui bottom attached active tab segment" id="fixedheight" data-tab="first" style="height:90%;">
+                <table class="ui yellow celled table calendar" style="height:100%;">
+                    <col width="10%">
+                    <col width="18%">
+                    <col width="18%">
+                    <col width="18%">
+                    <col width="18%">
+                    <col width="18%">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wendesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="ui bottom attached tab segment" data-tab="second" style="height:90%;">
+                Second
             </div>
         </div>
     </div>
-
 </body>
 
 </html>
