@@ -85,7 +85,7 @@ body.pushable{
 
 .event{
     background-color: var(--color);
-    color:white;
+    /*color:white;*/
     display:block;
     width:100%;
     height:100%;

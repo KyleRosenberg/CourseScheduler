@@ -99,7 +99,6 @@ function getTimes(course){
     }
     ind1*=4;
     ind2*=4;
-    console.log(course);
     return {
         'start':ind1+off1+1,
         'end':ind2+off2+1,
@@ -111,7 +110,25 @@ function getTimes(course){
 function addClassToCalendar(course){
     course = JSON.parse(course);
     times = getTimes(course);
-    console.log(times);
+    rcol = randomColor()
+    for (i = times.start; i<times.end; i++){
+        row = $('.calendar')[0].rows[i];
+        addOne = 0;
+        if ($(row.cells[0]).hasClass('warning')){
+            addOne = 1;
+        }
+        for (j = 0; j<5; j++){
+            if (days.charAt(j)==0){
+                continue;
+            }
+            if (i==times.start){
+                $(row.cells[j+addOne]).attr('rowspan', times.end-times.start);
+                $(row.cells[j+addOne]).append(`<div class="event" style="--color:${rcol}">${course.code} - ${course.section}</div>`)
+            } else {
+                $(row.cells[j+addOne]).remove();
+            }
+        }
+    }
 }
 
 function removeClassFromCalendar(course){
