@@ -180,14 +180,20 @@ function removeClassFromCalendar(course){
     }
 }
 
-function toggleShowCourse(div){
-    crn = $(div).attr('name').trim();
+function toggleShowCourse(div, data=false){
+    if (data){
+        crn = JSON.parse(div).crn;
+    } else {
+        crn = $(div).attr('name').trim();
+    }
     if (crn in calendar_classes){
         removeClassFromCalendar(calendar_classes[crn]);
         delete calendar_classes[crn];
     } else {
-        calendar_classes[crn] = saved_classes[crn];
-        addClassToCalendar(saved_classes[crn]);
+        if (crn in saved_classes){
+            calendar_classes[crn] = saved_classes[crn];
+            addClassToCalendar(saved_classes[crn]);
+        }
     }
 }
 
@@ -376,11 +382,14 @@ function toggleSaveCourse(course){
             success: function(data){
                 saved_classes[crn] = data;
                 updateCourseList()
+                toggleShowCourse(data, true);
             }
         });
     } else {
+        dat = saved_classes[crn];
         delete saved_classes[crn];
         updateCourseList()
+        toggleShowCourse(dat, true);
     }
 }
 
