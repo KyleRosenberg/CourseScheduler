@@ -41,7 +41,7 @@ function generateTable(){
             $(row).append($.parseHTML(`<td class="warning" rowspan="4">${hour%12==0?12:hour%12}:00${hour>11?'pm':'am'}</td>`))
         }
         for (var c = 1; c<columns; c++){
-            $(row).append($.parseHTML('<td></td>'))
+            $(row).append($.parseHTML(`<td name=${c}></td>`))
         }
         $('.calendar').append(row)
     }
@@ -114,6 +114,36 @@ function addClassToCalendar(course){
     for (i = times.start; i<times.end; i++){
         row = $('.calendar')[0].rows[i];
         addOne = 0;
+        for (j = 0; j<5; j++){
+            if (days.charAt(j)==0){
+                continue;
+            }
+            var cell;
+            for (k = 0; k<row.cells.length; k++){
+                cellk = $(row.cells[k]);
+                if (cellk.attr('name')==(j+1).toString()){
+                    cell = cellk;
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            if (i==times.start){
+                cell.attr('rowspan', times.end-times.start);
+                cell.append(`<div class="event" style="--color:${rcol}">${course.code} - ${course.section}</div>`)
+            } else {
+                cell.remove();
+            }
+        }
+    }
+}
+
+function removeClassFromCalendar(course){
+    course = JSON.parse(course);
+    times = getTimes(course);
+    for (i = times.start; i<times.end; i++){
+        row = $('.calendar')[0].rows[i];
+        addOne = 0;
         if ($(row.cells[0]).hasClass('warning')){
             addOne = 1;
         }
@@ -122,24 +152,42 @@ function addClassToCalendar(course){
                 continue;
             }
             if (i==times.start){
-                $(row.cells[j+addOne]).attr('rowspan', times.end-times.start);
-                $(row.cells[j+addOne]).append(`<div class="event" style="--color:${rcol}">${course.code} - ${course.section}</div>`)
+                $(row.cells[j+addOne]).removeAttr('rowspan');
+                $(row.cells[j+addOne]).empty();
             } else {
-                $(row.cells[j+addOne]).remove();
+                if (row.cells.length < j){
+                    c = row.insertCell(row.cells.length);
+                    $(c).attr('name', (j+1).toString());
+                } else {
+                    let cellk;
+                    let goodK;
+                    for (k = 0; k<row.cells.length; k++){
+                        if (parseInt($(row.cells[k]).attr('name'))<(j+1)){
+                            cellk = row.cells[k];
+                            goodK = k;
+                        }
+                    }
+                    if (cellk){
+                        console.log(cellk, goodK, j+1)
+                        c = row.insertCell(goodK+1);
+                        $(c).attr('name', (j+1).toString());
+                    } else {
+                        c = row.insertCell(addOne);
+                        $(c).attr('name', (j+1).toString());
+                    }
+                }
             }
         }
     }
-}
-
-function removeClassFromCalendar(course){
-
 }
 
 function toggleShowCourse(div){
     crn = $(div).attr('name').trim();
     if (crn in calendar_classes){
         removeClassFromCalendar(calendar_classes[crn]);
+        delete calendar_classes[crn];
     } else {
+        calendar_classes[crn] = saved_classes[crn];
         addClassToCalendar(saved_classes[crn]);
     }
 }
