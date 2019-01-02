@@ -91,10 +91,10 @@ function getTimes(course){
     } else {
         ind2 += parseInt(t2.substring(0, t2.search('m')-1))-8;
     }
-    if (ind1<12 && t1.search('pm')>-1){
+    if (ind1<4 && t1.search('pm')>-1){
         ind1+=12;
     }
-    if (ind2<12 && t2.search('pm')>-1){
+    if (ind2<4 && t2.search('pm')>-1){
         ind2+=12;
     }
     ind1*=4;
@@ -130,7 +130,7 @@ function addClassToCalendar(course){
             }
             if (i==times.start){
                 cell.attr('rowspan', times.end-times.start);
-                cell.append(`<div class="event" style="--color:${rcol}">${course.code} - ${course.section}</div>`)
+                cell.append(`<div class="event" style="--color:${rcol}">${times.name}</div>`)
             } else {
                 cell.remove();
             }
@@ -168,7 +168,6 @@ function removeClassFromCalendar(course){
                         }
                     }
                     if (cellk){
-                        console.log(cellk, goodK, j+1)
                         c = row.insertCell(goodK+1);
                         $(c).attr('name', (j+1).toString());
                     } else {
