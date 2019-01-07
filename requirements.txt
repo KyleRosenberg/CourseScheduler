@@ -1,5 +1,7 @@
+firebase-admin==2.14.0
 Flask==1.0.2
 Flask-Cors==3.0.4
 gunicorn==19.9.0
 jsonschema==2.6.0
+psycopg2==2.7.6.1
 requests==2.21.0

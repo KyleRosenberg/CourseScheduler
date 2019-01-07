@@ -6,12 +6,32 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="js/semantic.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase-auth.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAf2uWNRmjB0Z5BYTgEdp8Y7xCPlMFFwc8",
+            authDomain: "coursescheduler-6ac6e.firebaseapp.com",
+            projectId: "coursescheduler-6ac6e"
+        };
+        firebase.initializeApp(config);
+    </script>
     <script src="js/init.js"></script>
 
     <title>Home</title>
 </head>
 
-<body>
+<body class="pushable">
+    <div class="ui inverted menu">
+        <a class="item">
+            MyCUInfo
+        </a>
+        <div class="right menu">
+            <div id="name" class="item"></div>
+            <a id="login" class="item">Log In</a>
+        </div>
+    </div>
     <form class="ui form" action="/search" method="GET">
         <button class="ui button" type="submit">
             Start Planning!
