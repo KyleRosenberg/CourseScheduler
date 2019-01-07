@@ -6,3 +6,5 @@ jason.json
 config.json
 
 req.txt
+
+.env

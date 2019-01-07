@@ -23,6 +23,9 @@ class FirebaseAuth:
             "auth_provider_x509_cert_url": os.environ.get('auth_provider_x509_cert_url'),
             "client_x509_cert_url": os.environ.get('client_x509_cert_url'),
         }
+        while obj['private_key'].find('\\\\n')>-1:
+            obj['private_key'] = obj['private_key'].replace('\\\\n', '\n')
+        print(obj)
         cred = credentials.Certificate(obj)
         self.default = firebase_admin.initialize_app(cred)
 
