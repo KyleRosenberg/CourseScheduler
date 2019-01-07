@@ -5,17 +5,34 @@ from firebase_admin import auth
 import psycopg2
 import json
 import datetime
+import os
 
 
 class FirebaseAuth:
 
     def __init__(self):
-        cred = credentials.Certificate("jason.json")
+        obj = {
+            "type": os.environ.get('type'),
+            "project_id": os.environ.get('project_id'),
+            "private_key_id": os.environ.get('private_key_id'),
+            "private_key": os.environ.get('private_key'),
+            "client_email": os.environ.get('client_email'),
+            "client_id": os.environ.get('client_id'),
+            "auth_uri": os.environ.get('auth_uri'),
+            "token_uri": os.environ.get('token_uri'),
+            "auth_provider_x509_cert_url": os.environ.get('auth_provider_x509_cert_url'),
+            "client_x509_cert_url": os.environ.get('client_x509_cert_url'),
+        }
+        cred = credentials.Certificate(obj)
         self.default = firebase_admin.initialize_app(cred)
 
-        with open('config.json') as file:
-            dat = file.read();
-            self.config = json.loads(dat)['database']
+
+        self.config = {
+            'host':os.environ.get('host'),
+            'database':os.environ.get('database'),
+            'user':os.environ.get('user'),
+            'password':os.environ.get('password')
+        }
         self.conn = psycopg2.connect(host=self.config['host'], database=self.config['database'], user=self.config['user'], password=self.config['password'])
 
     def verifyToken(self, token, uid):

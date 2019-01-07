@@ -25,7 +25,6 @@ class CourseGrabber:
             "other": {"srcdb":str(semester)},
             "criteria": c
         }
-        print(payload)
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
         return r.text
 
