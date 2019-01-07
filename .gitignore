@@ -8,3 +8,5 @@ config.json
 req.txt
 
 .env
+
+test
