@@ -49,36 +49,33 @@ def culogin():
     if fa.verifyToken(request.form['token'], request.form['uid']):
         print('Checking existing tokens...')
         t = fa.checkCUTokenExpire(request.form['uid'])
+        dic = {}
         if t:
-            return t
+            print('Current token still valid.')
+            info = cg.getUserId(t)
+            id = info['pers']['id']
+            dic = info
         else:
             print('Token expired or doesnt exist, fetching new one...')
             t = cg.getAuthToken(request.form['username'], request.form['password'])
             info = cg.getUserId(t)
-            session['info'] = info
             id = info['pers']['id']
             fa.addTokenToDatabase(t, request.form['uid'], id)
-        return t
+            dic = info
+        return str([t, dic])
     else:
         return 'Auth Fail'
+
+@app.route('/getcrns', methods=['POST'])
+def getcrns():
+    return cg.doSearch({'crn':request.form['crns']}, request.form['srcdb'])
 
 @app.route('/getcart', methods=['POST'])
 def getcart():
     if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
         cartinfo = cg.getCart(request.form['cutoken'], fa.getCIDToken(request.form['cutoken']))
-        reginfo = cg.getUserId(request.form['cutoken'])
         cart = cartinfo['cart']
-        reg = reginfo['reg'][request.form['srcdb']]
-        cacrns = [c.split('|')[2] if c[:4]==request.form['srcdb'] else '' for c in cart]
-        recrns = [c.split('|')[1] for c in reg]
-        crns = cacrns + recrns
-        for c in crns:
-            if c=='':
-                crns.remove(c)
-        param = {
-            'crn':','.join(crns)
-        }
-        return cg.doSearch(param, request.form['srcdb'])
+        return str(cart)
     return 'Unauthorized'
 
 @app.route('/addcart', methods=['POST'])
