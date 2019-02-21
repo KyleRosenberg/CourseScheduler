@@ -1,12 +1,15 @@
-from flask import Flask, jsonify, request, render_template, send_file, send_from_directory
+from flask import Flask, jsonify, request, render_template, send_file, send_from_directory, session
 from cucourses import CourseGrabber
 from users import FirebaseAuth
+
+import os
 
 app = Flask(__name__)
 app.config['TESTING'] = True
 app.config['HTML_FOLDER'] = 'templates/'
 app.config['JS_FOLDER'] = 'js/'
 app.config['CSS_FOLDER'] = 'css/'
+app.secret_key = os.environ.get('flask_key')
 
 fa = FirebaseAuth()
 cg = CourseGrabber()
@@ -44,9 +47,17 @@ def search():
 @app.route('/culogin', methods=['POST'])
 def culogin():
     if fa.verifyToken(request.form['token'], request.form['uid']):
-        t = cg.getAuthToken(request.form['username'], request.form['password'])
-        id = cg.getUserId(t)['pers']['id']
-        fa.addTokenToDatabase(t, request.form['uid'], id)
+        print('Checking existing tokens...')
+        t = fa.checkCUTokenExpire(request.form['uid'])
+        if t:
+            return t
+        else:
+            print('Token expired or doesnt exist, fetching new one...')
+            t = cg.getAuthToken(request.form['username'], request.form['password'])
+            info = cg.getUserId(t)
+            session['info'] = info
+            id = info['pers']['id']
+            fa.addTokenToDatabase(t, request.form['uid'], id)
         return t
     else:
         return 'Auth Fail'
@@ -54,9 +65,10 @@ def culogin():
 @app.route('/getcart', methods=['POST'])
 def getcart():
     if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
-        cartinfo = cg.getUserId(request.form['cutoken'])
+        cartinfo = cg.getCart(request.form['cutoken'], fa.getCIDToken(request.form['cutoken']))
+        reginfo = cg.getUserId(request.form['cutoken'])
         cart = cartinfo['cart']
-        reg = cartinfo['reg'][request.form['srcdb']]
+        reg = reginfo['reg'][request.form['srcdb']]
         cacrns = [c.split('|')[2] if c[:4]==request.form['srcdb'] else '' for c in cart]
         recrns = [c.split('|')[1] for c in reg]
         crns = cacrns + recrns
@@ -68,6 +80,13 @@ def getcart():
         }
         return cg.doSearch(param, request.form['srcdb'])
     return 'Unauthorized'
+
+@app.route('/addcart', methods=['POST'])
+def addcart():
+    if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
+        cu = fa.getCUInfo(request.form['uid'])
+        return cg.addToCart(request.form, cu[3])
+    return ""
 
 @app.route('/')
 def default():

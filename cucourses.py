@@ -46,8 +46,29 @@ class CourseGrabber:
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
         return r.text
 
-    def getAuthToken(self, username, password):
+    def handleLoginPage(self, session, post_page_text, username, password, count=0):
+        postURL = post_page_text.split('fm-login" name="login" action="')[1].split('"')[0]
+        login_data = {
+            "timezoneOffset": "0",
+            "_eventId_proceed": "Log In",
+            "j_username": username,
+            "j_password": password,
+            "MIME Type": "application/x-www-form-urlencoded"
+        }
 
+        # user login page
+        login_request = session.post("https://fedauth.colorado.edu" + postURL, data=login_data)
+
+        login_text = login_request.text
+        if login_text.find('<form id="fm-login" name="login"')>-1:
+            if count==3:
+                print('FAILED')
+                return 'BROKEN'
+            return self.handleLoginPage(session, login_text, username, password, count+1)
+        else:
+            return login_text
+
+    def getAuthToken(self, username, password, count=0):
         session = requests.Session()
 
         # get the inital page, found url by disecting js code from
@@ -68,22 +89,9 @@ class CourseGrabber:
         post_page = session.post(action, data=ver1_data)
         post_page_text = post_page.text
 
-        postURL = post_page_text.split('fm-login" name="login" action="')[1].split('"')[0]
-        login_data = {
-            "timezoneOffset": "0",
-            "_eventId_proceed": "Log In",
-            "j_username": username,
-            "j_password": password
-        }
+        login_text = self.handleLoginPage(session, post_page_text, username, password)
 
-        # user login page
-        login_request = session.post(
-            "https://fedauth.colorado.edu" + postURL, data=login_data)
-
-        login_text = login_request.text
-
-        RelayState = login_text.split('name="RelayState" value="')[
-            1].split('"')[0]
+        RelayState = login_text.split('name="RelayState" value="')[1].split('"')[0]
         SAMLResponse = login_text.split(
             'name="SAMLResponse" value="')[1].split('"')[0]
 
@@ -105,5 +113,29 @@ class CourseGrabber:
         r = requests.get('https://classes.colorado.edu/api/?page=sisproxy&oauth_token='+token)
         text = r.text
         text = text[text.find('(')+1: text.find(')')]
-        print(text)
         return json.loads(text)
+
+    def getCart(self, token, id):
+        params = {
+            'page': 'sisproxy',
+            'p_action': 'cart_read',
+            'oauth_token': token,
+            'user_id': id
+        }
+        r = requests.get('https://classes.colorado.edu/api/', params=params)
+        j = r.text[8:-3]
+        return json.loads(j)
+
+    def addToCart(self, form, id):
+        params = {}
+        for k in form:
+            if k[0]=='p':
+                params[k] = form[k]
+        params['oauth_token'] = form['cutoken']
+        params['p_action'] = 'cart_add'
+        params['p_cart_name'] = 'default-UGRD'
+        params['p_institution'] = 'CUBLD'
+        params['user_id'] = id
+        params['page'] = 'sisproxy';
+        r = requests.get('https://classes.colorado.edu/api/', params=params)
+        return r.text

@@ -34,6 +34,11 @@ $(document).ready(function(event) {
         $('.ui.sidebar').sidebar('toggle');
     });
     generateTable();
+    firebase.auth().onAuthStateChanged(function(user) {
+       if (user) {
+           submitCULogin(console.log)
+       }
+   });
 });
 
 function generateTable() {
@@ -213,6 +218,9 @@ function toggleShowCourse(div, data = false) {
 }
 
 function proc_keyword_data(data) {
+    if (data == "Unauthorized") {
+        return;
+    }
     data = JSON.parse(data)
     if (data.count <= 0) {
         alert(data)
@@ -239,6 +247,7 @@ function proc_keyword_data(data) {
         card_html += `<div class="description">${class_list[i-1].title}</div>`;
         card_html += `<br/>`
         card_html += '<div class="meta">';
+        //TODO: Implement better code mapping
         if ('LEC' in counts) {
             card_html += `${counts['LEC']} lectures, `
         }
@@ -284,7 +293,7 @@ function proc_keyword_data(data) {
             }
         });
     }
-    $('.loader').removeClass('active')
+    $('.search_results .loader').removeClass('active');
 }
 
 function view_sections(i) {
@@ -319,7 +328,7 @@ function showDetails(data) {
     data = JSON.parse(data)
     popup_html = `<h3>${data.code} - ${data.title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`;
     popup_html += `<a class="ui black left ribbon label">Last Updated: ${data.last_updated}</a><br/>`
-    popup_html += `<strong>Credit Hours:</strong> <span>${data.hours_text}<span><br/>`;
+    popup_html += `<strong>Credit Hours:</strong> <span>${data.hours_text}</span><br/>`;
     if (data.seats == "Varies by section")
         popup_html += "<strong>Max Seats:</strong>"
     popup_html += `<span>${data.seats}</span><br/>`
@@ -357,12 +366,69 @@ function showDetails(data) {
     }
     table += '</table>'
     popup_html += table
+    if (data.crn!='Varies by section'){
+        popup_html +=  `<div style="text-align:right;"><div class="field">
+            <div class="ui selection dropdown">
+                <input type="hidden" name="gmod" value="LTR">
+                <div style="color:rgb(0, 0, 0)" class="default text">Letter</div>
+                <i class="dropdown icon"></i>
+                <div class="menu">`;
+        if (data.gmods.indexOf('LTR')>=0){
+            popup_html += `<div class="item" data-value="LTR">
+                Letter
+            </div>`;
+        }
+        if (data.gmods.indexOf('NOC')>=0){
+            popup_html += `<div class="item" data-value="NOC">
+                No Credit Basis (Audit)
+            </div>`;
+        }
+        if (data.gmods.indexOf('PF4')>=0)
+            popup_html += `<div class="item" data-value="PF4">
+                Pass/Fail
+            </div>`;
+        popup_html += `</div>
+            </div>
+        </div>
+        <button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
+                        Add to Cart
+                        </button></div>`;
+    }
     $('.ui.popup').append(popup_html);
     $('.ui.popup input[type="checkbox"]').click(function(event) {
         toggleSaveCourse($(this));
         event.stopPropagation();
     })
+    $('.ui.dropdown').dropdown();
     $('#popup_temp').removeClass('active');
+}
+
+function addToCart(data){
+    if (!firebase.auth().currentUser){
+        $('.ui.modal.google').modal('show');
+        return;
+    }
+    params = {
+        'p_term_code':srcdb,
+        'p_crn':data[1],
+        'p_gmod':$('input[name=gmod]')[0].value,
+        'uid':firebase.auth().currentUser.uid,
+        'cutoken':token,
+    }
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        params['token'] = idToken
+        $.ajax({
+            type: 'POST',
+            url: '/addcart',
+            data: params,
+            success: function(data){
+                console.log(data)
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+        $('.search_results .loader').removeClass('active')
+    });
 }
 
 function class_saved(id) {
@@ -374,21 +440,23 @@ function class_saved(id) {
 }
 
 function showCULogin(action = console.log) {
-    if (!firebase.auth().currentUser) {
-        console.log('Login!')
-        return;
-    }
     $('.ui.modal.login').modal({
         closable: false,
         onDeny: function() {
-            window.alert('Canceled');
         },
         onApprove: function() {
-            username = $('.ui.modal.login input[type="text"]').val();
-            password = $('.ui.modal.login input[type="password"]').val();
-            getCUAuthToken(username, password, action);
+            submitCULogin(action);
+            return false;
         }
     }).modal('show');
+}
+
+function submitCULogin(action){
+    $('.ui.modal.login .loader').text('Logging In...');
+    $('.ui.modal.login .segment').css('display', 'block');
+    username = $('.ui.modal.login input[type="text"]').val();
+    password = $('.ui.modal.login input[type="password"]').val();
+    getCUAuthToken(username, password, action);
 }
 
 function getCUAuthToken(username, password, action) {
@@ -407,6 +475,7 @@ function getCUAuthToken(username, password, action) {
                     console.log(data)
                 } else {
                     token = data;
+                    $('.ui.modal.login').modal('hide', false);
                     action()
                 }
             }
@@ -417,10 +486,15 @@ function getCUAuthToken(username, password, action) {
 }
 
 function getCart() {
+    if (!firebase.auth().currentUser){
+        $('.ui.modal.google').modal('show');
+        return;
+    }
     if (!token) {
         showCULogin(getCart);
         return;
     }
+    $('.search_results .loader').addClass('active')
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         $.ajax({
             type: 'POST',
@@ -437,6 +511,7 @@ function getCart() {
         });
     }).catch(function(error) {
         console.log(error);
+        $('.search_results .loader').removeClass('active')
     });
 }
 
