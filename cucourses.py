@@ -138,4 +138,5 @@ class CourseGrabber:
         params['user_id'] = id
         params['page'] = 'sisproxy';
         r = requests.get('https://classes.colorado.edu/api/', params=params)
+        print(r.text)
         return r.text

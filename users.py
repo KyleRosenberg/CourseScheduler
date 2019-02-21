@@ -43,7 +43,7 @@ class FirebaseAuth:
         uid_v = dec_tok['uid']
         return uid_v == uid
 
-    #Verify the cu token matches the one in the database => user can only be logged in one place at a time
+    #Verify the cu token matches the one in the database => user can only be logged in one place at a time, maybe not neccesary
     def checkToken(self, token, uid):
         cur = self.conn.cursor()
         cur.execute('select * from tokens where uid=%s', [uid])
@@ -87,6 +87,7 @@ class FirebaseAuth:
         except:
             return None
 
+    #Check if uid has a nonexpired token to prevent spending time acquiring a new one
     def checkCUTokenExpire(self, uid):
         cur = self.conn.cursor()
         cur.execute('select * from tokens where uid=%s', [uid])

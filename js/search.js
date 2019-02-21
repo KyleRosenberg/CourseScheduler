@@ -4,8 +4,6 @@ srcdb = '2191'
 saved_classes = {}
 calendar_classes = {}
 
-token = null;
-
 $(document).ready(function(event) {
     $('input[name=srcdb]').val('2191');
     $('#submit_search').click(function() {
@@ -414,7 +412,7 @@ function addToCart(data){
         'p_crn':data[1],
         'p_gmod':$('input[name=gmod]')[0].value,
         'uid':firebase.auth().currentUser.uid,
-        'cutoken':token,
+        'cutoken':window.sessionStorage.getItem('token'),
     }
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         params['token'] = idToken
@@ -423,7 +421,22 @@ function addToCart(data){
             url: '/addcart',
             data: params,
             success: function(data){
+                data = JSON.parse(data.slice(8, -3))
                 console.log(data)
+                data = data['cart']
+                for (i = 0; i<data.length; i++){
+                    c = data[i]
+                    yr = c.split('|')[0]
+                    if (yr!=srcdb){
+                        data.splice(i, 1)
+                        i--
+                    }
+                }
+                console.log(data)
+                bad = JSON.parse(window.sessionStorage.getItem('dict'))
+                bad['cart']=data; //Not bad anymore lol
+                window.sessionStorage.setItem('dict', JSON.stringify(bad))
+                window.sessionStorage.setItem('updated_cart', true)
             }
         });
     }).catch(function(error) {
@@ -478,8 +491,9 @@ function getCUAuthToken(username, password, action) {
                     data = data.split("'").join('"')
                     data = data.split("False").join('false')
                     data = JSON.parse(data)
-                    token = data[0];
+                    window.sessionStorage.setItem('token', data[0])
                     window.sessionStorage.setItem('dict', JSON.stringify(data[1]))
+                    window.sessionStorage.setItem('updated_cart', false)
                     $('.ui.modal.login').modal('hide', false);
                     action()
                 }
@@ -490,30 +504,112 @@ function getCUAuthToken(username, password, action) {
     });
 }
 
+function getCartCrns(){
+    bad = JSON.parse(window.sessionStorage.getItem('dict'))
+    crns = ''
+    for (i = 0; i<bad['cart'].length; i++){
+        crn = bad['cart'][i].split('|')[2]
+        crns += (crn + ',')
+    }
+    for (i = 0; i<bad['reg'][srcdb].length; i++){
+        crn = bad['reg'][srcdb][i].split('|')[1]
+        crns += (crn + ',')
+    }
+    return crns
+}
+
 function getCart() {
     if (!firebase.auth().currentUser){
         $('.ui.modal.google').modal('show');
         return;
     }
+    token = window.sessionStorage.getItem('token');
     if (!token) {
         showCULogin(getCart);
         return;
     }
     $('.search_results .loader').addClass('active')
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-        $.ajax({
-            type: 'POST',
-            url: '/getcart',
-            data: {
-                'uid':firebase.auth().currentUser.uid,
-                'token':idToken,
-                'cutoken':token,
-                'srcdb':srcdb
-            },
-            success: function(data){
-                proc_keyword_data(data)
+        if (window.sessionStorage.getItem('updated_cart')=="true"){
+            dict = JSON.parse(window.sessionStorage.getItem('dict'))
+            cart = dict['cart']
+            reg = dict['reg'][srcdb]
+            for (i = 0; i<cart.length; i++){
+                c = cart[i]
+                yr = c.split('|')[0]
+                if (yr!=srcdb){
+                    cart.splice(i, 1)
+                    i--
+                }
             }
-        });
+            crns = getCartCrns()
+            $.ajax({
+                type: 'POST',
+                url: '/getcrns',
+                data: {
+                    'uid':firebase.auth().currentUser.uid,
+                    'token':idToken,
+                    'cutoken':token,
+                    'srcdb':srcdb,
+                    'crns': crns
+                },
+                success: function(data){
+                    proc_keyword_data(data)
+                },
+                error: function(xhr, st, er){
+                    console.log(er)
+                    $('.search_results .loader').removeClass('active')
+                }
+            });
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/getcart',
+                data: {
+                    'uid':firebase.auth().currentUser.uid,
+                    'token':idToken,
+                    'cutoken':token,
+                    'srcdb':srcdb
+                },
+                success: function(data){
+                    data = data.split("'").join('"')
+                    data = JSON.parse(data)
+                    for (i = 0; i<data.length; i++){
+                        if (data[i].split('|')[0]!=srcdb){
+                            data.splice(i, 1)
+                            i--
+                        }
+                    }
+                    bad = JSON.parse(window.sessionStorage.getItem('dict'))
+                    bad['cart']=data; //Not bad anymore lol
+                    window.sessionStorage.setItem('dict', JSON.stringify(bad))
+                    window.sessionStorage.setItem('updated_cart', true)
+                    crns = getCartCrns()
+                    $.ajax({
+                        type: 'POST',
+                        url: '/getcrns',
+                        data: {
+                            'uid':firebase.auth().currentUser.uid,
+                            'token':idToken,
+                            'cutoken':token,
+                            'srcdb':srcdb,
+                            'crns': crns
+                        },
+                        success: function(data){
+                            proc_keyword_data(data)
+                        },
+                        error: function(xhr, st, er){
+                            console.log(er)
+                            $('.search_results .loader').removeClass('active')
+                        }
+                    });
+                },
+                error: function(xhr, st, er){
+                    console.log(er)
+                    $('.search_results .loader').removeClass('active')
+                }
+            });
+        }
     }).catch(function(error) {
         console.log(error);
         $('.search_results .loader').removeClass('active')
