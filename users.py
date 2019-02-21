@@ -88,7 +88,6 @@ class FirebaseAuth:
             return None
 
     def checkCUTokenExpire(self, uid):
-        print('Here')
         cur = self.conn.cursor()
         cur.execute('select * from tokens where uid=%s', [uid])
         try:

@@ -49,16 +49,20 @@ def culogin():
     if fa.verifyToken(request.form['token'], request.form['uid']):
         print('Checking existing tokens...')
         t = fa.checkCUTokenExpire(request.form['uid'])
+        dic = {}
         if t:
-            return t
+            print('Current token still valid.')
+            info = cg.getUserId(t)
+            id = info['pers']['id']
+            dic = info
         else:
             print('Token expired or doesnt exist, fetching new one...')
             t = cg.getAuthToken(request.form['username'], request.form['password'])
             info = cg.getUserId(t)
-            session['info'] = info
             id = info['pers']['id']
             fa.addTokenToDatabase(t, request.form['uid'], id)
-        return t
+            dic = info
+        return str([t, dic])
     else:
         return 'Auth Fail'
 
@@ -78,6 +82,7 @@ def getcart():
         param = {
             'crn':','.join(crns)
         }
+        #This part should be broken up into two functions, one to get the actual cart and one to do a search for arbitrary crns
         return cg.doSearch(param, request.form['srcdb'])
     return 'Unauthorized'
 

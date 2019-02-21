@@ -474,7 +474,11 @@ function getCUAuthToken(username, password, action) {
                 if (data=="Auth Fail"){
                     console.log(data)
                 } else {
-                    token = data;
+                    data = data.split("'").join('"')
+                    data = data.split("False").join('false')
+                    data = JSON.parse(data)
+                    token = data[0];
+                    window.sessionStorage.setItem('dict', JSON.stringify(data[1]))
                     $('.ui.modal.login').modal('hide', false);
                     action()
                 }
