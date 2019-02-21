@@ -321,7 +321,44 @@ function view_sections(i) {
     });
 }
 
-function showDetails(data) {
+function crnInCart(crn){
+    cart = JSON.parse(window.sessionStorage.getItem('dict'))['cart']
+    for (i = 0; i<cart.length; i++){
+        if (cart[i].split('|')[2]==crn){
+            return true;
+        }
+    }
+    return false;
+}
+
+function crnInReg(crn){
+    cart = JSON.parse(window.sessionStorage.getItem('dict'))['reg'][srcdb]
+    for (i = 0; i<cart.length; i++){
+        if (cart[i].split('|')[1]==crn){
+            return true;
+        }
+    }
+    return false;
+}
+
+function courseInCartOrReg(data){
+    crns = data.split('crn:')
+    for (i = 1; i<crns.length; i++){
+        crn = crns[i].substr(0, 5);
+        if (crnInCart(crn))
+            return true
+        if (crnInReg(crn))
+            return true
+    }
+    return false
+}
+
+function showDetails(data, showAll=false) {
+    if (!showAll)
+        cart_class = courseInCartOrReg(data);
+    else {
+        cart_class = false;
+    }
     $('.ui.popup').children().remove();
     $('#popup_temp').removeClass('active');
     data = JSON.parse(data)
@@ -333,6 +370,13 @@ function showDetails(data) {
     popup_html += `<span>${data.seats}</span><br/>`
     if (data.restrict_info != "")
         popup_html += `<span class="info_head">Registration Restrictions</span> <p>${data.restrict_info}</p>`
+    if (data.crn!='Varies by section'){
+        if (crnInCart(data.crn)){
+            popup_html += `<span class="info_head">Registration Notes</span> <p>This class is in your cart.</p>`
+        } else if (crnInReg(data.crn)){
+            popup_html += `<span class="info_head">Registration Notes</span> <p>You are registered for this class.</p>`
+        }
+    }
     if (data.clssnotes != "")
         popup_html += `<span class="info_head">Class Notes</span> <p>${data.clssnotes}</p>`
     popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
@@ -350,6 +394,11 @@ function showDetails(data) {
         cells = rows[r].children
         id = cells[0].innerText
         id = id.substring(id.indexOf(':') + 1).trim()
+        if (cart_class) {
+            if (!crnInCart(id) && !crnInReg(id)){
+                continue;
+            }
+        }
         row = `<tr onclick="selectCourseRow(this)"><td><div class="ui checkbox"><input type="checkbox" name="${id}" `;
         if (class_saved(id)) {
             row += 'checked';
@@ -388,10 +437,16 @@ function showDetails(data) {
             </div>`;
         popup_html += `</div>
             </div>
-        </div>
-        <button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
+        </div>`;
+        if (crnInCart(data.crn)){
+            popup_html += `<button class="ui secondary button" onclick="removeFromCart(['${data.gmods}', '${data.crn}'])">
+                        Remove from Cart
+                        </button></div>`;
+        } else {
+            popup_html += `<button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
                         Add to Cart
                         </button></div>`;
+        }
     }
     $('.ui.popup').append(popup_html);
     $('.ui.popup input[type="checkbox"]').click(function(event) {
@@ -630,7 +685,7 @@ function selectCourseRow(course) {
             'srcdb': srcdb
         },
         success: function(data) {
-            showDetails(data);
+            showDetails(data, true);
         }
     })
 }
