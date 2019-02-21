@@ -25,7 +25,6 @@ class FirebaseAuth:
         }
         while obj['private_key'].find('\\n')>-1:
             obj['private_key'] = obj['private_key'].replace('\\n', '\n')
-        print(obj)
         cred = credentials.Certificate(obj)
         self.default = firebase_admin.initialize_app(cred)
 
@@ -38,11 +37,13 @@ class FirebaseAuth:
         }
         self.conn = psycopg2.connect(host=self.config['host'], database=self.config['database'], user=self.config['user'], password=self.config['password'])
 
+    #Verify the Google token is for the UID and valid
     def verifyToken(self, token, uid):
         dec_tok = auth.verify_id_token(token)
         uid_v = dec_tok['uid']
         return uid_v == uid
 
+    #Verify the cu token matches the one in the database => user can only be logged in one place at a time
     def checkToken(self, token, uid):
         cur = self.conn.cursor()
         cur.execute('select * from tokens where uid=%s', [uid])
@@ -52,6 +53,17 @@ class FirebaseAuth:
         except:
             return False
 
+    #Return the cu id matching the cu token from the database
+    def getCIDToken(self, token):
+        cur = self.conn.cursor()
+        cur.execute('select * from tokens where cu_token=%s', [token])
+        try:
+            res = cur.fetchall()[0]
+            return res[3]
+        except:
+            return None
+
+    #Set the cu token and expiration for the UID
     def addTokenToDatabase(self, token, uid, cuid):
         cur = self.conn.cursor()
         cur.execute('select exists(select 1 from tokens where uid=%s)', [uid])
@@ -65,6 +77,7 @@ class FirebaseAuth:
             cur.execute('INSERT INTO tokens (uid, cu_token, cu_expire, cu_uid) VALUES(%s, %s, %s, %s)', [uid, token, exptime, cuid])
         self.conn.commit()
 
+    #Return database row for UID
     def getCUInfo(self, uid):
         cur = self.conn.cursor()
         cur.execute('select * from tokens where uid=%s', [uid])
@@ -73,3 +86,18 @@ class FirebaseAuth:
             return res
         except:
             return None
+
+    def checkCUTokenExpire(self, uid):
+        print('Here')
+        cur = self.conn.cursor()
+        cur.execute('select * from tokens where uid=%s', [uid])
+        try:
+            res = cur.fetchall()[0]
+            tk = res[1]
+            exp = res[2].replace(tzinfo=None)
+            if datetime.datetime.now()<exp:
+                return tk
+            return False
+        except Exception as e:
+            print(e)
+            return False
