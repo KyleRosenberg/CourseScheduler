@@ -35,10 +35,11 @@ $(document).ready(function(event) {
     });
     generateTable();
     firebase.auth().onAuthStateChanged(function(user) {
-       if (user) {
-           submitCULogin(console.log)
-       }
-   });
+        if (user) {
+            if (password = $('.ui.modal.login input[type="password"]').val().length>0)
+                submitCULogin(console.log)
+        }
+    });
 });
 
 function generateTable() {
