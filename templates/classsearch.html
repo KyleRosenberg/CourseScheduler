@@ -52,7 +52,7 @@
                 <h2>Search Classes</h2>
             </div>
             <div class="search_content">
-                <form class="ui form" action="javascript:void(0);">
+                <form class="ui form" action="javascript:void(0);" name="search_form">
                     <div class="field">
                         <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
                     </div>
@@ -79,6 +79,220 @@
                                 </div>
                                 <div class="item" data-value="2177">
                                     Fall 2017
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="subject">
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Subject</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="ACCT">Accounting (ACCT)</div>
+                                <div class="item" data-value="APRD">Advertising, PR, Media Design (APRD)</div>
+                                <div class="item" data-value="ASEN">Aerospace Engineering (ASEN)</div>
+                                <div class="item" data-value="AIRR">Air Force Aerospace Studies (AIRR)</div>
+                                <div class="item" data-value="ANTH">Anthropology (ANTH)</div>
+                                <div class="item" data-value="APPM">Applied Math (APPM)</div>
+                                <div class="item" data-value="ARAB">Arabic (ARAB)</div>
+                                <div class="item" data-value="AREN">Architectural Engineering (AREN)</div>
+                                <div class="item" data-value="ARCH">Architecture (ARCH)</div>
+                                <div class="item" data-value="ARTF">Art Film Studies (ARTF)</div>
+                                <div class="item" data-value="ARTH">Art History (ARTH)</div>
+                                <div class="item" data-value="ARTS">Art Studio and Non-Studio (ARTS)</div>
+                                <div class="item" data-value="ARSC">Arts & Sciences Courses (ARSC)</div>
+                                <div class="item" data-value="ASIA">Asian Studies (ASIA)</div>
+                                <div class="item" data-value="ASTR">Astrophysical & Planetary Sci (ASTR)</div>
+                                <div class="item" data-value="ATLS">ATLAS (ATLS)</div>
+                                <div class="item" data-value="ATOC">Atmospheric & Oceanic Sciences (ATOC)</div>
+                                <div class="item" data-value="BASE">BCOR Applied Semester Exper (BASE)</div>
+                                <div class="item" data-value="BMEN">Biomedical Engineering (BMEN)</div>
+                                <div class="item" data-value="BADM">Business Administration (BADM)</div>
+                                <div class="item" data-value="BCOR">Business Core (BCOR)</div>
+                                <div class="item" data-value="BPOL">Business Environment & Policy (BPOL)</div>
+                                <div class="item" data-value="BSLW">Business Law (BSLW)</div>
+                                <div class="item" data-value="BUSM">Business Minor (BUSM)</div>
+                                <div class="item" data-value="CSVC">Career Services (CSVC)</div>
+                                <div class="item" data-value="CWCV">Center for Western Civilizatio (CWCV)</div>
+                                <div class="item" data-value="CAMW">Center of the American West (CAMW)</div>
+                                <div class="item" data-value="CEES">Central & East European Stdy (CEES)</div>
+                                <div class="item" data-value="CHEN">Chemical Engineering (CHEN)</div>
+                                <div class="item" data-value="CHEM">Chemistry (CHEM)</div>
+                                <div class="item" data-value="CHIN">Chinese (CHIN)</div>
+                                <div class="item" data-value="CVEN">Civil Engineering (CVEN)</div>
+                                <div class="item" data-value="GREK">Classical Greek Language (GREK)</div>
+                                <div class="item" data-value="CLAS">Classics (CLAS)</div>
+                                <div class="item" data-value="COEN">Coll of Engineerng&App Sci Adm (COEN)</div>
+                                <div class="item" data-value="CMCI">Coll of Media,Commncation,Info (CMCI)</div>
+                                <div class="item" data-value="COMM">Communication (COMM)</div>
+                                <div class="item" data-value="COMR">Communication Res Acad Prgm (COMR)</div>
+                                <div class="item" data-value="COML">Comparative Literature (COML)</div>
+                                <div class="item" data-value="CSCI">Computer Science (CSCI)</div>
+                                <div class="item" data-value="CMDP">Critical Media Practices (CMDP)</div>
+                                <div class="item" data-value="CESR">Curr Emphasis in Soc Respnsbly (CESR)</div>
+                                <div class="item" data-value="DNCE">Dance (DNCE)</div>
+                                <div class="item" data-value="DANE">Danish (DANE)</div>
+                                <div class="item" data-value="DHUM">Digital Humanities (DHUM)</div>
+                                <div class="item" data-value="EBIO">Ecology & Evolutionary Biology (EBIO)</div>
+                                <div class="item" data-value="ECON">Economics (ECON)</div>
+                                <div class="item" data-value="EDUC">Education (EDUC)</div>
+                                <div class="item" data-value="ECEN">Electrical & Computer Engr (ECEN)</div>
+                                <div class="item" data-value="ENEN">Energy Engineering (ENEN)</div>
+                                <div class="item" data-value="EHON">Engineering Honors (EHON)</div>
+                                <div class="item" data-value="ENLP">Engineering Leadership Program (ENLP)</div>
+                                <div class="item" data-value="EMEN">Engineering Management (EMEN)</div>
+                                <div class="item" data-value="ENGL">English (ENGL)</div>
+                                <div class="item" data-value="ESLG">English as a Second Language (ESLG)</div>
+                                <div class="item" data-value="ESBM">Entrepren & Small Bus Mgmt (ESBM)</div>
+                                <div class="item" data-value="ENST">Environment and Sustainability (ENST)</div>
+                                <div class="item" data-value="ENVD">Environmental Design (ENVD)</div>
+                                <div class="item" data-value="EVEN">Environmental Engineering (EVEN)</div>
+                                <div class="item" data-value="ENVS">Environmental Studies (ENVS)</div>
+                                <div class="item" data-value="ETHN">Ethnic Studies (ETHN)</div>
+                                <div class="item" data-value="TDXD">Experience Design (TDXD)</div>
+                                <div class="item" data-value="FARR">Farrand Residential Acad Prgm (FARR)</div>
+                                <div class="item" data-value="FRSI">Farsi (FRSI)</div>
+                                <div class="item" data-value="FILM">Film Studies (FILM)</div>
+                                <div class="item" data-value="FNCE">Finance (FNCE)</div>
+                                <div class="item" data-value="FYXP">First Year Exploration (FYXP)</div>
+                                <div class="item" data-value="FYSM">First Year Seminar (FYSM)</div>
+                                <div class="item" data-value="FREN">French (FREN)</div>
+                                <div class="item" data-value="GEEN">General Engineering (GEEN)</div>
+                                <div class="item" data-value="GEOG">Geography (GEOG)</div>
+                                <div class="item" data-value="GEOL">Geological Sciences (GEOL)</div>
+                                <div class="item" data-value="GRMN">German (GRMN)</div>
+                                <div class="item" data-value="GSLL">Germanic & Slavic Lang & Lit (GSLL)</div>
+                                <div class="item" data-value="GRAD">Graduate School (GRAD)</div>
+                                <div class="item" data-value="GRTE">Graduate Teacher Education (GRTE)</div>
+                                <div class="item" data-value="HEBR">Hebrew (HEBR)</div>
+                                <div class="item" data-value="HIND">Hindi/Urdu (HIND)</div>
+                                <div class="item" data-value="HIST">History (HIST)</div>
+                                <div class="item" data-value="HONR">Honors (HONR)</div>
+                                <div class="item" data-value="HUMN">Humanities (HUMN)</div>
+                                <div class="item" data-value="HUEN">Humanities for Engineers (HUEN)</div>
+                                <div class="item" data-value="INDO">Indonesian (INDO)</div>
+                                <div class="item" data-value="BAIM">Infm Mgmt/Business Analytics (BAIM)</div>
+                                <div class="item" data-value="INFO">Information Science (INFO)</div>
+                                <div class="item" data-value="IPHY">Integrative Physiology (IPHY)</div>
+                                <div class="item" data-value="IMUS">Intensive Music (IMUS)</div>
+                                <div class="item" data-value="IAFS">International Affairs (IAFS)</div>
+                                <div class="item" data-value="INBU">International Business Cert (INBU)</div>
+                                <div class="item" data-value="IAWP">Intrmedia Art,Wrtg,Performance (IAWP)</div>
+                                <div class="item" data-value="INVS">INVST Community Studies (INVS)</div>
+                                <div class="item" data-value="ITAL">Italian (ITAL)</div>
+                                <div class="item" data-value="JPNS">Japanese (JPNS)</div>
+                                <div class="item" data-value="JWST">Jewish Studies (JWST)</div>
+                                <div class="item" data-value="JRNL">Journalism (JRNL)</div>
+                                <div class="item" data-value="KREN">Korean (KREN)</div>
+                                <div class="item" data-value="LGTC">Language Technology (LGTC)</div>
+                                <div class="item" data-value="LATN">Latin Language (LATN)</div>
+                                <div class="item" data-value="LAWS">Law School (LAWS)</div>
+                                <div class="item" data-value="LEAD">Leadership Minor (LEAD)</div>
+                                <div class="item" data-value="LGBT">Lesbn/Gay/Bisexual Stdys (LGBT)</div>
+                                <div class="item" data-value="LIBB">Libby Residential Acad Prgm (LIBB)</div>
+                                <div class="item" data-value="LING">Linguistics (LING)</div>
+                                <div class="item" data-value="MGMT">Management (MGMT)</div>
+                                <div class="item" data-value="MKTG">Marketing (MKTG)</div>
+                                <div class="item" data-value="ENVM">Master of the Environment (ENVM)</div>
+                                <div class="item" data-value="MSEN">Materials Science&Engineering (MSEN)</div>
+                                <div class="item" data-value="MATH">Mathematics (MATH)</div>
+                                <div class="item" data-value="MBAX">MBA Advanced Electives (MBAX)</div>
+                                <div class="item" data-value="MBAC">MBA Core (MBAC)</div>
+                                <div class="item" data-value="MCEN">Mechanical Engineering (MCEN)</div>
+                                <div class="item" data-value="MDST">Media Studies (MDST)</div>
+                                <div class="item" data-value="MEMS">Medieval & Early Modern Stdys (MEMS)</div>
+                                <div class="item" data-value="MILR">Military Science (MILR)</div>
+                                <div class="item" data-value="MCDB">Molecular Cell & Dev Biology (MCDB)</div>
+                                <div class="item" data-value="MSBC">MS Business Core (MSBC)</div>
+                                <div class="item" data-value="MSBX">MS Business Electives (MSBX)</div>
+                                <div class="item" data-value="MUSM">Museum (MUSM)</div>
+                                <div class="item" data-value="MUSC">Music (MUSC)</div>
+                                <div class="item" data-value="MUEL">Music Electives (MUEL)</div>
+                                <div class="item" data-value="EMUS">Music Ensemble (EMUS)</div>
+                                <div class="item" data-value="NAVR">Naval Science (NAVR)</div>
+                                <div class="item" data-value="NRSC">Neuroscience (NRSC)</div>
+                                <div class="item" data-value="NRLN">Norlin Scholars (NRLN)</div>
+                                <div class="item" data-value="OPIM">Operations & Information MGMT (OPIM)</div>
+                                <div class="item" data-value="ORMG">Organization Management (ORMG)</div>
+                                <div class="item" data-value="ORGN">Organizational Behavior (ORGN)</div>
+                                <div class="item" data-value="ORGL">Organizational Leadership (ORGL)</div>
+                                <div class="item" data-value="PACS">Peace & Conflict Studies (PACS)</div>
+                                <div class="item" data-value="PMUS">Performance Music (PMUS)</div>
+                                <div class="item" data-value="PHIL">Philosophy (PHIL)</div>
+                                <div class="item" data-value="PHYS">Physics (PHYS)</div>
+                                <div class="item" data-value="PSCI">Political Science (PSCI)</div>
+                                <div class="item" data-value="PORT">Portuguese (PORT)</div>
+                                <div class="item" data-value="PRLC">Presidents Leadership Class (PRLC)</div>
+                                <div class="item" data-value="PSYC">Psychology (PSYC)</div>
+                                <div class="item" data-value="REAL">Real Estate (REAL)</div>
+                                <div class="item" data-value="RLST">Religious Studies (RLST)</div>
+                                <div class="item" data-value="RUSS">Russian (RUSS)</div>
+                                <div class="item" data-value="SCAN">Scandinavian (SCAN)</div>
+                                <div class="item" data-value="SOCY">Sociology (SOCY)</div>
+                                <div class="item" data-value="SPAN">Spanish (SPAN)</div>
+                                <div class="item" data-value="SLHS">Speech, Language & Hearing Sci (SLHS)</div>
+                                <div class="item" data-value="STAT">Statistics (STAT)</div>
+                                <div class="item" data-value="SWED">Swedish (SWED)</div>
+                                <div class="item" data-value="TLEN">Telecommunications (TLEN)</div>
+                                <div class="item" data-value="THDN">Theater & Dance (THDN)</div>
+                                <div class="item" data-value="THTR">Theatre (THTR)</div>
+                                <div class="item" data-value="TMUS">Thesis Music (TMUS)</div>
+                                <div class="item" data-value="WGST">Women and Gender Studies (WGST)</div>
+                                <div class="item" data-value="WRTG">Writing and Rhetoric (WRTG)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="camp">
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Campus</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="BLDR">
+                                    Boulder Main Campus
+                                </div>
+                                <div class="item" data-value="CEPS">
+                                    Boulder Continuing Education
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="career">
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Career</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="GRAD">
+                                    Graduate
+                                </div>
+                                <div class="item" data-value="LAW">
+                                    Law
+                                </div>
+                                <div class="item" data-value="NOCR">
+                                    Non-Credit
+                                </div>
+                                <div class="item" data-value="UGRD">
+                                    Undergraduate
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="course_level">
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Course Level</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="<3">
+                                    Undergrad Lower Division
+                                </div>
+                                <div class="item" data-value="3::4">
+                                    Undergrad Upper Division
+                                </div>
+                                <div class="item" data-value=">=5">
+                                    Graduate
                                 </div>
                             </div>
                         </div>

@@ -10,9 +10,21 @@ $(document).ready(function(event) {
     $('input[name=srcdb]').val('2191');
     $('#submit_search').click(function() {
         cart = false;
-        kw = $('input[name=keyword]')[0].value;
-        srcdb = $('input[name=srcdb]')[0].value;
-        if (kw == '') {
+        finputs = $('form[name=search_form] input')
+        dat = {
+            'type':'keyword'
+        }
+        valid = false
+        for (let i = 0; i<finputs.length-1; i++){
+            inp = finputs[i]
+            if (inp.name=='srcdb'){
+                dat[inp.name] = inp.value;
+            }else if (inp.value!=''){
+                dat[inp.name] = inp.value;
+                valid = true;
+            }
+        }
+        if (!valid) {
             alert('Search query cannot be blank');
             return;
         }
@@ -20,11 +32,7 @@ $(document).ready(function(event) {
         $.ajax({
             type: 'POST',
             url: '/search',
-            data: {
-                'type': 'keyword',
-                'keyword': kw,
-                'srcdb': srcdb,
-            },
+            data: dat,
             success: proc_keyword_data
         });
     });
