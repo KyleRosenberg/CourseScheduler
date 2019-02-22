@@ -423,7 +423,7 @@ function showDetails(data, showAll=false) {
     }
     table += '</table>'
     popup_html += table
-    if (data.crn!='Varies by section'){
+    if (data.crn!='Varies by section' && !courseInCartOrReg('crn:' + data.crn)){
         popup_html +=  `<div style="text-align:right;"><div class="field">
             <div class="ui selection dropdown">
                 <input type="hidden" name="gmod" value="LTR">
@@ -451,7 +451,7 @@ function showDetails(data, showAll=false) {
             popup_html += `<button class="ui secondary button" onclick="removeFromCart(['${data.gmods}', '${data.crn}'])">
                         Remove from Cart
                         </button><div id="cart_load" class="ui text loader">Removing...</div></div>`;
-        } else {
+        } else if (!crnInReg(data.crn)){
             popup_html += `<button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
                         Add to Cart
                         </button><div id="cart_load" class="ui text loader">Adding...</div></div>`;
