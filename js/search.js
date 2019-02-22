@@ -34,8 +34,7 @@ $(document).ready(function(event) {
     generateTable();
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            if (password = $('.ui.modal.login input[type="password"]').val().length>0)
-                submitCULogin(console.log)
+            submitCULogin(console.log)
         }
     });
 });
@@ -322,7 +321,10 @@ function view_sections(i) {
 }
 
 function crnInCart(crn){
-    cart = JSON.parse(window.sessionStorage.getItem('dict'))['cart']
+    dict = JSON.parse(window.sessionStorage.getItem('dict'))
+    if (!dict) return false;
+    cart = dict['cart']
+    if (!cart) return false;
     for (i = 0; i<cart.length; i++){
         if (cart[i].split('|')[2]==crn){
             return true;
@@ -332,7 +334,10 @@ function crnInCart(crn){
 }
 
 function crnInReg(crn){
-    cart = JSON.parse(window.sessionStorage.getItem('dict'))['reg'][srcdb]
+    dict = JSON.parse(window.sessionStorage.getItem('dict'))
+    if (!dict) return false;
+    cart = dict['reg'][srcdb]
+    if (!cart) return false;
     for (i = 0; i<cart.length; i++){
         if (cart[i].split('|')[1]==crn){
             return true;
@@ -460,6 +465,11 @@ function showDetails(data, showAll=false) {
 function addToCart(data){
     if (!firebase.auth().currentUser){
         $('.ui.modal.google').modal('show');
+        return;
+    }
+    token = window.sessionStorage.getItem('token');
+    if (!token) {
+        showCULogin(getCart);
         return;
     }
     params = {
