@@ -4,9 +4,12 @@ srcdb = '2191'
 saved_classes = {}
 calendar_classes = {}
 
+cart = false;
+
 $(document).ready(function(event) {
     $('input[name=srcdb]').val('2191');
     $('#submit_search').click(function() {
+        cart = false;
         kw = $('input[name=keyword]')[0].value;
         srcdb = $('input[name=srcdb]')[0].value;
         if (kw == '') {
@@ -26,6 +29,7 @@ $(document).ready(function(event) {
         });
     });
     $('#get_cart').click(function() {
+        cart = true;
         getCart();
     });
     $('#sidebar_button').click(function() {
@@ -315,7 +319,7 @@ function view_sections(i) {
             'srcdb': srcdb
         },
         success: function(data) {
-            showDetails(data);
+            showDetails(data, !cart);
         }
     });
 }
@@ -359,9 +363,9 @@ function courseInCartOrReg(data){
 }
 
 function showDetails(data, showAll=false) {
-    if (!showAll)
+    if (!showAll){
         cart_class = courseInCartOrReg(data);
-    else {
+    } else {
         cart_class = false;
     }
     $('.ui.popup').children().remove();
@@ -446,11 +450,12 @@ function showDetails(data, showAll=false) {
         if (crnInCart(data.crn)){
             popup_html += `<button class="ui secondary button" onclick="removeFromCart(['${data.gmods}', '${data.crn}'])">
                         Remove from Cart
-                        </button></div>`;
+                        </button><div id="cart_load" class="ui text loader">Removing...</div></div>`;
         } else {
             popup_html += `<button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
                         Add to Cart
-                        </button></div>`;
+                        </button><div id="cart_load" class="ui text loader">Adding...</div></div>`;
+
         }
     }
     $('.ui.popup').append(popup_html);
@@ -460,6 +465,50 @@ function showDetails(data, showAll=false) {
     })
     $('.ui.dropdown').dropdown();
     $('#popup_temp').removeClass('active');
+}
+
+function removeFromCart(data){
+    if (!firebase.auth().currentUser){
+        $('.ui.modal.google').modal('show');
+        return;
+    }
+    params = {
+        'p_term_code':srcdb,
+        'p_crn':data[1],
+        'uid':firebase.auth().currentUser.uid,
+        'cutoken':window.sessionStorage.getItem('token'),
+    }
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        params['token'] = idToken;
+        $('#cart_load').addClass('active');
+        $.ajax({
+            type: 'POST',
+            url: '/removecart',
+            data: params,
+            success: function(data){
+                data = JSON.parse(data.slice(8, -3))
+                data = data['cart']
+                for (i = 0; i<data.length; i++){
+                    c = data[i]
+                    yr = c.split('|')[0]
+                    if (yr!=srcdb){
+                        data.splice(i, 1)
+                        i--
+                    }
+                }
+                bad = JSON.parse(window.sessionStorage.getItem('dict'))
+                bad['cart']=data; //Not bad anymore lol
+                window.sessionStorage.setItem('dict', JSON.stringify(bad))
+                window.sessionStorage.setItem('updated_cart', true)
+                $('.ui.bottom.attached.button').popup('hide all')
+                $('#cart_load').removeClass('active');
+                getCart()
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+        $('.search_results .loader').removeClass('active')
+    });
 }
 
 function addToCart(data){
@@ -480,14 +529,14 @@ function addToCart(data){
         'cutoken':window.sessionStorage.getItem('token'),
     }
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-        params['token'] = idToken
+        params['token'] = idToken;
+        $('#cart_load').addClass('active');
         $.ajax({
             type: 'POST',
             url: '/addcart',
             data: params,
             success: function(data){
                 data = JSON.parse(data.slice(8, -3))
-                console.log(data)
                 data = data['cart']
                 for (i = 0; i<data.length; i++){
                     c = data[i]
@@ -497,11 +546,13 @@ function addToCart(data){
                         i--
                     }
                 }
-                console.log(data)
                 bad = JSON.parse(window.sessionStorage.getItem('dict'))
                 bad['cart']=data; //Not bad anymore lol
                 window.sessionStorage.setItem('dict', JSON.stringify(bad))
                 window.sessionStorage.setItem('updated_cart', true)
+                $('.ui.bottom.attached.button').popup('hide all')
+                $('#cart_load').removeClass('active');
+                getCart()
             }
         });
     }).catch(function(error) {

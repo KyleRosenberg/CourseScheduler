@@ -88,7 +88,14 @@ def addcart():
     if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
         cu = fa.getCUInfo(request.form['uid'])
         return cg.addToCart(request.form, cu[3])
-    return ""
+    return "Unauthorized"
+
+@app.route('/removecart', methods=['POST'])
+def removecart():
+    if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
+        cu = fa.getCUInfo(request.form['uid'])
+        return cg.removeFromCart(request.form, cu[3])
+    return "Unauthorized"
 
 @app.route('/')
 def default():

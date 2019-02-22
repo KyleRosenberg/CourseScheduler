@@ -12,8 +12,7 @@ class CourseGrabber:
         querystring = {"page":"fose","route":"search"}
         headers = {
             'Content-Type': "application/json",
-            'cache-control': "no-cache",
-            'Postman-Token': "44ff740c-90b5-4cb0-ae59-c0a53a2bd4b3"
+            'cache-control': "no-cache"
         }
         c = []
         ignore = ['srcdb', 'type']
@@ -33,8 +32,7 @@ class CourseGrabber:
         querystring = {"page":"fose","route":"details"}
         headers = {
             'Content-Type': "application/json",
-            'cache-control': "no-cache",
-            'Postman-Token': "44ff740c-90b5-4cb0-ae59-c0a53a2bd4b3"
+            'cache-control': "no-cache"
         }
         c = {}
         ignore = ['type']
@@ -44,6 +42,7 @@ class CourseGrabber:
             c[f] = fields[f]
         payload = c
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
+        print(r)
         return r.text
 
     def handleLoginPage(self, session, post_page_text, username, password, count=0):
@@ -138,5 +137,18 @@ class CourseGrabber:
         params['user_id'] = id
         params['page'] = 'sisproxy';
         r = requests.get('https://classes.colorado.edu/api/', params=params)
-        print(r.text)
+        return r.text
+
+    def removeFromCart(self, form, id):
+        params = {}
+        for k in form:
+            if k[0]=='p':
+                params[k] = form[k]
+        params['oauth_token'] = form['cutoken']
+        params['p_action'] = 'cart_remove'
+        params['p_cart_name'] = 'default-UGRD'
+        params['p_institution'] = 'CUBLD'
+        params['user_id'] = id
+        params['page'] = 'sisproxy';
+        r = requests.get('https://classes.colorado.edu/api/', params=params)
         return r.text
