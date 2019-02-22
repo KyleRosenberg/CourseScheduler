@@ -42,7 +42,6 @@ class CourseGrabber:
             c[f] = fields[f]
         payload = c
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
-        print(r)
         return r.text
 
     def handleLoginPage(self, session, post_page_text, username, password, count=0):

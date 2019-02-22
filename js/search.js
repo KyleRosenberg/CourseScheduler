@@ -337,7 +337,7 @@ function crnInCart(crn){
     if (!dict) return false;
     cart = dict['cart']
     if (!cart) return false;
-    for (i = 0; i<cart.length; i++){
+    for (let i = 0; i<cart.length; i++){
         if (cart[i].split('|')[2]==crn){
             return true;
         }
@@ -350,7 +350,7 @@ function crnInReg(crn){
     if (!dict) return false;
     cart = dict['reg'][srcdb]
     if (!cart) return false;
-    for (i = 0; i<cart.length; i++){
+    for (let i = 0; i<cart.length; i++){
         if (cart[i].split('|')[1]==crn){
             return true;
         }
@@ -360,7 +360,7 @@ function crnInReg(crn){
 
 function courseInCartOrReg(data){
     crns = data.split('crn:')
-    for (i = 1; i<crns.length; i++){
+    for (let i = 1; i<crns.length; i++){
         crn = crns[i].substr(0, 5);
         if (crnInCart(crn))
             return true
@@ -402,12 +402,12 @@ function showDetails(data, showAll=false) {
     bad_section_element = $.parseHTML(data.all_sections);
     headers = $($(bad_section_element).children()[0]).children();
     table = '<table class="ui selectable celled table"><thead><tr><th>Saved</th>'
-    for (j = 0; j < headers.length; j++) {
+    for (let j = 0; j < headers.length; j++) {
         table += `<th>${headers[j].innerText}</th>`;
     }
     table += '</tr></thead>'
     rows = $(bad_section_element).children().slice(1)
-    for (r = 0; r < rows.length; r++) {
+    for (let r = 0; r < rows.length; r++) {
         cells = rows[r].children
         id = cells[0].innerText
         id = id.substring(id.indexOf(':') + 1).trim()
@@ -421,7 +421,7 @@ function showDetails(data, showAll=false) {
             row += 'checked';
         }
         row += `><label></label></div></td>`
-        for (c = 0; c < cells.length; c++) {
+        for (let c = 0; c < cells.length; c++) {
             txt = cells[c].innerText
             txt = txt.substring(txt.indexOf(':') + 1)
             row += `<td>${txt}</td>`;
@@ -431,30 +431,33 @@ function showDetails(data, showAll=false) {
     }
     table += '</table>'
     popup_html += table
-    if (data.crn!='Varies by section' && !courseInCartOrReg('crn:' + data.crn)){
-        popup_html +=  `<div style="text-align:right;"><div class="field">
-            <div class="ui selection dropdown">
-                <input type="hidden" name="gmod" value="LTR">
-                <div style="color:rgb(0, 0, 0)" class="default text">Letter</div>
-                <i class="dropdown icon"></i>
-                <div class="menu">`;
-        if (data.gmods.indexOf('LTR')>=0){
-            popup_html += `<div class="item" data-value="LTR">
-                Letter
+    if (data.crn!='Varies by section'){
+        popup_html +=  `<div style="text-align:right;">`
+        if (!courseInCartOrReg('crn:'+data.crn)){
+            popup_html += `<div class="field">
+                <div class="ui selection dropdown">
+                    <input type="hidden" name="gmod" value="LTR">
+                    <div style="color:rgb(0, 0, 0)" class="default text">Letter</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">`;
+            if (data.gmods.indexOf('LTR')>=0){
+                popup_html += `<div class="item" data-value="LTR">
+                    Letter
+                </div>`;
+            }
+            if (data.gmods.indexOf('NOC')>=0){
+                popup_html += `<div class="item" data-value="NOC">
+                    No Credit Basis (Audit)
+                </div>`;
+            }
+            if (data.gmods.indexOf('PF4')>=0)
+                popup_html += `<div class="item" data-value="PF4">
+                    Pass/Fail
+                </div>`;
+            popup_html += `</div>
+                </div>
             </div>`;
         }
-        if (data.gmods.indexOf('NOC')>=0){
-            popup_html += `<div class="item" data-value="NOC">
-                No Credit Basis (Audit)
-            </div>`;
-        }
-        if (data.gmods.indexOf('PF4')>=0)
-            popup_html += `<div class="item" data-value="PF4">
-                Pass/Fail
-            </div>`;
-        popup_html += `</div>
-            </div>
-        </div>`;
         if (crnInCart(data.crn)){
             popup_html += `<button class="ui secondary button" onclick="removeFromCart(['${data.gmods}', '${data.crn}'])">
                         Remove from Cart
