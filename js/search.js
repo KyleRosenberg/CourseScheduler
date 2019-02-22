@@ -221,10 +221,40 @@ function toggleShowCourse(div, data = false) {
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
-            calendar_classes[crn] = saved_classes[crn];
-            addClassToCalendar(saved_classes[crn]);
+            let fits = fitsOnCalendar(saved_classes[crn]);
+            console.log(fits);
+            if (fits){
+                calendar_classes[crn] = saved_classes[crn];
+                addClassToCalendar(saved_classes[crn]);
+            }
         }
     }
+}
+
+function fitsOnCalendar(course){
+    course = JSON.parse(course);
+    times = getTimes(course);
+    for (i = times.start; i < times.end; i++) {
+        row = $('.calendar')[0].rows[i];
+        addOne = 0;
+        for (j = 0; j < 5; j++) {
+            if (days.charAt(j) == 0) {
+                continue;
+            }
+            var cell;
+            for (k = 0; k < row.cells.length; k++) {
+                cellk = $(row.cells[k]);
+                if (cellk.attr('name') == (j + 1).toString()) {
+                    if (cellk[0].innerHTML != ""){
+                        return false;
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 function proc_keyword_data(data) {
@@ -335,7 +365,7 @@ function view_sections(i) {
 function crnInCart(crn){
     dict = JSON.parse(window.sessionStorage.getItem('dict'))
     if (!dict) return false;
-    cart = dict['cart']
+    let cart = dict['cart']
     if (!cart) return false;
     for (let i = 0; i<cart.length; i++){
         if (cart[i].split('|')[2]==crn){
@@ -348,7 +378,7 @@ function crnInCart(crn){
 function crnInReg(crn){
     dict = JSON.parse(window.sessionStorage.getItem('dict'))
     if (!dict) return false;
-    cart = dict['reg'][srcdb]
+    let cart = dict['reg'][srcdb]
     if (!cart) return false;
     for (let i = 0; i<cart.length; i++){
         if (cart[i].split('|')[1]==crn){
@@ -659,7 +689,7 @@ function getCart() {
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         if (window.sessionStorage.getItem('updated_cart')=="true"){
             dict = JSON.parse(window.sessionStorage.getItem('dict'))
-            cart = dict['cart']
+            let cart = dict['cart']
             reg = dict['reg'][srcdb]
             for (i = 0; i<cart.length; i++){
                 c = cart[i]
