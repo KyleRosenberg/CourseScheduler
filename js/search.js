@@ -38,8 +38,7 @@ $(document).ready(function(event) {
     generateTable();
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            if (password = $('.ui.modal.login input[type="password"]').val().length>0)
-                submitCULogin(console.log)
+            submitCULogin(console.log)
         }
     });
 });
@@ -366,8 +365,7 @@ function courseInCartOrReg(data){
 function showDetails(data, showAll=false) {
     if (!showAll){
         cart_class = courseInCartOrReg(data);
-    }
-    else {
+    } else {
         cart_class = false;
     }
     $('.ui.popup').children().remove();
@@ -381,6 +379,13 @@ function showDetails(data, showAll=false) {
     popup_html += `<span>${data.seats}</span><br/>`
     if (data.restrict_info != "")
         popup_html += `<span class="info_head">Registration Restrictions</span> <p>${data.restrict_info}</p>`
+    if (data.crn!='Varies by section'){
+        if (crnInCart(data.crn)){
+            popup_html += `<span class="info_head">Registration Notes</span> <p>This class is in your cart.</p>`
+        } else if (crnInReg(data.crn)){
+            popup_html += `<span class="info_head">Registration Notes</span> <p>You are registered for this class.</p>`
+        }
+    }
     if (data.clssnotes != "")
         popup_html += `<span class="info_head">Class Notes</span> <p>${data.clssnotes}</p>`
     popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
@@ -398,6 +403,11 @@ function showDetails(data, showAll=false) {
         cells = rows[r].children
         id = cells[0].innerText
         id = id.substring(id.indexOf(':') + 1).trim()
+        if (cart_class) {
+            if (!crnInCart(id) && !crnInReg(id)){
+                continue;
+            }
+        }
         row = `<tr onclick="selectCourseRow(this)"><td><div class="ui checkbox"><input type="checkbox" name="${id}" `;
         if (class_saved(id)) {
             row += 'checked';
@@ -445,6 +455,7 @@ function showDetails(data, showAll=false) {
             popup_html += `<button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
                         Add to Cart
                         </button><div id="cart_load" class="ui text loader">Adding...</div></div>`;
+
         }
     }
     $('.ui.popup').append(popup_html);
@@ -503,6 +514,11 @@ function removeFromCart(data){
 function addToCart(data){
     if (!firebase.auth().currentUser){
         $('.ui.modal.google').modal('show');
+        return;
+    }
+    token = window.sessionStorage.getItem('token');
+    if (!token) {
+        showCULogin(getCart);
         return;
     }
     params = {
@@ -730,7 +746,7 @@ function selectCourseRow(course) {
             'srcdb': srcdb
         },
         success: function(data) {
-            showDetails(data);
+            showDetails(data, true);
         }
     })
 }
