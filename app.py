@@ -53,6 +53,11 @@ def culogin():
         if t:
             print('Current token still valid.')
             info = cg.getUserId(t)
+            if 'error' in info:
+                t = cg.getAuthToken(request.form['username'], request.form['password'])
+                info = cg.getUserId(t)
+                id = info['pers']['id']
+                fa.addTokenToDatabase(t, request.form['uid'], id)
             id = info['pers']['id']
             dic = info
         else:
@@ -83,7 +88,14 @@ def addcart():
     if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
         cu = fa.getCUInfo(request.form['uid'])
         return cg.addToCart(request.form, cu[3])
-    return ""
+    return "Unauthorized"
+
+@app.route('/removecart', methods=['POST'])
+def removecart():
+    if fa.checkToken(request.form['cutoken'], request.form['uid']) and fa.verifyToken(request.form['token'], request.form['uid']):
+        cu = fa.getCUInfo(request.form['uid'])
+        return cg.removeFromCart(request.form, cu[3])
+    return "Unauthorized"
 
 @app.route('/')
 def default():

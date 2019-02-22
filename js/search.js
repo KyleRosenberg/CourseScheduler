@@ -4,12 +4,27 @@ srcdb = '2191'
 saved_classes = {}
 calendar_classes = {}
 
+cart = false;
+
 $(document).ready(function(event) {
     $('input[name=srcdb]').val('2191');
     $('#submit_search').click(function() {
-        kw = $('input[name=keyword]')[0].value;
-        srcdb = $('input[name=srcdb]')[0].value;
-        if (kw == '') {
+        cart = false;
+        finputs = $('form[name=search_form] input')
+        dat = {
+            'type':'keyword'
+        }
+        valid = false
+        for (let i = 0; i<finputs.length-1; i++){
+            inp = finputs[i]
+            if (inp.name=='srcdb'){
+                dat[inp.name] = inp.value;
+            }else if (inp.value!=''){
+                dat[inp.name] = inp.value;
+                valid = true;
+            }
+        }
+        if (!valid) {
             alert('Search query cannot be blank');
             return;
         }
@@ -17,15 +32,12 @@ $(document).ready(function(event) {
         $.ajax({
             type: 'POST',
             url: '/search',
-            data: {
-                'type': 'keyword',
-                'keyword': kw,
-                'srcdb': srcdb,
-            },
+            data: dat,
             success: proc_keyword_data
         });
     });
     $('#get_cart').click(function() {
+        cart = true;
         getCart();
     });
     $('#sidebar_button').click(function() {
@@ -34,8 +46,7 @@ $(document).ready(function(event) {
     generateTable();
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            if (password = $('.ui.modal.login input[type="password"]').val().length>0)
-                submitCULogin(console.log)
+            submitCULogin(console.log)
         }
     });
 });
@@ -210,10 +221,40 @@ function toggleShowCourse(div, data = false) {
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
-            calendar_classes[crn] = saved_classes[crn];
-            addClassToCalendar(saved_classes[crn]);
+            let fits = fitsOnCalendar(saved_classes[crn]);
+            console.log(fits);
+            if (fits){
+                calendar_classes[crn] = saved_classes[crn];
+                addClassToCalendar(saved_classes[crn]);
+            }
         }
     }
+}
+
+function fitsOnCalendar(course){
+    course = JSON.parse(course);
+    times = getTimes(course);
+    for (i = times.start; i < times.end; i++) {
+        row = $('.calendar')[0].rows[i];
+        addOne = 0;
+        for (j = 0; j < 5; j++) {
+            if (days.charAt(j) == 0) {
+                continue;
+            }
+            var cell;
+            for (k = 0; k < row.cells.length; k++) {
+                cellk = $(row.cells[k]);
+                if (cellk.attr('name') == (j + 1).toString()) {
+                    if (cellk[0].innerHTML != ""){
+                        return false;
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 function proc_keyword_data(data) {
@@ -316,12 +357,55 @@ function view_sections(i) {
             'srcdb': srcdb
         },
         success: function(data) {
-            showDetails(data);
+            showDetails(data, !cart);
         }
     });
 }
 
-function showDetails(data) {
+function crnInCart(crn){
+    dict = JSON.parse(window.sessionStorage.getItem('dict'))
+    if (!dict) return false;
+    let cart = dict['cart']
+    if (!cart) return false;
+    for (let i = 0; i<cart.length; i++){
+        if (cart[i].split('|')[2]==crn){
+            return true;
+        }
+    }
+    return false;
+}
+
+function crnInReg(crn){
+    dict = JSON.parse(window.sessionStorage.getItem('dict'))
+    if (!dict) return false;
+    let cart = dict['reg'][srcdb]
+    if (!cart) return false;
+    for (let i = 0; i<cart.length; i++){
+        if (cart[i].split('|')[1]==crn){
+            return true;
+        }
+    }
+    return false;
+}
+
+function courseInCartOrReg(data){
+    crns = data.split('crn:')
+    for (let i = 1; i<crns.length; i++){
+        crn = crns[i].substr(0, 5);
+        if (crnInCart(crn))
+            return true
+        if (crnInReg(crn))
+            return true
+    }
+    return false
+}
+
+function showDetails(data, showAll=false) {
+    if (!showAll){
+        cart_class = courseInCartOrReg(data);
+    } else {
+        cart_class = false;
+    }
     $('.ui.popup').children().remove();
     $('#popup_temp').removeClass('active');
     data = JSON.parse(data)
@@ -333,6 +417,13 @@ function showDetails(data) {
     popup_html += `<span>${data.seats}</span><br/>`
     if (data.restrict_info != "")
         popup_html += `<span class="info_head">Registration Restrictions</span> <p>${data.restrict_info}</p>`
+    if (data.crn!='Varies by section'){
+        if (crnInCart(data.crn)){
+            popup_html += `<span class="info_head">Registration Notes</span> <p>This class is in your cart.</p>`
+        } else if (crnInReg(data.crn)){
+            popup_html += `<span class="info_head">Registration Notes</span> <p>You are registered for this class.</p>`
+        }
+    }
     if (data.clssnotes != "")
         popup_html += `<span class="info_head">Class Notes</span> <p>${data.clssnotes}</p>`
     popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
@@ -341,21 +432,26 @@ function showDetails(data) {
     bad_section_element = $.parseHTML(data.all_sections);
     headers = $($(bad_section_element).children()[0]).children();
     table = '<table class="ui selectable celled table"><thead><tr><th>Saved</th>'
-    for (j = 0; j < headers.length; j++) {
+    for (let j = 0; j < headers.length; j++) {
         table += `<th>${headers[j].innerText}</th>`;
     }
     table += '</tr></thead>'
     rows = $(bad_section_element).children().slice(1)
-    for (r = 0; r < rows.length; r++) {
+    for (let r = 0; r < rows.length; r++) {
         cells = rows[r].children
         id = cells[0].innerText
         id = id.substring(id.indexOf(':') + 1).trim()
+        if (cart_class) {
+            if (!crnInCart(id) && !crnInReg(id)){
+                continue;
+            }
+        }
         row = `<tr onclick="selectCourseRow(this)"><td><div class="ui checkbox"><input type="checkbox" name="${id}" `;
         if (class_saved(id)) {
             row += 'checked';
         }
         row += `><label></label></div></td>`
-        for (c = 0; c < cells.length; c++) {
+        for (let c = 0; c < cells.length; c++) {
             txt = cells[c].innerText
             txt = txt.substring(txt.indexOf(':') + 1)
             row += `<td>${txt}</td>`;
@@ -366,32 +462,42 @@ function showDetails(data) {
     table += '</table>'
     popup_html += table
     if (data.crn!='Varies by section'){
-        popup_html +=  `<div style="text-align:right;"><div class="field">
-            <div class="ui selection dropdown">
-                <input type="hidden" name="gmod" value="LTR">
-                <div style="color:rgb(0, 0, 0)" class="default text">Letter</div>
-                <i class="dropdown icon"></i>
-                <div class="menu">`;
-        if (data.gmods.indexOf('LTR')>=0){
-            popup_html += `<div class="item" data-value="LTR">
-                Letter
+        popup_html +=  `<div style="text-align:right;">`
+        if (!courseInCartOrReg('crn:'+data.crn)){
+            popup_html += `<div class="field">
+                <div class="ui selection dropdown">
+                    <input type="hidden" name="gmod" value="LTR">
+                    <div style="color:rgb(0, 0, 0)" class="default text">Letter</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">`;
+            if (data.gmods.indexOf('LTR')>=0){
+                popup_html += `<div class="item" data-value="LTR">
+                    Letter
+                </div>`;
+            }
+            if (data.gmods.indexOf('NOC')>=0){
+                popup_html += `<div class="item" data-value="NOC">
+                    No Credit Basis (Audit)
+                </div>`;
+            }
+            if (data.gmods.indexOf('PF4')>=0)
+                popup_html += `<div class="item" data-value="PF4">
+                    Pass/Fail
+                </div>`;
+            popup_html += `</div>
+                </div>
             </div>`;
         }
-        if (data.gmods.indexOf('NOC')>=0){
-            popup_html += `<div class="item" data-value="NOC">
-                No Credit Basis (Audit)
-            </div>`;
-        }
-        if (data.gmods.indexOf('PF4')>=0)
-            popup_html += `<div class="item" data-value="PF4">
-                Pass/Fail
-            </div>`;
-        popup_html += `</div>
-            </div>
-        </div>
-        <button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
+        if (crnInCart(data.crn)){
+            popup_html += `<button class="ui secondary button" onclick="removeFromCart(['${data.gmods}', '${data.crn}'])">
+                        Remove from Cart
+                        </button><div id="cart_load" class="ui text loader">Removing...</div></div>`;
+        } else if (!crnInReg(data.crn)){
+            popup_html += `<button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
                         Add to Cart
-                        </button></div>`;
+                        </button><div id="cart_load" class="ui text loader">Adding...</div></div>`;
+
+        }
     }
     $('.ui.popup').append(popup_html);
     $('.ui.popup input[type="checkbox"]').click(function(event) {
@@ -402,9 +508,58 @@ function showDetails(data) {
     $('#popup_temp').removeClass('active');
 }
 
+function removeFromCart(data){
+    if (!firebase.auth().currentUser){
+        $('.ui.modal.google').modal('show');
+        return;
+    }
+    params = {
+        'p_term_code':srcdb,
+        'p_crn':data[1],
+        'uid':firebase.auth().currentUser.uid,
+        'cutoken':window.sessionStorage.getItem('token'),
+    }
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        params['token'] = idToken;
+        $('#cart_load').addClass('active');
+        $.ajax({
+            type: 'POST',
+            url: '/removecart',
+            data: params,
+            success: function(data){
+                data = JSON.parse(data.slice(8, -3))
+                data = data['cart']
+                for (i = 0; i<data.length; i++){
+                    c = data[i]
+                    yr = c.split('|')[0]
+                    if (yr!=srcdb){
+                        data.splice(i, 1)
+                        i--
+                    }
+                }
+                bad = JSON.parse(window.sessionStorage.getItem('dict'))
+                bad['cart']=data; //Not bad anymore lol
+                window.sessionStorage.setItem('dict', JSON.stringify(bad))
+                window.sessionStorage.setItem('updated_cart', true)
+                $('.ui.bottom.attached.button').popup('hide all')
+                $('#cart_load').removeClass('active');
+                getCart()
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+        $('.search_results .loader').removeClass('active')
+    });
+}
+
 function addToCart(data){
     if (!firebase.auth().currentUser){
         $('.ui.modal.google').modal('show');
+        return;
+    }
+    token = window.sessionStorage.getItem('token');
+    if (!token) {
+        showCULogin(getCart);
         return;
     }
     params = {
@@ -415,14 +570,14 @@ function addToCart(data){
         'cutoken':window.sessionStorage.getItem('token'),
     }
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-        params['token'] = idToken
+        params['token'] = idToken;
+        $('#cart_load').addClass('active');
         $.ajax({
             type: 'POST',
             url: '/addcart',
             data: params,
             success: function(data){
                 data = JSON.parse(data.slice(8, -3))
-                console.log(data)
                 data = data['cart']
                 for (i = 0; i<data.length; i++){
                     c = data[i]
@@ -432,11 +587,13 @@ function addToCart(data){
                         i--
                     }
                 }
-                console.log(data)
                 bad = JSON.parse(window.sessionStorage.getItem('dict'))
                 bad['cart']=data; //Not bad anymore lol
                 window.sessionStorage.setItem('dict', JSON.stringify(bad))
                 window.sessionStorage.setItem('updated_cart', true)
+                $('.ui.bottom.attached.button').popup('hide all')
+                $('#cart_load').removeClass('active');
+                getCart()
             }
         });
     }).catch(function(error) {
@@ -532,7 +689,7 @@ function getCart() {
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         if (window.sessionStorage.getItem('updated_cart')=="true"){
             dict = JSON.parse(window.sessionStorage.getItem('dict'))
-            cart = dict['cart']
+            let cart = dict['cart']
             reg = dict['reg'][srcdb]
             for (i = 0; i<cart.length; i++){
                 c = cart[i]
@@ -630,7 +787,7 @@ function selectCourseRow(course) {
             'srcdb': srcdb
         },
         success: function(data) {
-            showDetails(data);
+            showDetails(data, true);
         }
     })
 }
