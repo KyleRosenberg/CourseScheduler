@@ -48,9 +48,11 @@ $(document).ready(function(event) {
     generateTable();
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+            loadSections();
             submitCULogin(console.log)
         }
     });
+    $('#save_button').click(saveSections);
 });
 
 function generateTable() {
@@ -224,7 +226,6 @@ function toggleShowCourse(div, data = false) {
     } else {
         if (crn in saved_classes) {
             let fits = fitsOnCalendar(saved_classes[crn]);
-            console.log(fits);
             if (fits){
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
@@ -860,4 +861,69 @@ function updateCourseList() {
             <div class="detail">${time}</div></div></div>`;
         dis.append(html);
     }
+}
+
+function saveSections(){
+    if (!firebase.auth().currentUser){
+        $('.ui.modal.google').modal('show');
+        return;
+    }
+    saved = []
+    for (var k in saved_classes){
+        sc = JSON.parse(saved_classes[k])
+        s = {}
+        s['code'] = sc.code
+        s['meeting_html'] = sc.meeting_html
+        s['hours_text'] = sc.hours_text
+        s['crn'] = sc.crn
+        s['section'] = sc.section
+        saved.push(s)
+    }
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        $.ajax({
+            type: 'POST',
+            url: '/savesect',
+            data: {
+                'uid':firebase.auth().currentUser.uid,
+                'token':idToken,
+                'saved':JSON.stringify(saved)
+            },
+            success: function(data){
+                if (data!='Success'){
+                    console.log('Oh no lol');
+                }
+            },
+            error: function(xhr, st, er){
+                console.log(er)
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+    });
+}
+
+function loadSections(){
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        $.ajax({
+            type: 'POST',
+            url: '/loadsect',
+            data: {
+                'uid':firebase.auth().currentUser.uid,
+                'token':idToken
+            },
+            success: function(data){
+                saved_classes = {}
+                for (let i = 0; i<data.length; i++){
+                    let d = data[i];
+                    saved_classes[d['crn']] = JSON.stringify(d)
+                }
+                updateCourseList();
+            },
+            error: function(xhr, st, er){
+                console.log(er)
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+    });
 }

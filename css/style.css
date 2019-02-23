@@ -33,6 +33,10 @@ body.pushable{
     text-align: center;
 }
 
+.ui.inverted.menu{
+    margin-bottom: 0px;
+}
+
 .search_results{
     width:105%;
 }

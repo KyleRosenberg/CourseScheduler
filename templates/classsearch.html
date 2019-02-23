@@ -59,12 +59,15 @@
             <a id="login" class="item">Log In</a>
         </div>
     </div>
-    <div class="ui right sidebar" style="width:20%;height:100%;background-color:#E7E7E7;">
+    <div class="ui right sidebar" style="text-align:center;width:20%;height:100%;background-color:#E7E7E7;">
         <div class="search_head">
             <h2>Saved Courses</h2>
         </div>
         <div id="save_display" class="ui middle aligned divided list">
 
+        </div>
+        <div class="ui button" id="save_button">
+            Save <i class="save icon"></i>
         </div>
     </div>
     <div class="pusher">
@@ -78,7 +81,7 @@
                         <input type="text" name="keyword" placeholder="Title, Subject, Instructor, or Keyword">
                     </div>
                     <div class="field">
-                        <div class="ui selection dropdown">
+                        <div class="ui fluid selection dropdown">
                             <input type="hidden" name="srcdb">
                             <div style="color:rgb(0, 0, 0)" class="default text">Summer 2019</div>
                             <i class="dropdown icon"></i>
@@ -265,7 +268,7 @@
                         </div>
                     </div>
                     <div class="field">
-                        <div class="ui selection dropdown">
+                        <div class="ui fluid selection dropdown">
                             <input type="hidden" name="camp">
                             <div style="color:rgb(0, 0, 0)" class="default text">Any Campus</div>
                             <i class="dropdown icon"></i>
@@ -280,7 +283,7 @@
                         </div>
                     </div>
                     <div class="field">
-                        <div class="ui selection dropdown">
+                        <div class="ui fluid selection dropdown">
                             <input type="hidden" name="career">
                             <div style="color:rgb(0, 0, 0)" class="default text">Any Career</div>
                             <i class="dropdown icon"></i>
@@ -301,7 +304,7 @@
                         </div>
                     </div>
                     <div class="field">
-                        <div class="ui selection dropdown">
+                        <div class="ui fluid selection dropdown">
                             <input type="hidden" name="course_level">
                             <div style="color:rgb(0, 0, 0)" class="default text">Any Course Level</div>
                             <i class="dropdown icon"></i>
@@ -396,7 +399,7 @@
     <div class="ui modal google" style="width:35%;text-align:center;">
         <div class="header">Login to CU Course Scheduler</div>
         <div class="content">
-            You'll need to login with us before connecting with MyCUInfo.
+            You'll need to login with us before continuing.<br/>
             <div class="ui blue button" onclick="handleLogin()">Login</div>
         </div>
     </div>
