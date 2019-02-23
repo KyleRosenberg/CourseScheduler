@@ -54,6 +54,19 @@ body.pushable{
     display:block;
 }
 
+.main_header{
+    color: white;
+    text-align:center;
+    font-size: 18px;
+    line-height:18px;
+}
+
+.main_header .header{
+    font-family: Impact, Charcoal, sans-serif;
+    font-size: 60px;
+    line-height: 62px;
+}
+
 .footer_image {
     width: 100%;
     left: 0;
