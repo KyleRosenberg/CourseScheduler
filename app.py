@@ -97,11 +97,6 @@ def removecart():
         return cg.removeFromCart(request.form, cu[3])
     return "Unauthorized"
 
-@app.route('/.well-known/acme-challenge/')
-def cert():
-    print('CERT BOT2')
-    return request.params['token'] + ".EKDwOVY0YpCWu_FAB-rqFcjb7EjpFNkWALU-kvFSXYs"
-
 @app.route('/')
 def default():
     print('CERT BOT')
