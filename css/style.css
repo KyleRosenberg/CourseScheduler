@@ -1,7 +1,5 @@
 body.pushable{
-    background-image: url('https://classes.colorado.edu/background.jpg')!important;
-    background-size:cover!important;
-    height:95.8%;
+     height:95.8%;
 }
 
 .search_bar{
@@ -54,6 +52,27 @@ body.pushable{
     background-color:#565A5C;
     color:white;
     display:block;
+}
+
+.main_header{
+    color: white;
+    text-align:center;
+    font-size: 18px;
+    line-height:18px;
+}
+
+.main_header .header{
+    font-family: Impact, Charcoal, sans-serif;
+    font-size: 60px;
+    line-height: 62px;
+}
+
+.footer_image {
+    width: 100%;
+    left: 0;
+    position: absolute;
+    bottom: 0;
+    max-height: 30%;
 }
 
 .main_view{

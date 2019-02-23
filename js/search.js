@@ -1,5 +1,6 @@
 class_list = []
-srcdb = '2191'
+default_srcdb = '2194';
+srcdb = default_srcdb;
 
 saved_classes = {}
 calendar_classes = {}
@@ -18,6 +19,7 @@ $(document).ready(function(event) {
         for (let i = 0; i<finputs.length-1; i++){
             inp = finputs[i]
             if (inp.name=='srcdb'){
+                srcdb = inp.value;
                 dat[inp.name] = inp.value;
             }else if (inp.value!=''){
                 dat[inp.name] = inp.value;
@@ -378,7 +380,7 @@ function crnInCart(crn){
 function crnInReg(crn){
     dict = JSON.parse(window.sessionStorage.getItem('dict'))
     if (!dict) return false;
-    let cart = dict['reg'][srcdb]
+    let cart = dict['reg'][default_srcdb]
     if (!cart) return false;
     for (let i = 0; i<cart.length; i++){
         if (cart[i].split('|')[1]==crn){
@@ -514,7 +516,7 @@ function removeFromCart(data){
         return;
     }
     params = {
-        'p_term_code':srcdb,
+        'p_term_code':default_srcdb,
         'p_crn':data[1],
         'uid':firebase.auth().currentUser.uid,
         'cutoken':window.sessionStorage.getItem('token'),
@@ -532,7 +534,7 @@ function removeFromCart(data){
                 for (i = 0; i<data.length; i++){
                     c = data[i]
                     yr = c.split('|')[0]
-                    if (yr!=srcdb){
+                    if (yr!=default_srcdb){
                         data.splice(i, 1)
                         i--
                     }
@@ -563,7 +565,7 @@ function addToCart(data){
         return;
     }
     params = {
-        'p_term_code':srcdb,
+        'p_term_code':default_srcdb,
         'p_crn':data[1],
         'p_gmod':$('input[name=gmod]')[0].value,
         'uid':firebase.auth().currentUser.uid,
@@ -582,7 +584,7 @@ function addToCart(data){
                 for (i = 0; i<data.length; i++){
                     c = data[i]
                     yr = c.split('|')[0]
-                    if (yr!=srcdb){
+                    if (yr!=default_srcdb){
                         data.splice(i, 1)
                         i--
                     }
@@ -668,8 +670,8 @@ function getCartCrns(){
         crn = bad['cart'][i].split('|')[2]
         crns += (crn + ',')
     }
-    for (i = 0; i<bad['reg'][srcdb].length; i++){
-        crn = bad['reg'][srcdb][i].split('|')[1]
+    for (i = 0; i<bad['reg'][default_srcdb].length; i++){
+        crn = bad['reg'][default_srcdb][i].split('|')[1]
         crns += (crn + ',')
     }
     return crns
@@ -690,11 +692,11 @@ function getCart() {
         if (window.sessionStorage.getItem('updated_cart')=="true"){
             dict = JSON.parse(window.sessionStorage.getItem('dict'))
             let cart = dict['cart']
-            reg = dict['reg'][srcdb]
+            reg = dict['reg'][default_srcdb]
             for (i = 0; i<cart.length; i++){
                 c = cart[i]
                 yr = c.split('|')[0]
-                if (yr!=srcdb){
+                if (yr!=default_srcdb){
                     cart.splice(i, 1)
                     i--
                 }
@@ -707,7 +709,7 @@ function getCart() {
                     'uid':firebase.auth().currentUser.uid,
                     'token':idToken,
                     'cutoken':token,
-                    'srcdb':srcdb,
+                    'srcdb':default_srcdb,
                     'crns': crns
                 },
                 success: function(data){
@@ -726,13 +728,13 @@ function getCart() {
                     'uid':firebase.auth().currentUser.uid,
                     'token':idToken,
                     'cutoken':token,
-                    'srcdb':srcdb
+                    'srcdb':default_srcdb
                 },
                 success: function(data){
                     data = data.split("'").join('"')
                     data = JSON.parse(data)
                     for (i = 0; i<data.length; i++){
-                        if (data[i].split('|')[0]!=srcdb){
+                        if (data[i].split('|')[0]!=default_srcdb){
                             data.splice(i, 1)
                             i--
                         }
@@ -749,7 +751,7 @@ function getCart() {
                             'uid':firebase.auth().currentUser.uid,
                             'token':idToken,
                             'cutoken':token,
-                            'srcdb':srcdb,
+                            'srcdb':default_srcdb,
                             'crns': crns
                         },
                         success: function(data){
