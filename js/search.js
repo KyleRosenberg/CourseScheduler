@@ -265,7 +265,9 @@ function proc_keyword_data(data) {
     }
     data = JSON.parse(data)
     if (data.count <= 0) {
-        alert(data)
+        alert('No results.')
+        $('.search_results .loader').removeClass('active');
+        return;
     }
     class_list = data.results;
     $('.search_results .ui.cards').empty();
@@ -645,7 +647,7 @@ function getCUAuthToken(username, password, action) {
             },
             success: function(data) {
                 if (data=="Auth Fail"){
-                    console.log(data)
+                    $('.ui.modal.login .segment').css('display', 'none');
                 } else {
                     data = data.split("'").join('"')
                     data = data.split("False").join('false')
@@ -654,8 +656,12 @@ function getCUAuthToken(username, password, action) {
                     window.sessionStorage.setItem('dict', JSON.stringify(data[1]))
                     window.sessionStorage.setItem('updated_cart', false)
                     $('.ui.modal.login').modal('hide', false);
+                    $('.ui.modal.login .segment').css('display', 'none');
                     action()
                 }
+            },
+            error: function(data){
+                $('.ui.modal.login .segment').css('display', 'none');
             }
         })
     }).catch(function(error) {
@@ -670,9 +676,11 @@ function getCartCrns(){
         crn = bad['cart'][i].split('|')[2]
         crns += (crn + ',')
     }
-    for (i = 0; i<bad['reg'][default_srcdb].length; i++){
-        crn = bad['reg'][default_srcdb][i].split('|')[1]
-        crns += (crn + ',')
+    if (default_srcdb in bad['reg']){
+        for (i = 0; i<bad['reg'][default_srcdb].length; i++){
+            crn = bad['reg'][default_srcdb][i].split('|')[1]
+            crns += (crn + ',')
+        }
     }
     return crns
 }
