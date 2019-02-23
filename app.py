@@ -101,6 +101,10 @@ def removecart():
 def favicon():
     return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+@app.route('/contact')
+def contact():
+    return send_from_directory(app.config['HTML_FOLDER'], 'contact.html')
+
 @app.route('/')
 def default():
     return send_from_directory(app.config['HTML_FOLDER'], 'index.html')
