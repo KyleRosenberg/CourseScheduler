@@ -44,6 +44,7 @@ function handleLogin(){
           var user = result.user;
           $('#login').text("Log Out");
           $('#name').text('Hi, ' + user.displayName);
+          $('.ui.modal.google').modal('hide');
 
           // ...
         }).catch(function(error) {

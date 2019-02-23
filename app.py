@@ -97,9 +97,34 @@ def removecart():
         return cg.removeFromCart(request.form, cu[3])
     return "Unauthorized"
 
+@app.route('/savesect', methods=['POST'])
+def savesect():
+    if fa.verifyToken(request.form['token'], request.form['uid']):
+        try:
+            fa.saveSectList(request.form['uid'], request.form['saved'])
+            return "Success"
+        except Exception as e:
+            print(e)
+            return "Something went wrong"
+    return "Unauthorized"
+
+@app.route('/loadsect', methods=['POST'])
+def loadsect():
+    if fa.verifyToken(request.form['token'], request.form['uid']):
+        try:
+            return jsonify(fa.loadSectList(request.form['uid']))
+        except Exception as e:
+            print(e)
+            return "Something went wrong"
+    return "Unauthorized"
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/contact')
+def contact():
+    return send_from_directory(app.config['HTML_FOLDER'], 'contact.html')
 
 @app.route('/')
 def default():

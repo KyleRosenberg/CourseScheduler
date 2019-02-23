@@ -48,9 +48,11 @@ $(document).ready(function(event) {
     generateTable();
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+            loadSections();
             submitCULogin(console.log)
         }
     });
+    $('#save_button').click(saveSections);
 });
 
 function generateTable() {
@@ -224,7 +226,6 @@ function toggleShowCourse(div, data = false) {
     } else {
         if (crn in saved_classes) {
             let fits = fitsOnCalendar(saved_classes[crn]);
-            console.log(fits);
             if (fits){
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
@@ -265,7 +266,9 @@ function proc_keyword_data(data) {
     }
     data = JSON.parse(data)
     if (data.count <= 0) {
-        alert(data)
+        alert('No results.')
+        $('.search_results .loader').removeClass('active');
+        return;
     }
     class_list = data.results;
     $('.search_results .ui.cards').empty();
@@ -645,7 +648,7 @@ function getCUAuthToken(username, password, action) {
             },
             success: function(data) {
                 if (data=="Auth Fail"){
-                    console.log(data)
+                    $('.ui.modal.login .segment').css('display', 'none');
                 } else {
                     data = data.split("'").join('"')
                     data = data.split("False").join('false')
@@ -654,8 +657,12 @@ function getCUAuthToken(username, password, action) {
                     window.sessionStorage.setItem('dict', JSON.stringify(data[1]))
                     window.sessionStorage.setItem('updated_cart', false)
                     $('.ui.modal.login').modal('hide', false);
+                    $('.ui.modal.login .segment').css('display', 'none');
                     action()
                 }
+            },
+            error: function(data){
+                $('.ui.modal.login .segment').css('display', 'none');
             }
         })
     }).catch(function(error) {
@@ -670,9 +677,11 @@ function getCartCrns(){
         crn = bad['cart'][i].split('|')[2]
         crns += (crn + ',')
     }
-    for (i = 0; i<bad['reg'][default_srcdb].length; i++){
-        crn = bad['reg'][default_srcdb][i].split('|')[1]
-        crns += (crn + ',')
+    if (default_srcdb in bad['reg']){
+        for (i = 0; i<bad['reg'][default_srcdb].length; i++){
+            crn = bad['reg'][default_srcdb][i].split('|')[1]
+            crns += (crn + ',')
+        }
     }
     return crns
 }
@@ -852,4 +861,69 @@ function updateCourseList() {
             <div class="detail">${time}</div></div></div>`;
         dis.append(html);
     }
+}
+
+function saveSections(){
+    if (!firebase.auth().currentUser){
+        $('.ui.modal.google').modal('show');
+        return;
+    }
+    saved = []
+    for (var k in saved_classes){
+        sc = JSON.parse(saved_classes[k])
+        s = {}
+        s['code'] = sc.code
+        s['meeting_html'] = sc.meeting_html
+        s['hours_text'] = sc.hours_text
+        s['crn'] = sc.crn
+        s['section'] = sc.section
+        saved.push(s)
+    }
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        $.ajax({
+            type: 'POST',
+            url: '/savesect',
+            data: {
+                'uid':firebase.auth().currentUser.uid,
+                'token':idToken,
+                'saved':JSON.stringify(saved)
+            },
+            success: function(data){
+                if (data!='Success'){
+                    console.log('Oh no lol');
+                }
+            },
+            error: function(xhr, st, er){
+                console.log(er)
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+    });
+}
+
+function loadSections(){
+    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+        $.ajax({
+            type: 'POST',
+            url: '/loadsect',
+            data: {
+                'uid':firebase.auth().currentUser.uid,
+                'token':idToken
+            },
+            success: function(data){
+                saved_classes = {}
+                for (let i = 0; i<data.length; i++){
+                    let d = data[i];
+                    saved_classes[d['crn']] = JSON.stringify(d)
+                }
+                updateCourseList();
+            },
+            error: function(xhr, st, er){
+                console.log(er)
+            }
+        });
+    }).catch(function(error) {
+        console.log(error);
+    });
 }

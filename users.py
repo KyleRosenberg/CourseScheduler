@@ -49,6 +49,7 @@ class FirebaseAuth:
         cur.execute('select * from tokens where uid=%s', [uid])
         try:
             res = cur.fetchall()[0]
+            self.conn.commit()
             return res[1]==token
         except:
             return False
@@ -59,6 +60,7 @@ class FirebaseAuth:
         cur.execute('select * from tokens where cu_token=%s', [token])
         try:
             res = cur.fetchall()[0]
+            self.conn.commit()
             return res[3]
         except:
             return None
@@ -80,9 +82,10 @@ class FirebaseAuth:
     #Return database row for UID
     def getCUInfo(self, uid):
         cur = self.conn.cursor()
-        cur.execute('select * from tokens where uid=%s', [uid])
+        cur.execute('SELECT * FROM tokens WHERE uid=%s', [uid])
         try:
             res = cur.fetchall()[0]
+            self.conn.commit()
             return res
         except:
             return None
@@ -93,6 +96,7 @@ class FirebaseAuth:
         cur.execute('select * from tokens where uid=%s', [uid])
         try:
             res = cur.fetchall()[0]
+            self.conn.commit()
             tk = res[1]
             exp = res[2].replace(tzinfo=None)
             if datetime.datetime.now()<exp:
@@ -101,3 +105,32 @@ class FirebaseAuth:
         except Exception as e:
             print(e)
             return False
+
+    #Delete all section entries for uid, and write new ones
+    def saveSectList(self, uid, saved):
+        saved = json.loads(saved)
+        cur = self.conn.cursor()
+        cur.execute('DELETE FROM saved_sections WHERE uid=%s', [uid])
+        self.conn.commit()
+        for s in saved:
+            self.addSectionToSaved(uid, s)
+
+    #Write one section entry
+    def addSectionToSaved(self, uid, sect):
+        cur = self.conn.cursor()
+        cur.execute('INSERT INTO saved_sections (uid, code, meeting_html, hours_text, crn, section) VALUES(%s, %s, %s, %s, %s, %s)',
+            [uid, sect['code'], sect['meeting_html'], sect['hours_text'], sect['crn'], sect['section']])
+        self.conn.commit()
+
+    #Read and return all section entries for uid
+    def loadSectList(self, uid):
+        cur = self.conn.cursor()
+        cur.execute('SELECT * FROM saved_sections WHERE uid=%s', [uid])
+        try:
+            res = cur.fetchall()
+            self.conn.commit()
+            ret = [{'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]} for r in res]
+            return ret
+        except Exception as e:
+            print(e)
+            return "Something went wrong"
