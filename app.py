@@ -97,6 +97,10 @@ def removecart():
         return cg.removeFromCart(request.form, cu[3])
     return "Unauthorized"
 
+@app.route('/.well-known/acme-challenge/im5o2Mu4mokmICTP2U05TMn_eNRTD2eQ6dl6TkKrFtg')
+def cert():
+    return "im5o2Mu4mokmICTP2U05TMn_eNRTD2eQ6dl6TkKrFtg.EKDwOVY0YpCWu_FAB-rqFcjb7EjpFNkWALU-kvFSXYs"
+
 @app.route('/')
 def default():
     return send_from_directory(app.config['HTML_FOLDER'], 'index.html')
