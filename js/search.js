@@ -19,12 +19,8 @@ $(document).ready(function(event) {
         for (let i = 0; i<finputs.length-1; i++){
             inp = finputs[i]
             if (inp.name=='srcdb'){
-                if (inp.value==""){
-                    srcdb = default_srcdb
-                } else {
-                    srcdb = inp.value;
-                }
-                dat[inp.name] = srcdb;
+                srcdb = inp.value;
+                dat[inp.name] = inp.value;
             }else if (inp.value!=''){
                 dat[inp.name] = inp.value;
                 valid = true;
