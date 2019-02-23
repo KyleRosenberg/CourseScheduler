@@ -97,9 +97,12 @@ def removecart():
         return cg.removeFromCart(request.form, cu[3])
     return "Unauthorized"
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/')
 def default():
-    print('CERT BOT')
     return send_from_directory(app.config['HTML_FOLDER'], 'index.html')
 
 if __name__ == '__main__':

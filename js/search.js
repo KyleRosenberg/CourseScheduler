@@ -8,7 +8,7 @@ calendar_classes = {}
 cart = false;
 
 $(document).ready(function(event) {
-    $('input[name=srcdb]').val('2191');
+    $('input[name=srcdb]').val(default_srcdb);
     $('#submit_search').click(function() {
         cart = false;
         finputs = $('form[name=search_form] input')
