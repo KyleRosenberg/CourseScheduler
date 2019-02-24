@@ -14,10 +14,6 @@ app.secret_key = os.environ.get('flask_key')
 fa = FirebaseAuth()
 cg = CourseGrabber()
 
-@app.route('/search_classes', methods=['POST'])
-def search_classes():
-    res = cg.doSearch(request.form)
-    return res
 
 @app.route('/css/<path:filename>')
 def css(filename):

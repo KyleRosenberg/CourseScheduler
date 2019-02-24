@@ -35,6 +35,7 @@ body.pushable{
 
 .ui.inverted.menu{
     margin-bottom: 0px;
+    border-radius: 0px;
 }
 
 .search_results{
