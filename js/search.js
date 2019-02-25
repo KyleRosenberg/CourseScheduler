@@ -526,6 +526,7 @@ function showDetails(data, showAll=false) {
 
 function removeFromCart(data){
     if (!firebase.auth().currentUser){
+        $('.ui.bottom.attached.button').popup('hide all')
         $('.ui.modal.google').modal('show');
         return;
     }
@@ -570,12 +571,13 @@ function removeFromCart(data){
 
 function addToCart(data){
     if (!firebase.auth().currentUser){
+        $('.ui.bottom.attached.button').popup('hide all')
         $('.ui.modal.google').modal('show');
         return;
     }
     token = window.sessionStorage.getItem('token');
     if (!token) {
-        showCULogin(getCart);
+        showCULogin(addToCart, data);
         return;
     }
     params = {
@@ -626,7 +628,8 @@ function class_saved(id) {
     return false;
 }
 
-function showCULogin(action = console.log) {
+function showCULogin(action = console.log, params=null) {
+    $('.ui.bottom.attached.button').popup('hide all')
     $('.ui.modal.login').modal({
         closable: false,
         selector : {
@@ -636,7 +639,7 @@ function showCULogin(action = console.log) {
         onDeny: function() {
         },
         onApprove: function() {
-            submitCULogin(action);
+            submitCULogin(action, params);
             return false;
         },
         onVisible: function(){
@@ -651,15 +654,15 @@ function showCULogin(action = console.log) {
     }).modal('show');
 }
 
-function submitCULogin(action){
+function submitCULogin(action, params=null){
     $('.ui.modal.login .loader').text('Logging In...');
     $('.ui.modal.login .segment').css('display', 'block');
     username = $('.ui.modal.login input[type="text"]').val();
     password = $('.ui.modal.login input[type="password"]').val();
-    getCUAuthToken(username, password, action);
+    getCUAuthToken(username, password, action, params);
 }
 
-function getCUAuthToken(username, password, action) {
+function getCUAuthToken(username, password, action, params=null) {
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         $.ajax({
             type: 'POST',
@@ -682,7 +685,7 @@ function getCUAuthToken(username, password, action) {
                     window.sessionStorage.setItem('updated_cart', false)
                     $('.ui.modal.login').modal('hide', false);
                     $('.ui.modal.login .segment').css('display', 'none');
-                    action()
+                    action(params)
                 }
             },
             error: function(data){
