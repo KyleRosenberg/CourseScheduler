@@ -105,6 +105,7 @@ body.pushable{
 #course_item{
     padding:1px;
     padding-top: 10px;
+    background-color: rgba(1, 1, 1, 0);
 }
 
 .event{

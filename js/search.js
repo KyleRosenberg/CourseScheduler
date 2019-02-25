@@ -16,8 +16,9 @@ $(document).ready(function(event) {
             'type':'keyword'
         }
         valid = false
-        for (let i = 0; i<finputs.length-1; i++){
+        for (let i = 0; i<finputs.length; i++){
             inp = finputs[i]
+            if ($(inp).hasClass('search')) continue;
             if (inp.name=='srcdb'){
                 srcdb = inp.value;
                 dat[inp.name] = inp.value;
@@ -53,6 +54,12 @@ $(document).ready(function(event) {
         }
     });
     $('#save_button').click(saveSections);
+    $('#disclaimer_link').popup({
+        inline: true,
+        on: 'hover',
+        popup: '.disclaimer.popup',
+        position: 'right center'
+    });
 });
 
 function generateTable() {
@@ -222,13 +229,17 @@ function toggleShowCourse(div, data = false) {
     }
     if (crn in calendar_classes) {
         removeClassFromCalendar(calendar_classes[crn]);
+        if (!data)
+            $(div).parent().parent().css('background-color', 'rgba(1, 1, 1, 0)');
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
             let fits = fitsOnCalendar(saved_classes[crn]);
-            if (fits){
+            if (fits) {
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
+                if (!data)
+                    $(div).parent().parent().css('background-color', 'rgba(1, 1, 1, 0.15)');
             }
         }
     }
@@ -515,6 +526,7 @@ function showDetails(data, showAll=false) {
 
 function removeFromCart(data){
     if (!firebase.auth().currentUser){
+        $('.ui.bottom.attached.button').popup('hide all')
         $('.ui.modal.google').modal('show');
         return;
     }
@@ -559,12 +571,13 @@ function removeFromCart(data){
 
 function addToCart(data){
     if (!firebase.auth().currentUser){
+        $('.ui.bottom.attached.button').popup('hide all')
         $('.ui.modal.google').modal('show');
         return;
     }
     token = window.sessionStorage.getItem('token');
     if (!token) {
-        showCULogin(getCart);
+        showCULogin(addToCart, data);
         return;
     }
     params = {
@@ -615,27 +628,41 @@ function class_saved(id) {
     return false;
 }
 
-function showCULogin(action = console.log) {
+function showCULogin(action = console.log, params=null) {
+    $('.ui.bottom.attached.button').popup('hide all')
     $('.ui.modal.login').modal({
         closable: false,
+        selector : {
+            deny: '.cclose',
+            approve: '.clogin'
+        },
         onDeny: function() {
         },
         onApprove: function() {
-            submitCULogin(action);
+            submitCULogin(action, params);
             return false;
+        },
+        onVisible: function(){
+            $('#disclaimer_link').popup({
+                inline: true,
+                on: 'click',
+                popup: '.disclaimer.popup',
+                position: 'bottom center',
+                setFluidWidth: true
+            });
         }
     }).modal('show');
 }
 
-function submitCULogin(action){
+function submitCULogin(action, params=null){
     $('.ui.modal.login .loader').text('Logging In...');
     $('.ui.modal.login .segment').css('display', 'block');
     username = $('.ui.modal.login input[type="text"]').val();
     password = $('.ui.modal.login input[type="password"]').val();
-    getCUAuthToken(username, password, action);
+    getCUAuthToken(username, password, action, params);
 }
 
-function getCUAuthToken(username, password, action) {
+function getCUAuthToken(username, password, action, params=null) {
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         $.ajax({
             type: 'POST',
@@ -658,7 +685,7 @@ function getCUAuthToken(username, password, action) {
                     window.sessionStorage.setItem('updated_cart', false)
                     $('.ui.modal.login').modal('hide', false);
                     $('.ui.modal.login .segment').css('display', 'none');
-                    action()
+                    action(params)
                 }
             },
             error: function(data){
@@ -820,19 +847,24 @@ function toggleSaveCourse(course) {
             },
             success: function(data) {
                 saved_classes[crn] = data;
-                updateCourseList()
-                toggleShowCourse(data, true);
+                html = updateCourseList(crn)
+                if (html)
+                    data = html
+                toggleShowCourse(data, false);
             }
         });
     } else {
         dat = saved_classes[crn];
         delete saved_classes[crn];
-        updateCourseList()
-        toggleShowCourse(dat, true);
+        html = updateCourseList(crn)
+        if (html)
+            dat = html
+        toggleShowCourse(dat, false);
     }
 }
 
-function updateCourseList() {
+function updateCourseList(crn=null) {
+    ret = null;
     dis = $('#save_display');
     dis.children().remove()
     var sorted = [];
@@ -857,11 +889,18 @@ function updateCourseList() {
         ele = $(v.meeting_html)[0]
         ele = ele.innerText
         time = ele.substring(0, ele.indexOf(' in'));
-        html = `<div class="item"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
+        html = $(`<div class="item" style="padding:3px;"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
             Toggle</div></div><div id="course_item" class="ui label" style="padding:1px;padding-top:10px;">${code}
-            <div class="detail">${time}</div></div></div>`;
+            <div class="detail">${time}</div></div></div>`);
         dis.append(html);
+        if (v.crn==crn){
+            ret = html;
+        }
     }
+    if (ret){
+        return $(ret)[0].children[0].children[0];
+    }
+    return null;
 }
 
 function saveSections(){
