@@ -57,9 +57,6 @@ $(document).ready(function(event) {
     $('#disclaimer_link').popup({
         inline: true,
         on: 'hover',
-        onShow: function() {
-            console.log('HERE')
-        },
         popup: '.disclaimer.popup',
         position: 'right center'
     });
@@ -232,13 +229,17 @@ function toggleShowCourse(div, data = false) {
     }
     if (crn in calendar_classes) {
         removeClassFromCalendar(calendar_classes[crn]);
+        if (!data)
+            $(div).parent().parent().css('background-color', 'rgba(1, 1, 1, 0)');
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
             let fits = fitsOnCalendar(saved_classes[crn]);
-            if (fits){
+            if (fits) {
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
+                if (!data)
+                    $(div).parent().parent().css('background-color', 'rgba(1, 1, 1, 0.15)');
             }
         }
     }
@@ -843,19 +844,24 @@ function toggleSaveCourse(course) {
             },
             success: function(data) {
                 saved_classes[crn] = data;
-                updateCourseList()
-                toggleShowCourse(data, true);
+                html = updateCourseList(crn)
+                if (html)
+                    data = html
+                toggleShowCourse(data, false);
             }
         });
     } else {
         dat = saved_classes[crn];
         delete saved_classes[crn];
-        updateCourseList()
-        toggleShowCourse(dat, true);
+        html = updateCourseList(crn)
+        if (html)
+            dat = html
+        toggleShowCourse(dat, false);
     }
 }
 
-function updateCourseList() {
+function updateCourseList(crn=null) {
+    ret = null;
     dis = $('#save_display');
     dis.children().remove()
     var sorted = [];
@@ -880,11 +886,18 @@ function updateCourseList() {
         ele = $(v.meeting_html)[0]
         ele = ele.innerText
         time = ele.substring(0, ele.indexOf(' in'));
-        html = `<div class="item"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
+        html = $(`<div class="item" style="padding:3px;"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
             Toggle</div></div><div id="course_item" class="ui label" style="padding:1px;padding-top:10px;">${code}
-            <div class="detail">${time}</div></div></div>`;
+            <div class="detail">${time}</div></div></div>`);
         dis.append(html);
+        if (v.crn==crn){
+            ret = html;
+        }
     }
+    if (ret){
+        return $(ret)[0].children[0].children[0];
+    }
+    return null;
 }
 
 function saveSections(){
