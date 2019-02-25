@@ -59,7 +59,7 @@
             <a id="login" class="item">Log In</a>
         </div>
     </div>
-    <div class="ui right sidebar" style="text-align:center;width:20%;height:100%;background-color:#E7E7E7;">
+    <div class="ui right sidebar" style="top:40px;text-align:center;width:20%;height:100%;background-color:#E7E7E7;">
         <div class="search_head">
             <h2>Saved Courses</h2>
         </div>
@@ -384,11 +384,22 @@
                 </div><br /><br />
                 <div class="ui input">
                     <input type="password" placeholder="Identikey Password">
-                </div><br /><br />
-                <div class="ui actions buttons">
-                    <button class="ui negative button">Cancel</button>
+                </div>
+                <div class="ui disclaimer popup">
+                    <p>The simple answer is we need your Identikey information in order to view and add/remove classes from your cart in CU's system.
+                    We <strong>do not</strong> store your username or password.
+                    You can continue using the class search and calendar feature without giving up this information.</p>
+                    <p>The longer answer is that we use your login information to get a session token to access your account.
+                    This token is only used to access your cart, and doesn't give us access to anything else in MyCUInfo or anywhere else.
+                    The token expires after 2 hours, so if you don't use our site within that time frame you will have to resubmit your credentials.
+                    We do store your token in our databse so that if you come back while the token is still valid, you don't have to enter your credentials again.
+                    Again, you can continue using the class search and calendar feature without giving us your credentials, but you won't have access to your cart features.</p>
+                </div><br />
+                <a id="disclaimer_link" href="#">What do we do with this information?</a>
+                <div class="ui buttons">
+                    <button class="ui cclose negative button">Cancel</button>
                     <div class="or"></div>
-                    <button class="ui positive button">Login</button>
+                    <button class="ui clogin positive button">Login</button>
                 </div>
             </form>
             <div class="ui inverted segment" style="text-align:center;display:none;">
@@ -403,6 +414,8 @@
             <div class="ui blue button" onclick="handleLogin()">Login</div>
         </div>
     </div>
+
+
 </body>
 
 </html>

@@ -16,8 +16,9 @@ $(document).ready(function(event) {
             'type':'keyword'
         }
         valid = false
-        for (let i = 0; i<finputs.length-1; i++){
+        for (let i = 0; i<finputs.length; i++){
             inp = finputs[i]
+            if ($(inp).hasClass('search')) continue;
             if (inp.name=='srcdb'){
                 srcdb = inp.value;
                 dat[inp.name] = inp.value;
@@ -53,6 +54,15 @@ $(document).ready(function(event) {
         }
     });
     $('#save_button').click(saveSections);
+    $('#disclaimer_link').popup({
+        inline: true,
+        on: 'hover',
+        onShow: function() {
+            console.log('HERE')
+        },
+        popup: '.disclaimer.popup',
+        position: 'right center'
+    });
 });
 
 function generateTable() {
@@ -618,11 +628,24 @@ function class_saved(id) {
 function showCULogin(action = console.log) {
     $('.ui.modal.login').modal({
         closable: false,
+        selector : {
+            deny: '.cclose',
+            approve: '.clogin'
+        },
         onDeny: function() {
         },
         onApprove: function() {
             submitCULogin(action);
             return false;
+        },
+        onVisible: function(){
+            $('#disclaimer_link').popup({
+                inline: true,
+                on: 'click',
+                popup: '.disclaimer.popup',
+                position: 'bottom center',
+                setFluidWidth: true
+            });
         }
     }).modal('show');
 }
