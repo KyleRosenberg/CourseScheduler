@@ -648,7 +648,19 @@ function showCULogin(action = console.log, params=null) {
                 on: 'click',
                 popup: '.disclaimer.popup',
                 position: 'bottom center',
-                setFluidWidth: true
+                setFluidWidth: true,
+                onVisible: function(){
+                    $(this).css({
+                        'top': '0',
+                        'left': '-50%',
+                        'bottom': 'auto',
+                        'right': 'auto',
+                        'display': 'block !important',
+                        'position': 'absolute',
+                        'width': '200%',
+                        'max-width': '500%'
+                    });
+                }
             });
         }
     }).modal('show');
