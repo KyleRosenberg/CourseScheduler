@@ -229,8 +229,6 @@ function toggleShowCourse(div, data = false) {
     }
     if (crn in calendar_classes) {
         removeClassFromCalendar(calendar_classes[crn]);
-        if (!data)
-            $(div).parent().parent().css('background-color', 'rgba(1, 1, 1, 0)');
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
@@ -238,8 +236,6 @@ function toggleShowCourse(div, data = false) {
             if (fits) {
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
-                if (!data)
-                    $(div).parent().parent().css('background-color', 'rgba(1, 1, 1, 0.15)');
             }
         }
     }
@@ -272,6 +268,7 @@ function fitsOnCalendar(course){
 }
 
 function proc_keyword_data(data) {
+    $('.search_results .ui.cards').empty();
     if (data == "Unauthorized") {
         return;
     }
@@ -859,24 +856,19 @@ function toggleSaveCourse(course) {
             },
             success: function(data) {
                 saved_classes[crn] = data;
-                html = updateCourseList(crn)
-                if (html)
-                    data = html
-                toggleShowCourse(data, false);
+                toggleShowCourse(data, true);
+                updateCourseList()
             }
         });
     } else {
         dat = saved_classes[crn];
         delete saved_classes[crn];
-        html = updateCourseList(crn)
-        if (html)
-            dat = html
-        toggleShowCourse(dat, false);
+        updateCourseList()
+        toggleShowCourse(dat, true);
     }
 }
 
-function updateCourseList(crn=null) {
-    ret = null;
+function updateCourseList() {
     dis = $('#save_display');
     dis.children().remove()
     var sorted = [];
@@ -905,14 +897,12 @@ function updateCourseList(crn=null) {
             Toggle</div></div><div id="course_item" class="ui label" style="padding:1px;padding-top:10px;">${code}
             <div class="detail">${time}</div></div></div>`);
         dis.append(html);
-        if (v.crn==crn){
-            ret = html;
+        if (v.crn in calendar_classes) {
+            $(html).css('background-color', 'rgba(1, 1, 1, 0.15)')
+        } else {
+            $(html).css('background-color', 'rgba(1, 1, 1, 0)')
         }
     }
-    if (ret){
-        return $(ret)[0].children[0].children[0];
-    }
-    return null;
 }
 
 function saveSections(){

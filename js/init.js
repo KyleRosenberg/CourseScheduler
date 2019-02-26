@@ -32,6 +32,21 @@ function handleLogin(){
             // Sign-out successful.
             $('#login').text("Log In");
             $('#name').text('');
+
+            try{
+                window.sessionStorage.removeItem('token')
+                window.sessionStorage.removeItem('dict')
+                window.sessionStorage.removeItem('updated_cart')
+                for (k in calendar_classes){
+                    removeClassFromCalendar(calendar_classes[k]);
+                }
+                saved_classes = {}
+                calendar_classes = {}
+                updateCourseList();
+                proc_keyword_data('Unauthorized');
+            } catch (e){
+                console.log(e)
+            }
         })
         .catch(function(error) {
         // An error happened
