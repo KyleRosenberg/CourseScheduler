@@ -2,60 +2,16 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="js/semantic.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase-auth.js"></script>
-    <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "AIzaSyAf2uWNRmjB0Z5BYTgEdp8Y7xCPlMFFwc8",
-            authDomain: "coursescheduler-6ac6e.firebaseapp.com",
-            projectId: "coursescheduler-6ac6e"
-        };
-        firebase.initializeApp(config);
-    </script>
-    <script src="js/init.js"></script>
+
+    {{ headers }}
 
     <title>Home</title>
 </head>
 
 <body class="pushable">
-    <div class="ui inverted menu">
-        <div class="ui dropdown item">
-            BuffPlanner
-            <i class="dropdown icon"></i>
-            <div class="menu">
-                <a class="item" href="/">
-                    Home
-                </a>
-                <a class="item" href="/search">
-                    Search
-                </a>
-                <a class="item" href="/contact">
-                    Contact
-                </a>
-            </div>
-        </div>
-        <div class="ui dropdown item">
-            Links
-            <i class="dropdown icon"></i>
-            <div class="menu">
-                <a class="item" href="https://mycuinfo.colorado.edu" target="_blank">
-                    MyCUInfo
-                </a>
-                <a class="item" href="https://portal.prod.cu.edu/psp/epprod/UCB2/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART" target="_blank">
-                    Enrollment
-                </a>
-            </div>
-        </div>
-        <div class="right menu">
-            <div id="name" class="item"></div>
-            <a id="login" class="item">Log In</a>
-        </div>
-    </div>
+
+    {{ navbar }}
+
     <div class="landing">
         <img class="footer_image" src="https://i.imgur.com/L1fGauH.png"/>
         <div id="main_header">

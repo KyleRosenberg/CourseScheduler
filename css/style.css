@@ -10,7 +10,7 @@ body.pushable{
 }
 
 .search_head{
-    background-color: rgba(206, 182, 128);
+    background-color: #CEB680;
     color:white;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -70,7 +70,7 @@ body.pushable{
     font-family: Impact, Charcoal, sans-serif;
     font-size: 7vw;
     line-height: 7vw;
-    color: rgba(206, 183, 128);
+    color: #CEB780;
     text-align:center;
     top:10%;
     position:relative;
@@ -97,9 +97,21 @@ body.pushable{
     font-family: "Arial Black", Gadget, sans-serif;
     font-size: 3vh;
     line-height: 3vw;
-    background-color: rgba(206, 183, 128);
+    background-color: #CEB780;
     color:black;
     text-align:center;
+}
+
+.ui.error.message{
+    bottom:0px;
+    position:absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left:0;
+    right:0;
+    width:90%;
+    text-align:center;
+    z-index: 99999;
 }
 
 .landing {
@@ -108,15 +120,16 @@ body.pushable{
     top:0px;
     left:0px;
     position:absolute;
-    background-color: rbga(86, 90, 92);
+    background-color: #565A5C;
     text-align:center;
+    z-index: -1;
 }
 
 .continuation{
     position:absolute;
     width:100%;
     top:100%;
-    background-color:rgba(34, 35, 36);
+    background-color: #222324;
     color:white;
 }
 
@@ -152,7 +165,16 @@ body.pushable{
 #course_item{
     padding:1px;
     padding-top: 10px;
-    background-color: rgba(1, 1, 1, 0);
+    background-color: transparent;
+    
+}
+
+.ui.right.sidebar{
+    top: 40px;
+    text-align: center;
+    width: 20%;
+    height: 100%;
+    background-color: #e7e7e7;
 }
 
 .event{

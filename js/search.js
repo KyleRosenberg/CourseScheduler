@@ -50,7 +50,7 @@ $(document).ready(function(event) {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             loadSections();
-            submitCULogin(console.log)
+            submitCULogin(console.log, null, false)
         }
     });
     $('#save_button').click(saveSections);
@@ -239,6 +239,7 @@ function toggleShowCourse(div, data = false) {
             }
         }
     }
+    updateCourseList()
 }
 
 function fitsOnCalendar(course){
@@ -541,6 +542,12 @@ function removeFromCart(data){
             url: '/removecart',
             data: params,
             success: function(data){
+                $('#cart_load').removeClass('active');
+                if (data=="Unauthorized"){
+                    showError("You are not authorized to use this function.")
+                    $('.search_results .loader').removeClass('active')
+                    return;
+                }
                 data = JSON.parse(data.slice(8, -3))
                 data = data['cart']
                 for (i = 0; i<data.length; i++){
@@ -556,12 +563,11 @@ function removeFromCart(data){
                 window.sessionStorage.setItem('dict', JSON.stringify(bad))
                 window.sessionStorage.setItem('updated_cart', true)
                 $('.ui.bottom.attached.button').popup('hide all')
-                $('#cart_load').removeClass('active');
                 getCart()
             }
         });
     }).catch(function(error) {
-        console.log(error);
+        showError(error)
         $('.search_results .loader').removeClass('active')
     });
 }
@@ -592,6 +598,12 @@ function addToCart(data){
             url: '/addcart',
             data: params,
             success: function(data){
+                $('#cart_load').removeClass('active');
+                if (data=="Unauthorized"){
+                    showError("You are not authorized to use this function.")
+                    $('.search_results .loader').removeClass('active')
+                    return;
+                }
                 data = JSON.parse(data.slice(8, -3))
                 data = data['cart']
                 for (i = 0; i<data.length; i++){
@@ -607,12 +619,11 @@ function addToCart(data){
                 window.sessionStorage.setItem('dict', JSON.stringify(bad))
                 window.sessionStorage.setItem('updated_cart', true)
                 $('.ui.bottom.attached.button').popup('hide all')
-                $('#cart_load').removeClass('active');
                 getCart()
             }
         });
     }).catch(function(error) {
-        console.log(error);
+        showError(error);
         $('.search_results .loader').removeClass('active')
     });
 }
@@ -663,15 +674,15 @@ function showCULogin(action = console.log, params=null) {
     }).modal('show');
 }
 
-function submitCULogin(action, params=null){
+function submitCULogin(action, params=null, showerror=true){
     $('.ui.modal.login .loader').text('Logging In...');
     $('.ui.modal.login .segment').css('display', 'block');
     username = $('.ui.modal.login input[type="text"]').val();
     password = $('.ui.modal.login input[type="password"]').val();
-    getCUAuthToken(username, password, action, params);
+    getCUAuthToken(username, password, action, params, showerror);
 }
 
-function getCUAuthToken(username, password, action, params=null) {
+function getCUAuthToken(username, password, action, params=null, showerror=true) {
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         $.ajax({
             type: 'POST',
@@ -685,6 +696,11 @@ function getCUAuthToken(username, password, action, params=null) {
             success: function(data) {
                 if (data=="Auth Fail"){
                     $('.ui.modal.login .segment').css('display', 'none');
+                    if (showerror)
+                        showError('Your user token is expired. Try logging out and logging back in.')
+                } else if (data=="Invalid credentials"){
+                    if (showerror)
+                        showError('CU Login failed. The username and/or password are likely incorrect.')
                 } else {
                     data = data.split("'").join('"')
                     data = data.split("False").join('false')
@@ -699,10 +715,12 @@ function getCUAuthToken(username, password, action, params=null) {
             },
             error: function(data){
                 $('.ui.modal.login .segment').css('display', 'none');
+                if (showerror)
+                    showError(data);
             }
         })
     }).catch(function(error) {
-        console.log(error);
+        showError(error);
     });
 }
 
@@ -762,7 +780,7 @@ function getCart() {
                     proc_keyword_data(data)
                 },
                 error: function(xhr, st, er){
-                    console.log(er)
+                    showError("There was an error loading classes from your cart.")
                     $('.search_results .loader').removeClass('active')
                 }
             });
@@ -777,6 +795,11 @@ function getCart() {
                     'srcdb':srcdb
                 },
                 success: function(data){
+                    if (data=="Unauthorized"){
+                        showError("You are not authorized to use this function.")
+                        $('.search_results .loader').removeClass('active')
+                        return;
+                    }
                     data = data.split("'").join('"')
                     data = JSON.parse(data)
                     for (i = 0; i<data.length; i++){
@@ -804,19 +827,19 @@ function getCart() {
                             proc_keyword_data(data)
                         },
                         error: function(xhr, st, er){
-                            console.log(er)
+                            showError(er)
                             $('.search_results .loader').removeClass('active')
                         }
                     });
                 },
                 error: function(xhr, st, er){
-                    console.log(er)
+                    showError(er)
                     $('.search_results .loader').removeClass('active')
                 }
             });
         }
     }).catch(function(error) {
-        console.log(error);
+        showError(error);
         $('.search_results .loader').removeClass('active')
     });
 }
@@ -863,14 +886,15 @@ function toggleSaveCourse(course) {
     } else {
         dat = saved_classes[crn];
         delete saved_classes[crn];
-        updateCourseList()
         toggleShowCourse(dat, true);
+        updateCourseList()
     }
 }
 
 function updateCourseList() {
     dis = $('#save_display');
     dis.children().remove()
+    dis.append('<div class="ui text loader">Loading saved sections...</div>');
     var sorted = [];
     for (var key in saved_classes) {
         sorted[sorted.length] = key;
@@ -898,9 +922,9 @@ function updateCourseList() {
             <div class="detail">${time}</div></div></div>`);
         dis.append(html);
         if (v.crn in calendar_classes) {
-            $(html).css('background-color', 'rgba(1, 1, 1, 0.15)')
-        } else {
-            $(html).css('background-color', 'rgba(1, 1, 1, 0)')
+            $(html).css('background-color', '#C5C5C5')
+        } else { //TODO fiv color stuff ^ v
+            $(html).css('background-color', 'transparent')
         }
     }
 }
@@ -932,19 +956,20 @@ function saveSections(){
             },
             success: function(data){
                 if (data!='Success'){
-                    console.log('Oh no lol');
+                    showError('I don\'t know how you managed this, but this should literally never happen.');
                 }
             },
             error: function(xhr, st, er){
-                console.log(er)
+                showError('There was an error saving your sections.');
             }
         });
     }).catch(function(error) {
-        console.log(error);
+        showError(error);
     });
 }
 
 function loadSections(){
+    $('#save_display .loader').addClass('active');
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         $.ajax({
             type: 'POST',
@@ -962,10 +987,12 @@ function loadSections(){
                 updateCourseList();
             },
             error: function(xhr, st, er){
-                console.log(er)
+                $('#save_display .loader').removeClass('active')
+                showError('There was an error loading your saved sections.');
             }
         });
     }).catch(function(error) {
-        console.log(error);
+        $('#save_display .loader').removeClass('active')
+        showError(error);
     });
 }
