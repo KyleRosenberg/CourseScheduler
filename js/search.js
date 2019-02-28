@@ -699,6 +699,7 @@ function getCUAuthToken(username, password, action, params=null, showerror=true)
                     if (showerror)
                         showError('Your user token is expired. Try logging out and logging back in.')
                 } else if (data=="Invalid credentials"){
+                    $('.ui.modal.login .segment').css('display', 'none');
                     if (showerror)
                         showError('CU Login failed. The username and/or password are likely incorrect.')
                 } else {
