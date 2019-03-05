@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, send_file, send_from_directory, session
+from flask import Flask, jsonify, request, render_template, send_file, send_from_directory, session, Markup
 from cucourses import CourseGrabber
 from users import FirebaseAuth
 
@@ -25,7 +25,18 @@ def js(filename):
 
 @app.route('/search', methods=['GET'])
 def display_search():
-    return send_from_directory(app.config['HTML_FOLDER'], 'classsearch.html')
+    navbar = ""
+    headers = ""
+    with open('templates/navbar.html', 'r') as f:
+        navbar = f.read()
+    with open('templates/headers.html', 'r') as f:
+        headers = f.read()
+    if navbar=="" or headers=="":
+        return "Something went wrong"
+    return render_template('classsearch.html',
+        navbar=Markup(navbar),
+        headers=Markup(headers)
+    )
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -58,7 +69,10 @@ def culogin():
             dic = info
         else:
             print('Token expired or doesnt exist, fetching new one...')
-            t = cg.getAuthToken(request.form['username'], request.form['password'])
+            try:
+                t = cg.getAuthToken(request.form['username'], request.form['password'])
+            except:
+                return 'Invalid credentials'
             info = cg.getUserId(t)
             id = info['pers']['id']
             fa.addTokenToDatabase(t, request.form['uid'], id)
@@ -120,11 +134,33 @@ def favicon():
 
 @app.route('/contact')
 def contact():
-    return send_from_directory(app.config['HTML_FOLDER'], 'contact.html')
+    navbar = ""
+    headers = ""
+    with open('templates/navbar.html', 'r') as f:
+        navbar = f.read()
+    with open('templates/headers.html', 'r') as f:
+        headers = f.read()
+    if navbar=="" or headers=="":
+        return "Something went wrong"
+    return render_template('contact.html',
+        navbar=Markup(navbar),
+        headers=Markup(headers)
+    )
 
 @app.route('/')
 def default():
-    return send_from_directory(app.config['HTML_FOLDER'], 'index.html')
+    navbar = ""
+    headers = ""
+    with open('templates/navbar.html', 'r') as f:
+        navbar = f.read()
+    with open('templates/headers.html', 'r') as f:
+        headers = f.read()
+    if navbar=="" or headers=="":
+        return "Something went wrong"
+    return render_template('index.html',
+        navbar=Markup(navbar),
+        headers=Markup(headers)
+    )
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
