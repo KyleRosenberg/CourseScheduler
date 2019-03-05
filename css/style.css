@@ -59,25 +59,142 @@ body.pushable{
     display:block;
 }
 
-.main_header{
-    color: white;
+.ui.error.message{
+    bottom:0px;
+    position:absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left:0;
+    right:0;
+    width:90%;
     text-align:center;
-    font-size: 18px;
-    line-height:18px;
+    z-index: 99999;
 }
 
-.main_header .header{
+.landing {
+    width:100%;
+    height:700px;
+    top:40px;
+    left:0px;
+    position:absolute;
+    background-color: #565A5C;
+    text-align:center;
+    z-index: 1;
+}
+
+.continuation{
+    position:absolute;
+    width:100%;
+    top:740px;
+    background-color: white;
+    color:black;
+    clear:both;
+    padding-top:5%;
+    padding-bottom:5%;
+}
+
+.welcome{
+    width:50%;
+    top:100px;
+    position:relative;
+    padding-left: 5%;
+    float:left;
+}
+
+.feature_sect{
+    float:right;
+    width:50%;
+    top:80px;
+    padding-right:8%;
+    padding-left:10%;
+    position:relative;
+}
+
+.feature_sect img{
+    width:100%;
+}
+
+.title_text{
+    font-size: 70px;
+    line-height: 70px;
+    color: #CEB77B;
+    font-family: Impact, Charcoal, sans-serif;
+    text-align: left;
+}
+
+.info_text{
+    font-size: 24px;
+    line-height: 24px;
+    color: white;
+    font-family: "Arial Black", Gadget, sans-serif;
+    text-align: left;
+}
+
+.landing_actions{
+    left:-10%;
+    position:relative;
+}
+
+.ui.yellow.button{
+    background-color: #CEB77B;
+}
+
+.ui.yellow.button:hover{
+    background-color: #ae975b;
+}
+
+.welcome a{
+    color:white;
+    font-family: "Arial Black", Gadget, sans-serif;
+    font-size: 14px;
+    line-height: 14px;
+}
+
+.ui.basic.segment{
+    display: inline-block;
+    position:relative;
+    clear:both;
+    padding-bottom: 1.5%;
+    padding-top: 1.5%;
+}
+
+.segment h2{
     font-family: Impact, Charcoal, sans-serif;
     font-size: 60px;
-    line-height: 62px;
+    line-height: 60px;
 }
 
-.footer_image {
-    width: 100%;
-    left: 0;
-    position: absolute;
-    bottom: 0;
-    max-height: 30%;
+.segment .button{
+    width: 30%;
+    height: 4em;
+    left: 35%;
+}
+
+.finfo{
+    width:60%;
+    font-size: 24px;
+    line-height: 24px;
+    font-family: "Arial Black", Gadget, sans-serif;
+    text-align: left;
+}
+
+.ficon{
+    width:40%;
+    font-size: 240px;
+    line-height: 240px;
+    color:#CEB77B;
+}
+
+.feature_left{
+    float:left;
+    padding-left:10%;
+    padding-right:5%;
+}
+
+.feature_right{
+    float:right;
+    padding-right:10%;
+    padding-left:5%;
 }
 
 .main_view{
@@ -91,13 +208,26 @@ body.pushable{
 .ui.celled.table.calendar tr td{
     padding:0px;
     text-align: center;
+    border-left: 1px solid rgba(34,36,38,.1);
+    height:1%;
+}
+
+.ui.celled.table.calendar tr th{
+    padding:2%;
+    text-align: center;
+    height:6%;
 }
 
 #fixedheight {
     table-layout: fixed;
 }
 
-#fixedheight td {
+#fixedheight td{
+    line-height: 25%;
+    overflow: hidden;
+}
+
+#fixedheight th{
     line-height: 25%;
     overflow: hidden;
 }
@@ -105,7 +235,16 @@ body.pushable{
 #course_item{
     padding:1px;
     padding-top: 10px;
-    background-color: rgba(1, 1, 1, 0);
+    background-color: transparent;
+
+}
+
+.ui.right.sidebar{
+    top: 40px;
+    text-align: center;
+    width: 20%;
+    height: 100%;
+    background-color: #e7e7e7;
 }
 
 .event{
