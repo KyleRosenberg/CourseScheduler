@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template, send_file, send_from_directory, session, Markup, after_this_request
 from cucourses import CourseGrabber
 from users import FirebaseAuth
-from io import StringIO as IO
+from io import BytesIO as IO
 import gzip
 import functools
 
