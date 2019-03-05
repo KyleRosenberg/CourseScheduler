@@ -208,13 +208,26 @@ body.pushable{
 .ui.celled.table.calendar tr td{
     padding:0px;
     text-align: center;
+    border-left: 1px solid rgba(34,36,38,.1);
+    height:1%;
+}
+
+.ui.celled.table.calendar tr th{
+    padding:2%;
+    text-align: center;
+    height:6%;
 }
 
 #fixedheight {
     table-layout: fixed;
 }
 
-#fixedheight td {
+#fixedheight td{
+    line-height: 25%;
+    overflow: hidden;
+}
+
+#fixedheight th{
     line-height: 25%;
     overflow: hidden;
 }
