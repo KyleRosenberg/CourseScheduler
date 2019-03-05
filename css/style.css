@@ -10,7 +10,7 @@ body.pushable{
 }
 
 .search_head{
-    background-color: #CEB680;
+    background-color: rgba(206, 182, 128);
     color:white;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -58,7 +58,6 @@ body.pushable{
     color:white;
     display:block;
 }
-
 
 .ui.error.message{
     bottom:0px;

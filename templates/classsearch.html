@@ -2,25 +2,69 @@
 <html>
 
 <head>
-
-    {{ headers }}
-
+    <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="js/semantic.min.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase-auth.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAf2uWNRmjB0Z5BYTgEdp8Y7xCPlMFFwc8",
+            authDomain: "coursescheduler-6ac6e.firebaseapp.com",
+            projectId: "coursescheduler-6ac6e"
+        };
+        firebase.initializeApp(config);
+    </script>
     <script src="js/randomColor.js"></script>
+    <script src="js/init.js"></script>
     <script src="js/search.js"></script>
 
     <title>Search</title>
 </head>
 
 <body class="pushable">
-
-    {{ navbar }}
-
-    <div class="ui right sidebar">
+    <div class="ui inverted menu">
+        <div class="ui dropdown item">
+            BuffPlanner
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/">
+                    Home
+                </a>
+                <a class="item" href="/search">
+                    Search
+                </a>
+                <a class="item" href="/contact">
+                    Contact
+                </a>
+            </div>
+        </div>
+        <div class="ui dropdown item">
+            Links
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="https://mycuinfo.colorado.edu" target="_blank">
+                    MyCUInfo
+                </a>
+                <a class="item" href="https://portal.prod.cu.edu/psp/epprod/UCB2/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART" target="_blank">
+                    Enrollment
+                </a>
+            </div>
+        </div>
+        <div class="right menu">
+            <div id="name" class="item"></div>
+            <a id="login" class="item">Log In</a>
+        </div>
+    </div>
+    <div class="ui right sidebar" style="top:40px;text-align:center;width:20%;height:100%;background-color:#E7E7E7;">
         <div class="search_head">
             <h2>Saved Courses</h2>
         </div>
         <div id="save_display" class="ui middle aligned divided list">
-            <div class="ui text loader">Loading saved sections...</div>
+
         </div>
         <div class="ui button" id="save_button">
             Save for Later <i class="save icon"></i>
@@ -39,7 +83,7 @@
                     <div class="field">
                         <div class="ui fluid selection dropdown">
                             <input type="hidden" name="srcdb">
-                            <div style="color:#000)" class="default text">Summer 2019</div>
+                            <div style="color:rgb(0, 0, 0)" class="default text">Summer 2019</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="2194">
@@ -66,7 +110,7 @@
                     <div class="field">
                         <div class="ui fluid search selection dropdown">
                             <input type="hidden" name="subject">
-                            <div style="color:#000" class="default text">Any Subject</div>
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Subject</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="">Any Subject</div>
@@ -227,7 +271,7 @@
                     <div class="field">
                         <div class="ui fluid selection dropdown">
                             <input type="hidden" name="camp">
-                            <div style="color:#000" class="default text">Any Campus</div>
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Campus</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="">
@@ -245,7 +289,7 @@
                     <div class="field">
                         <div class="ui fluid selection dropdown">
                             <input type="hidden" name="career">
-                            <div style="color:#000" class="default text">Any Career</div>
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Career</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="">
@@ -269,7 +313,7 @@
                     <div class="field">
                         <div class="ui fluid selection dropdown">
                             <input type="hidden" name="course_level">
-                            <div style="color:#000" class="default text">Any Course Level</div>
+                            <div style="color:rgb(0, 0, 0)" class="default text">Any Course Level</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="">
@@ -384,6 +428,7 @@
             <div class="ui blue button" onclick="handleLogin()">Login</div>
         </div>
     </div>
+
 
 </body>
 
