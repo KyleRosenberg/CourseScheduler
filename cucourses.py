@@ -19,7 +19,11 @@ class CourseGrabber:
         for f in fields:
             if f in ignore:
                 continue
-            c.append({"field":f, "value":fields[f]})
+            if f=="hours":
+                c.append({"field":f, "value":">="+str(fields[f])})
+                c.append({"field":"hours_min", "value":"<="+str(fields[f])})
+            else:
+                c.append({"field":f, "value":fields[f]})
         payload = {
             "other": {"srcdb":str(semester)},
             "criteria": c
