@@ -229,9 +229,6 @@ body.pushable{
     table-layout: fixed;
 }
 
-#fixedheight thead{
-}
-
 #fixedheight td{
     line-height: 25%;
     overflow: hidden;
