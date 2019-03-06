@@ -12,6 +12,7 @@ app.config['TESTING'] = True
 app.config['HTML_FOLDER'] = 'templates/'
 app.config['JS_FOLDER'] = 'js/'
 app.config['CSS_FOLDER'] = 'css/'
+app.config['IMAGE_FOLDER'] = 'images/'
 app.secret_key = os.environ.get('flask_key')
 
 fa = FirebaseAuth()
@@ -50,11 +51,15 @@ def gzipped(f):
 
     return view_func
 
-
 @app.route('/css/<path:filename>')
 @gzipped
 def css(filename):
     return send_from_directory(app.config['CSS_FOLDER'], filename)
+
+@app.route('/images/<path:filename>')
+@gzipped
+def images(filename):
+    return send_from_directory(app.config['IMAGE_FOLDER'], filename)
 
 @app.route('/js/<path:filename>')
 @gzipped
