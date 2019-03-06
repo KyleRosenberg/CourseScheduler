@@ -302,6 +302,215 @@
                         <i class="undo icon"></i>
                         Reset Filters
                     </button>
+                    <button id="show_advanced" class="ui button">
+                        Advanced
+                    </button>
+                    <div id="advanced_search" class="ui popup top left">
+                        <form class="ui form" action="javascript:void(0);" name="advanced_form">
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="session">
+                                    <div style="color:#000" class="default text">Any Session</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any Session</div>
+                                        <div class="item" data-value="BAS">Boulder A Session/1st 5 Weeks</div>
+                                        <div class="item" data-value="BGS">Boulder Augmester/3 Weeks</div>
+                                        <div class="item" data-value="BBS">Boulder B Session/2nd 5 Weeks</div>
+                                        <div class="item" data-value="BCS">Boulder C Session/8 Weeks</div>
+                                        <div class="item" data-value="B41">Boulder Campus 4-Wk Session 1</div>
+                                        <div class="item" data-value="B42">Boulder Campus 4-Wk Session 2</div>
+                                        <div class="item" data-value="B51">Boulder Campus 5-Wk Session 1</div>
+                                        <div class="item" data-value="B52">Boulder Campus 5-Wk Session 2</div>
+                                        <div class="item" data-value="B53">Boulder Campus 5-Wk Session 3</div>
+                                        <div class="item" data-value="B81">Boulder Campus 8-Wk Session 1</div>
+                                        <div class="item" data-value="B82">Boulder Campus 8-Wk Session 2</div>
+                                        <div class="item" data-value="BPS">Boulder Campus Pre-Semester</div>
+                                        <div class="item" data-value="BVS">Boulder Campus Variable Sess</div>
+                                        <div class="item" data-value="BD2">Boulder D (w/B Drop/Add Dates)</div>
+                                        <div class="item" data-value="BD1">Boulder D Session/10 Weeks</div>
+                                        <div class="item" data-value="BES">Boulder E Session/1st 5 Weeks</div>
+                                        <div class="item" data-value="BFS">Boulder F Session/2nd 5 Weeks</div>
+                                        <div class="item" data-value="B">Boulder Main Campus Semester</div>
+                                        <div class="item" data-value="BAM">Boulder Maymester/3 Weeks</div>
+                                        <div class="item" data-value="BS2">Boulder Sum Session-2nd 6 Wks</div>
+                                        <div class="item" data-value="BWS">Boulder Winter Session</div>
+                                        <div class="item" data-value="BET">CE Evening 10 Weeks</div>
+                                        <div class="item" data-value="BEF">CE Evening Full Session</div>
+                                        <div class="item" data-value="BSE">CE Extraordinary Special</div>
+                                        <div class="item" data-value="BG2">CE Grad 2nd 7 weeks</div>
+                                        <div class="item" data-value="BSO">CE Online Self Paced</div>
+                                        <div class="item" data-value="BL4">CE Online TermBased 10 Weeks</div>
+                                        <div class="item" data-value="BL3">CE Online TermBased Full Sess</div>
+                                        <div class="item" data-value="BL1">CE Online TermBased Sess 1</div>
+                                        <div class="item" data-value="BL2">CE Online TermBased Sess 2</div>
+                                        <div class="item" data-value="BL5">CE Online TrmBsd Sum 8 Weeks</div>
+                                        <div class="item" data-value="BCE">Cont Ed Extraordinary</div>
+                                        <div class="item" data-value="BIT">Cont Ed IEC ESL Credit 10 Week</div>
+                                        <div class="item" data-value="BM9">Cont Ed-Applied Music</div>
+                                        <div class="item" data-value="BM1">Cont Ed-Evening MBA Session 1</div>
+                                        <div class="item" data-value="BM2">Cont Ed-Evening MBA Session 2</div>
+                                        <div class="item" data-value="BII">Cont-Ed Individ Instruction</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="stat">
+                                    <div style="color:#000" class="default text">Open, Waitlisted, or Closed</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">
+                                            Open, Waitlisted, or Closed
+                                        </div>
+                                        <div class="item" data-value="A,W">
+                                            Open or Waitlist Available
+                                        </div>
+                                        <div class="item" data-value="A">
+                                            Open Only
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="overlap">
+                                    <div style="color:#000" class="default text">Any Meeting Time</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any Meeting Time</div>
+                                        <div class="item" data-value="2020">MWF 9am-9:50am</div>
+                                        <div class="item" data-value="2021">MWF 10am-10:50am</div>
+                                        <div class="item" data-value="2057">MWF 11am-11:50am</div>
+                                        <div class="item" data-value="2022">MWF 12pm-12:50pm</div>
+                                        <div class="item" data-value="4668">MWF 8am-11:50am</div>
+                                        <div class="item" data-value="4669">MWF 12pm-4:50pm</div>
+                                        <div class="item" data-value="2019">MWF 1pm-1:50pm</div>
+                                        <div class="item" data-value="2059">MWF 2pm-2:50pm</div>
+                                        <div class="item" data-value="2096">MWF 3pm-3:50pm</div>
+                                        <div class="item" data-value="2389">MWF 4pm-4:50pm</div>
+                                        <div class="item" data-value="4671">MWF 5pm-10pm</div>
+                                        <div class="item" data-value="4676">MWF Only</div>
+                                        <div class="item" data-value="4662">MTWThF 7:30am-11:50am</div>
+                                        <div class="item" data-value="4663">MTWThF 12pm-4:50pm</div>
+                                        <div class="item" data-value="4664">MTWThF 5pm-11pm</div>
+                                        <div class="item" data-value="4672">TTh 8am-11:50am</div>
+                                        <div class="item" data-value="2024">TTh 8am-9:15am</div>
+                                        <div class="item" data-value="2028">TTh 9:30am-10:45am</div>
+                                        <div class="item" data-value="2025">TTh 11am-12:15pm</div>
+                                        <div class="item" data-value="4673">TTh 12pm-4:50pm</div>
+                                        <div class="item" data-value="2023">TTh 12:30pm-1:45pm</div>
+                                        <div class="item" data-value="2043">TTh 2pm-3:15pm</div>
+                                        <div class="item" data-value="2055">TTh 3:30pm-4:45pm</div>
+                                        <div class="item" data-value="4674">TTh 5pm-10pm</div>
+                                        <div class="item" data-value="4675">TuTh Only</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="asgened_8A">
+                                    <div style="color:#000" class="default text">Any A&S GenEd Attributes (Fall 2018+)</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any A&S GenEd Attributes (Fall 2018+)</div>
+                                        <div class="item" data-value="asgened_8A">A&S GenEd: Distribution-Arts & Humanities</div>
+                                        <div class="item" data-value="asgened_8F">A&S GenEd: Foreign Language</div>
+                                        <div class="item" data-value="asgened_8G">A&S GenEd: Diversity-Global Perspective</div>
+                                        <div class="item" data-value="asgened_8L">A&S GenEd: Distribution-Natural Sci Lab</div>
+                                        <div class="item" data-value="asgened_8U">A&S GenEd: Diversity-U.S. Perspective</div>
+                                        <div class="item" data-value="asgened_8N">A&S GenEd: Distribution-Natural Sciences</div>
+                                        <div class="item" data-value="asgened_8Q">A&S GenEd: Quantitative Reasoning & Math</div>
+                                        <div class="item" data-value="asgened_8S">A&S GenEd: Distribution-Social Sciences</div>
+                                        <div class="item" data-value="asgened_8WL">A&S GenEd: Written Communication-Lower</div>
+                                        <div class="item" data-value="asgened_8WU">A&S GenEd: Written Communication-Upper</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="arsc_AH">
+                                    <div style="color:#000" class="default text">Any A&S Core Attribute</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any A&S Core Attribute </div>
+                                        <div class="item" data-value="arsc_AH">A&S Core: Historical Context</div>
+                                        <div class="item" data-value="arsc_AD">A&S Core: Human Diversity</div>
+                                        <div class="item" data-value="arsc_AU">A&S Core: United States Context</div>
+                                        <div class="item" data-value="arsc_AL">A&S Core: Literature and the Arts</div>
+                                        <div class="item" data-value="arsc_AS">A&S Core: Contemporary Societies</div>
+                                        <div class="item" data-value="arsc_AI">A&S Core: Ideals & Values</div>
+                                        <div class="item" data-value="arsc_AX">A&S Core: Natural Science Sequence</div>
+                                        <div class="item" data-value="arsc_AZ">A&S Core: Natural Science Lab</div>
+                                        <div class="item" data-value="arsc_AY">A&S Core: Natural Sci Non-Sequence</div>
+                                        <div class="item" data-value="arsc_AF">A&S Core: Foreign Language</div>
+                                        <div class="item" data-value="arsc_AQ">A&S Core: Quantitative Reasoning</div>
+                                        <div class="item" data-value="arsc_AW">A&S Core: Written Communication</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="schd">
+                                    <div style="color:#000" class="default text">Any Class Type</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any Class Type</div>
+                                        <div class="item" data-value="CLN">Clinical</div>
+                                        <div class="item" data-value="DSC">Discussion</div>
+                                        <div class="item" data-value="DIS">Dissertation</div>
+                                        <div class="item" data-value="FLD">Field Studies</div>
+                                        <div class="item" data-value="IND">Independent Study</div>
+                                        <div class="item" data-value="INT">Internship</div>
+                                        <div class="item" data-value="LAB">Laboratory</div>
+                                        <div class="item" data-value="LEC">Lecture</div>
+                                        <div class="item" data-value="MLS">Main Lab Section</div>
+                                        <div class="item" data-value="OTH">Other</div>
+                                        <div class="item" data-value="PRA">Practicum</div>
+                                        <div class="item" data-value="REC">Recitation</div>
+                                        <div class="item" data-value="RSC">Research</div>
+                                        <div class="item" data-value="SEM">Seminar</div>
+                                        <div class="item" data-value="STU">Studio</div>
+                                        <div class="item" data-value="WKS">Workshop</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="instmode">
+                                    <div style="color:#000" class="default text">Any Instruction Mode</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any Instruction Mode</div>
+                                        <div class="item" data-value="CD">Candidate for Degree</div>
+                                        <div class="item" data-value="HN">Honors Thesis Courses</div>
+                                        <div class="item" data-value="HY">Hybrid Online/Classroom</div>
+                                        <div class="item" data-value="P">In Person</div>
+                                        <div class="item" data-value="IS">Independent Study</div>
+                                        <div class="item" data-value="OL">Online</div>
+                                        <div class="item" data-value="OS">Online Self Paced</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui fluid selection dropdown">
+                                    <input type="hidden" name="hours">
+                                    <div style="color:#000" class="default text">Any Credit Hours</div>
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        <div class="item" data-value="">Any Credit Hours</div>
+                                        <div class="item" data-value="0">0 Hours</div>
+                                        <div class="item" data-value="1">1 Hour</div>
+                                        <div class="item" data-value="2">2 Hours</div>
+                                        <div class="item" data-value="3">3 Hours</div>
+                                        <div class="item" data-value="4">4 Hours</div>
+                                        <div class="item" data-value="5">5 Hours</div>
+                                        <div class="item" data-value="6+">6+ Hours</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </form>
                 <div class="ui section divider"></div>
                 <div class="search_results">
@@ -358,21 +567,23 @@
                 <div class="ui input">
                     <input type="password" placeholder="Identikey Password">
                 </div>
-                <div class="ui disclaimer popup">
-                    <p>The simple answer is we need your Identikey information in order to view and add/remove classes from your cart in CU's system.
-                    We <strong>do not</strong> store your username or password.
-                    You can continue using the class search and calendar feature without giving up this information.</p>
-                    <p>The longer answer is that we use your login information to get a session token to access your account.
-                    This token is only used to access your cart, and doesn't give us access to anything else in MyCUInfo or anywhere else.
-                    The token expires after 2 hours, so if you don't use our site within that time frame you will have to resubmit your credentials.
-                    We do store your token in our databse so that if you come back while the token is still valid, you don't have to enter your credentials again.
-                    Again, you can continue using the class search and calendar feature without giving us your credentials, but you won't have access to your cart features.</p>
-                </div><br />
-                <a id="disclaimer_link" href="#">What do we do with this information?</a><br/>
+                <br/>
+                <a id="disclaimer_link" href="javascript:showDisclaimer()">What do we do with this information?</a>
+                <br/>
                 <div class="ui buttons">
                     <button class="ui cclose negative button">Cancel</button>
                     <div class="or"></div>
                     <button class="ui clogin positive button">Login</button>
+                </div>
+                <div class="disclaimer" style="display:none;">
+                    <p>The simple answer is we need your Identikey information in order to view and add/remove classes from your cart in CU's system.
+                        We <strong>do not</strong> store your username or password.
+                        You can continue using the class search and calendar feature without giving up this information.</p>
+                    <p>The longer answer is that we use your login information to get a session token to access your account.
+                        This token is only used to access your cart, and doesn't give us access to anything else in MyCUInfo or anywhere else.
+                        The token expires after 2 hours, so if you don't use our site within that time frame you will have to resubmit your credentials.
+                        We do store your token in our databse so that if you come back while the token is still valid, you don't have to enter your credentials again.
+                        Again, you can continue using the class search and calendar feature without giving us your credentials, but you won't have access to your cart features.</p>
                 </div>
             </form>
             <div class="ui inverted segment" style="text-align:center;display:none;">
@@ -383,7 +594,7 @@
     <div class="ui modal google" style="width:35%;text-align:center;">
         <div class="header">Login to BuffPlanner</div>
         <div class="content">
-            You'll need to login with us before continuing.<br/>
+            You'll need to login with us before continuing.<br />
             <div class="ui blue button" onclick="handleLogin()">Login</div>
         </div>
     </div>

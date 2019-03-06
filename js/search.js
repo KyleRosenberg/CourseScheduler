@@ -27,6 +27,18 @@ $(document).ready(function(event) {
                 valid = true;
             }
         }
+        finputs = $('#advanced_search input')
+        for (let i = 0; i<finputs.length; i++){
+            inp = finputs[i]
+            if ($(inp).hasClass('search')) continue;
+            if (inp.name=='srcdb'){
+                srcdb = inp.value;
+                dat[inp.name] = inp.value;
+            }else if (inp.value!=''){
+                dat[inp.name] = inp.value;
+                valid = true;
+            }
+        }
         if (!valid) {
             alert('Search query cannot be blank');
             return;
@@ -59,6 +71,13 @@ $(document).ready(function(event) {
         on: 'hover',
         popup: '.disclaimer.popup',
         position: 'right center'
+    });
+    $('#show_advanced').popup({
+        inline: true,
+        popup: '#advanced_search',
+        on: 'click',
+        position: 'right center',
+        target: '.search_bar',
     });
 });
 
@@ -649,29 +668,12 @@ function showCULogin(action = console.log, params=null) {
         onApprove: function() {
             submitCULogin(action, params);
             return false;
-        },
-        onVisible: function(){
-            $('#disclaimer_link').popup({
-                inline: true,
-                on: 'click',
-                popup: '.disclaimer.popup',
-                position: 'bottom center',
-                setFluidWidth: true,
-                onVisible: function(){
-                    $(this).css({
-                        'top': '0',
-                        'left': '-50%',
-                        'bottom': 'auto',
-                        'right': 'auto',
-                        'display': 'block !important',
-                        'position': 'absolute',
-                        'width': '200%',
-                        'max-width': '500%'
-                    });
-                }
-            });
         }
     }).modal('show');
+}
+
+function showDisclaimer(){
+    $('.disclaimer').css('display', '');
 }
 
 function submitCULogin(action, params=null, showerror=true){
