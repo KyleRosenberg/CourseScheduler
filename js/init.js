@@ -2,6 +2,7 @@ var provider = new firebase.auth.GoogleAuthProvider();
 
 $(document).ready(function() {
    $('.ui.dropdown').dropdown();
+   $('.ui.accordion').accordion();
    $('.menu .item').tab();
    //$('.ui.sidebar').sidebar('toggle');
 
