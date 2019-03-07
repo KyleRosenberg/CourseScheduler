@@ -153,7 +153,9 @@ function getTimes(course) {
         'start': ind1 + off1 + 1,
         'end': ind2 + off2 + 1,
         'days': days,
-        'name': `${course.code} - ${course.section}`
+        'name': `${course.code} - ${course.section}`,
+        'code': course.code,
+        'crn': course.crn
     }
 }
 
@@ -180,7 +182,32 @@ function addClassToCalendar(course) {
             }
             if (i == times.start) {
                 cell.attr('rowspan', times.end - times.start);
-                cell.append(`<div class="event" style="--color:${rcol}">${times.name}</div>`)
+                cell.append(`<div class="event" style="--color:${rcol}" onclick="viewSection(${times.crn}, '${times.code}')">${times.name}</div>`)
+                $(cell).popup({
+                    html: `<h3>${times.code}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
+                    position: 'right center',
+                    on: 'click',
+                    target: '.search_bar',
+                    setFluidWidth: false,
+                    onShow: function() {
+                        $(this).css({
+                            'top': '0px',
+                            'max-width': '850px',
+                            'max-height': '100%',
+                            'overflow-y': 'scroll',
+                            'overflow-x': 'hidden'
+                        });
+                    },
+                    onVisible: function() {
+                        $(this).css({
+                            'top': '0px',
+                            'max-width': '850px',
+                            'max-height': '100%',
+                            'overflow-y': 'scroll',
+                            'overflow-x': 'hidden'
+                        });
+                    }
+                });
             } else {
                 cell.remove();
             }
@@ -379,6 +406,7 @@ function view_sections(i) {
         ind -= 1
     }
     crns = crns.slice(1)
+    if (!cart) curr_class = "";
     $.ajax({
         type: 'POST',
         url: '/search',
@@ -387,6 +415,23 @@ function view_sections(i) {
             'group': `code:${curr_class}`,
             'key': `crn:${class_list[last].crn}`,
             'matched': `crn:${crns}`,
+            'srcdb': srcdb
+        },
+        success: function(data) {
+            showDetails(data, !cart);
+        }
+    });
+}
+
+function viewSection(crn, code){
+    $.ajax({
+        type: 'POST',
+        url: '/search',
+        data: {
+            'type': 'view_sections',
+            'group': `code:${code}`,
+            'key': `crn:${crn}`,
+            'matched': `crn:${crn}`,
             'srcdb': srcdb
         },
         success: function(data) {
