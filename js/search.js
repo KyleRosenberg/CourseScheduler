@@ -440,7 +440,8 @@ function showDetails(data, showAll=false) {
         cart_class = false;
     }
     $('.ui.popup').children().remove();
-    $('#popup_temp').removeClass('active');
+    $('#popup_temp').remove();
+    $('#popup_temp').remove();
     data = JSON.parse(data)
     popup_html = `<h3>${data.code} - ${data.title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`;
     popup_html += `<a class="ui black left ribbon label">Last Updated: ${data.last_updated}</a><br/>`
@@ -538,7 +539,8 @@ function showDetails(data, showAll=false) {
         event.stopPropagation();
     })
     $('.ui.dropdown').dropdown();
-    $('#popup_temp').removeClass('active');
+    $('#popup_temp').remove();
+    $('#popup_temp').remove();
 }
 
 function removeFromCart(data){
