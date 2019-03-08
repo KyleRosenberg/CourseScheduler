@@ -249,8 +249,17 @@ body.pushable{
     top: 40px;
     text-align: center;
     width: 20%;
-    height: 100%;
     background-color: #e7e7e7;
+    overflow-y: scroll;
+
+    /* Firefox */
+    height: -moz-calc(100% - 40px)!important;
+    /* WebKit */
+    height: -webkit-calc(100% - 40px)!important;
+    /* Opera */
+    height: -o-calc(100% - 40px)!important;
+    /* Standard */
+    height: calc(100% - 40px)!important;
 }
 
 .event{
