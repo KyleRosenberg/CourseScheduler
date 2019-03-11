@@ -216,7 +216,6 @@ body.pushable{
     padding:0px;
     text-align: center;
     border-left: 1px solid rgba(34,36,38,.1);
-    height: 1%;
 }
 
 .ui.celled.table.calendar tr th{
@@ -283,4 +282,8 @@ body.pushable{
 
 .pusher{
     height:100%;
+}
+
+#cumap {
+    height: 100%;
 }

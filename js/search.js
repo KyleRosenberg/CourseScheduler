@@ -7,6 +7,8 @@ calendar_classes = {}
 
 cart = false;
 
+mymap = null;
+
 $(document).ready(function(event) {
     $('input[name=srcdb]').val(default_srcdb);
     $('#submit_search').click(function() {
@@ -79,6 +81,16 @@ $(document).ready(function(event) {
         position: 'right center',
         target: '.search_bar',
     });
+    mymap = L.map('cumap', {
+        center: [40.007581,-105.2681304],
+        zoom: 20
+    });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+    setTimeout(function(){
+        mymap.invalidateSize();
+    }, 1000);
 });
 
 function generateTable() {
