@@ -81,6 +81,9 @@ $(document).ready(function(event) {
         position: 'right center',
         target: '.search_bar',
     });
+    $('#time_input').calendar({
+        type: 'time'
+    });
     mymap = L.map('cumap', {
         center: [40.007581,-105.2681304],
         zoom: 20
