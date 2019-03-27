@@ -212,13 +212,13 @@ body.pushable{
     width: 80%;
 }
 
-.ui.celled.table.calendar tr td{
+.ui.celled.table.bpcalendar tr td{
     padding:0px;
     text-align: center;
     border-left: 1px solid rgba(34,36,38,.1);
 }
 
-.ui.celled.table.calendar tr th{
+.ui.celled.table.bpcalendar tr th{
     padding:2%;
     text-align: center;
     height:6%;

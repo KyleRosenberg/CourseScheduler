@@ -2,6 +2,8 @@ class_list = []
 default_srcdb = '2197';
 srcdb = default_srcdb;
 
+curr_edit = null;
+
 saved_classes = {}
 calendar_classes = {}
 
@@ -81,8 +83,52 @@ $(document).ready(function(event) {
         position: 'right center',
         target: '.search_bar',
     });
-    $('#time_input').calendar({
-        type: 'time'
+    $('.ccan').click(function(){
+        $('.create input').val('');
+        $('.modal.create .checkbox').checkbox('uncheck');
+        $('.ui.modal.create').modal('hide');
+    });
+    $('.csav').click(function(){
+        let title = $('#custom_title').val()
+        let st = $('#start_time input').val().replace(' ', '').toLowerCase()
+        let et = $('#end_time input').val().replace(' ', '').toLowerCase()
+        let t1 = timeToIndex(st)
+        let t2 = timeToIndex(et)
+        let ds = $('#custom_days').children()
+        let dvs = ['M', 'T', 'W', 'Th', 'F'];
+        let days = "";
+        for (var i = 0; i<ds.length; i++){
+        	if ($(ds[i].children[0]).checkbox('is checked')){
+                days += dvs[i];
+            }
+        }
+        if (days==""){
+            showError('Must include at least one day of the week.')
+            return false;
+        }
+        if (t1 >= t2){
+            showError('End time must be after start time and more than 5 minutes apart.')
+            return false;
+        }
+        let d = new Date();
+        let n = d.getTime();
+        if (curr_edit) {
+            n = curr_edit;
+            toggleShowCourse(saved_classes[curr_edit.toString()], true);
+        }
+        let course = {
+            'meeting_html': `<div>${days} ${st}-${et} in</div>`,
+            'code': title,
+            'hours_text': '',
+            'crn': n.toString(),
+            'section': ''
+        }
+        cs = JSON.stringify(course)
+        saved_classes[n.toString()] = cs
+        toggleShowCourse(cs, true);
+        $('.create input').val('');
+        $('.modal.create .checkbox').checkbox('uncheck');
+        $('.ui.modal.create').modal('hide');
     });
     mymap = L.map('cumap', {
         center: [40.007581,-105.2681304],
@@ -96,6 +142,22 @@ $(document).ready(function(event) {
     }, 1000);
 });
 
+function timeToIndex(t){
+    ind = 0;
+    off = 0;
+    if (t.search(':') > -1) {
+        ind += parseInt(t.substring(0, t.search(':'))) - 8;
+        off = Math.round(parseInt(t.substring(t.search(':') + 1, t.search('m') - 1)) / 15);
+    } else {
+        ind += parseInt(t.substring(0, t.search('m') - 1)) - 8;
+    }
+    if (ind < 4 && t.search('pm') > -1) {
+        ind += 12;
+    }
+    ind *= 4;
+    return ind + off + 1;
+}
+
 function generateTable() {
     let columns = 6;
     let rows = (10 + 12 - 8) * 4; //(9pm - 8pm)
@@ -108,7 +170,7 @@ function generateTable() {
         for (var c = 1; c < columns; c++) {
             $(row).append($.parseHTML(`<td name=${c}></td>`))
         }
-        $('.calendar').append(row)
+        $('.bpcalendar').append(row)
     }
 }
 
@@ -140,35 +202,15 @@ function getTimes(course) {
     t1 = time.substring(1, time.indexOf('-'))
     t2 = time.substring(time.indexOf('-') + 1)
 
-    ind1 = 0;
-    off1 = 0;
-    ind2 = 0;
-    off2 = 0;
-    if (t1.search(':') > -1) {
-        ind1 += parseInt(t1.substring(0, t1.search(':'))) - 8;
-        off1 = Math.round(parseInt(t1.substring(t1.search(':') + 1, t1.search('m') - 1)) / 15);
-    } else {
-        ind1 += parseInt(t1.substring(0, t1.search('m') - 1)) - 8;
-    }
-    if (t2.search(':') > -1) {
-        ind2 += parseInt(t2.substring(0, t2.search(':'))) - 8;
-        off2 = Math.round(parseInt(t2.substring(t2.search(':') + 1, t2.search('m') - 1)) / 15);
-    } else {
-        ind2 += parseInt(t2.substring(0, t2.search('m') - 1)) - 8;
-    }
-    if (ind1 < 4 && t1.search('pm') > -1) {
-        ind1 += 12;
-    }
-    if (ind2 < 4 && t2.search('pm') > -1) {
-        ind2 += 12;
-    }
-    ind1 *= 4;
-    ind2 *= 4;
+    ind1 = timeToIndex(t1);
+    ind2 = timeToIndex(t2);
+    name = course.code;
+    if (course.section != '') name += ` - ${course.section}`;
     return {
-        'start': ind1 + off1 + 1,
-        'end': ind2 + off2 + 1,
+        'start': ind1,
+        'end': ind2,
         'days': days,
-        'name': `${course.code} - ${course.section}`,
+        'name': name,
         'code': course.code,
         'crn': course.crn
     }
@@ -179,7 +221,7 @@ function addClassToCalendar(course) {
     times = getTimes(course);
     rcol = randomColor()
     for (i = times.start; i < times.end; i++) {
-        row = $('.calendar')[0].rows[i];
+        row = $('.bpcalendar')[0].rows[i];
         addOne = 0;
         for (j = 0; j < 5; j++) {
             if (days.charAt(j) == 0) {
@@ -198,31 +240,33 @@ function addClassToCalendar(course) {
             if (i == times.start) {
                 cell.attr('rowspan', times.end - times.start);
                 cell.append(`<div class="event" style="--color:${rcol}" onclick="viewSection(${times.crn}, '${times.code}')">${times.name}</div>`)
-                $(cell).popup({
-                    html: `<h3>${times.code}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
-                    position: 'right center',
-                    on: 'click',
-                    target: '.search_bar',
-                    setFluidWidth: false,
-                    onShow: function() {
-                        $(this).css({
-                            'top': '0px',
-                            'max-width': '850px',
-                            'max-height': '100%',
-                            'overflow-y': 'scroll',
-                            'overflow-x': 'hidden'
-                        });
-                    },
-                    onVisible: function() {
-                        $(this).css({
-                            'top': '0px',
-                            'max-width': '850px',
-                            'max-height': '100%',
-                            'overflow-y': 'scroll',
-                            'overflow-x': 'hidden'
-                        });
-                    }
-                });
+                if (times.crn.toString().length<=5){
+                    $(cell).popup({
+                        html: `<h3>${times.code}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
+                        position: 'right center',
+                        on: 'click',
+                        target: '.search_bar',
+                        setFluidWidth: false,
+                        onShow: function() {
+                            $(this).css({
+                                'top': '0px',
+                                'max-width': '850px',
+                                'max-height': '100%',
+                                'overflow-y': 'scroll',
+                                'overflow-x': 'hidden'
+                            });
+                        },
+                        onVisible: function() {
+                            $(this).css({
+                                'top': '0px',
+                                'max-width': '850px',
+                                'max-height': '100%',
+                                'overflow-y': 'scroll',
+                                'overflow-x': 'hidden'
+                            });
+                        }
+                    });
+                }
             } else {
                 cell.remove();
             }
@@ -234,7 +278,7 @@ function removeClassFromCalendar(course) {
     course = JSON.parse(course);
     times = getTimes(course);
     for (i = times.start; i < times.end; i++) {
-        row = $('.calendar')[0].rows[i];
+        row = $('.bpcalendar')[0].rows[i];
         addOne = 0;
         if ($(row.cells[0]).hasClass('warning')) {
             addOne = 1;
@@ -307,7 +351,7 @@ function fitsOnCalendar(course){
     course = JSON.parse(course);
     times = getTimes(course);
     for (i = times.start; i < times.end; i++) {
-        row = $('.calendar')[0].rows[i];
+        row = $('.bpcalendar')[0].rows[i];
         addOne = 0;
         for (j = 0; j < 5; j++) {
             if (days.charAt(j) == 0) {
@@ -439,6 +483,10 @@ function view_sections(i) {
 }
 
 function viewSection(crn, code){
+    if (crn.toString().length>5){
+        showCreate(crn);
+        return;
+    }
     $.ajax({
         type: 'POST',
         url: '/search',
@@ -715,6 +763,72 @@ function class_saved(id) {
         if (keys[i] == id.toString()) return true;
     }
     return false;
+}
+
+function showCreate(crn=null){
+    curr_edit = crn;
+    $('.ui.modal.create').modal({
+        closable: false
+    }).modal('show');
+    let minDate = new Date();
+    let maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(0);
+    maxDate.setHours(21);
+    maxDate.setMinutes(45);
+    $('#start_time').calendar({
+        type: 'time',
+        minDate:minDate,
+        maxDate:maxDate
+    });
+    minDate = new Date();
+    maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(15);
+    maxDate.setHours(22);
+    maxDate.setMinutes(0);
+    $('#end_time').calendar({
+        type: 'time',
+        minDate:minDate,
+        maxDate:maxDate
+    });
+    if (crn!=null){
+        crn = crn.toString()
+        if (crn in saved_classes){
+            course = saved_classes[crn]
+            course = JSON.parse(course)
+            ele = $(course.meeting_html)[0]
+            ele = ele.innerText
+            time = ele.substring(0, ele.indexOf(' in'));
+            if (time.search('F') > -1) {
+                time = time.replace('F', '')
+                $($('#custom_days .checkbox')[4]).checkbox('check')
+            }
+            if (time.search('Th') > -1) {
+                time = time.replace('Th', '')
+                $($('#custom_days .checkbox')[3]).checkbox('check')
+            }
+            if (time.search('W') > -1) {
+                time = time.replace('W', '')
+                $($('#custom_days .checkbox')[2]).checkbox('check')
+            }
+            if (time.search('T') > -1) {
+                time = time.replace('T', '')
+                $($('#custom_days .checkbox')[1]).checkbox('check')
+            }
+            if (time.search('M') > -1) {
+                time = time.replace('M', '')
+                $($('#custom_days .checkbox')[0]).checkbox('check')
+            }
+            t1 = time.substring(1, time.indexOf('-')).replace('AM', ' AM').replace('PM', ' PM')
+            t2 = time.substring(time.indexOf('-') + 1).replace('AM', ' AM').replace('PM', ' PM')
+            $('#custom_title').val(course.code)
+            $('#start_time input').val(t1)
+            $('#end_time input').val(t2)
+        } else {
+            showError('Please report this to the developers - this event is not known as a saved event.')
+        }
+    }
 }
 
 function showCULogin(action = console.log, params=null) {
