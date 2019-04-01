@@ -337,7 +337,12 @@ function toggleShowCourse(div, data = false) {
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
-            let fits = fitsOnCalendar(saved_classes[crn]);
+            let fits = false;
+            try {
+                fits = fitsOnCalendar(saved_classes[crn]);
+            } catch (e){
+                fits = false;
+            }
             if (fits) {
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
@@ -354,10 +359,11 @@ function fitsOnCalendar(course){
         row = $('.bpcalendar')[0].rows[i];
         addOne = 0;
         for (j = 0; j < 5; j++) {
-            if (days.charAt(j) == 0) {
+            if (times.days.charAt(j) == 0) {
                 continue;
             }
-            var cell;
+            let cellk;
+            let found_cell = true;
             for (k = 0; k < row.cells.length; k++) {
                 cellk = $(row.cells[k]);
                 if (cellk.attr('name') == (j + 1).toString()) {
@@ -368,6 +374,7 @@ function fitsOnCalendar(course){
                     continue;
                 }
             }
+            if (!found_cell) return false;
         }
     }
     return true;
