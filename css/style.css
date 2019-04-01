@@ -212,14 +212,14 @@ body.pushable{
     width: 80%;
 }
 
-.ui.celled.table.calendar tr td{
+.ui.celled.table.bpcalendar tr td{
     padding:0px;
     text-align: center;
     border-left: 1px solid rgba(34,36,38,.1);
-    height: 1%;
+    height:1%; 
 }
 
-.ui.celled.table.calendar tr th{
+.ui.celled.table.bpcalendar tr th{
     padding:2%;
     text-align: center;
     height:6%;
@@ -249,8 +249,17 @@ body.pushable{
     top: 40px;
     text-align: center;
     width: 20%;
-    height: 100%;
     background-color: #e7e7e7;
+    overflow-y: scroll;
+
+    /* Firefox */
+    height: -moz-calc(100% - 40px)!important;
+    /* WebKit */
+    height: -webkit-calc(100% - 40px)!important;
+    /* Opera */
+    height: -o-calc(100% - 40px)!important;
+    /* Standard */
+    height: calc(100% - 40px)!important;
 }
 
 .event{
@@ -274,4 +283,8 @@ body.pushable{
 
 .pusher{
     height:100%;
+}
+
+#cumap {
+    height: 100%;
 }

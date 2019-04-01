@@ -12,19 +12,53 @@
 
     {{ navbar }}
 
-    <div class="ui grid">
-        <div class="five wide column"></div>
-        <div class="six wide column">
-            <div>
-                <div id="main_header">Contact</div>
-                <br/>
-                <p>Questions, comments, or concerns? Feel free to check out the source code over at
-                    <a target="_blank" href="https://github.com/KyleRosenberg/CourseScheduler">our GitHub repo</a>,
-                    follow us on twitter <a target="_blank" href="https://twitter.com/BuffPlanner">@BuffPlanner</a>,
-                    or send an email my way at <a href="mailto:kyle@buffplanner.com">kyle@buffplanner.com</a>.</p>
-            </div>
+    <h3 style="color:white;">Have a question or issue that isn’t addressed here? Feel free to email us at support@buffplanner.com or message us on Twitter @BuffPlanner.</h3>
+
+    </strong>
+
+    <div style="width:80%;left:10%;position:absolute;" class="ui styled fluid accordion">
+        <div class="title">
+            <i class="icon dropdown"></i>
+            How do I view a class on the calendar?
         </div>
-        <div class="five wide column">
+        <div class="content">
+            <p>After completing a search click on <strong>View Sections</strong> for the course you want to explore. Click the checkbox to the left of the section(s) you want to view and it should appear on the calendar. If it does not, this means class conflicts with one that is already displayed on the calendar, but it will still appear under <strong>Saved Classes</strong>.</p>
+        </div>
+        <div class="title">
+            <i class="icon dropdown"></i>
+            How do I save classes for later?
+        </div>
+        <div class="content">
+            <p>Make sure you are logged in by clicking the <strong>Log In</strong> button at the top right corner of the screen. Once you have added the classes you want to save for later hit the </strong>Save for Later</strong> button at the bottom of the <strong>Saved Classes section</strong>. If you do not save for later then the classes will only be saved until you leave the site.</p>
+        </div>
+        <div class="title">
+            <i class="icon dropdown"></i>
+            How do I see the classes currently in my MyCUInfo cart?
+        </div>
+        <div class="content">
+            <p>Click on the the <strong>My Cart</strong> button in the search section. If you have not done so yet, log in to MyCUInfo using your Identikey. Once you have logged in, the classes currently in your MyCUInfo cart will appear in the left column whenever you click on <strong>My Cart</strong>.</p>
+        </div>
+        <div class="title">
+            <i class="icon dropdown"></i>
+            How do I add classes to my MyCUInfo cart?
+        </div>
+        <div class="content">
+            <p>Make sure you are logged in to MyCUInfo by clicking <strong>My Cart</strong>. If you are not asked to log in, this means you are already logged in. Once you have found a class you want to add to your cart through the search function, check the <strong>Saved</strong> box next to the section you want to add, and then click <strong>Add to Cart</strong>. The class will appear when you click <strong>My Cart</strong> and will also be in your cart in MyCUInfo when you log in.</p>
+        </div>
+        <div class="title">
+            <i class="icon dropdown"></i>
+            How do I remove classes from my MyCUInfo cart?
+        </div>
+        <div class="content">
+            <p>Make sure you are logged in to MyCUInfo by clicking <strong>My Cart</strong>. If the classes in your cart appear below the search area, this means you are already logged in. Select the class you want to remove from your cart, check the box next to the section you want removed, and then click <strong>Remove From Cart</strong>. When you log in to MyCUInfo you will no longer see this class in your cart.</p>
+        </div>
+        <div class="title">
+            <i class="icon dropdown"></i>
+            Why do you need my IdentiKey and what do you do with it?
+        </div>
+        <div class="content">
+            <p>The simple answer is we need your Identikey information in order to view and add/remove classes from your cart in CU's system. We <strong>do not</strong> store your username or password. If you prefer, you can continue using the class search and calendar feature without giving up this information.</p>
+            <p>The longer answer is that we use your login information to get a session token to access your account. This token is only used to access your cart, and doesn't give us access to anything else in MyCUInfo or anywhere else. The token expires after 2 hours, so if you don't use our site within that time frame you will have to resubmit your credentials. We do store your token in our database so that if you come back while the token is still valid, you don't have to enter your credentials again. Again, you can continue using the class search and calendar feature without giving us your credentials, but you won't have access to your cart features.</p>
         </div>
     </div>
 

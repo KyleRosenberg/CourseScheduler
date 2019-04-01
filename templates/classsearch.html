@@ -5,6 +5,15 @@
 
     {{ headers }}
 
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin="">
+    </script>
     <script src="js/randomColor.js"></script>
     <script src="js/search.js"></script>
 
@@ -15,9 +24,13 @@
 
     {{ navbar }}
 
-    <div class="ui right sidebar">
+    <div class="ui right sidebar" style="overflow-y:scroll;">
         <div class="search_head">
             <h2>Saved Courses</h2>
+        </div>
+        <br/>
+        <div class="ui button" id="custom_button" onclick="showCreate()">
+            Create Custom <i class="plus icon"></i>
         </div>
         <div id="save_display" class="ui middle aligned divided list">
             <div class="ui text loader">Loading saved sections...</div>
@@ -531,7 +544,7 @@
                 <a class="item" data-tab="second">Map View</a>
             </div>
             <div class="ui bottom attached active tab segment" data-tab="first" style="height:90%;">
-                <table class="ui yellow celled table calendar" id="fixedheight" style="height:100%;width:100%;">
+                <table class="ui yellow celled table bpcalendar" id="fixedheight" style="height:100%;width:100%;">
                     <col width="10%">
                     <col width="18%">
                     <col width="18%">
@@ -554,7 +567,9 @@
                 </table>
             </div>
             <div class="ui bottom attached tab segment" data-tab="second" style="height:90%;">
-                Coming Soon <i class="trademark icon"></i>
+                <div id="cumap">
+
+                </div>
             </div>
         </div>
     </div>
@@ -599,7 +614,64 @@
             <div class="ui blue button" onclick="handleLogin()">Login</div>
         </div>
     </div>
-
+    <div class="ui modal create" style="width:50%;text-align:center;">
+        <div class="header">Custom Event</div>
+        <div class="content">
+            <div class="ui input">
+                <input type="text" placeholder="Title" id="custom_title" maxlength=12>
+            </div>
+            <div class="ui calendar" id="start_time">
+                <div class="ui input left icon">
+                    <i class="time icon"></i>
+                    <input type="text" placeholder="Start Time">
+                </div>
+            </div>
+            <div class="ui calendar" id="end_time">
+                <div class="ui input left icon">
+                    <i class="time icon"></i>
+                    <input type="text" placeholder="End Time">
+                </div>
+            </div>
+            <div class="ui five column center aligned stackable divided grid segment" id="custom_days">
+                <div class="column">
+                    <div class="ui checkbox">
+                        <input type="checkbox">
+                        <label>Monday</label>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui checkbox">
+                        <input type="checkbox">
+                        <label>Tuesday</label>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui checkbox">
+                        <input type="checkbox">
+                        <label>Wednesday</label>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui checkbox">
+                        <input type="checkbox">
+                        <label>Thursday</label>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui checkbox">
+                        <input type="checkbox">
+                        <label>Friday</label>
+                    </div>
+                </div>
+            </div>
+            <button class="ui disabled negative button cdel">Delete</button>
+            <div class="ui buttons">
+                <button class="ui negative button ccan">Cancel</button>
+                <div class="or"></div>
+                <button class="ui positive button csav">Save</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

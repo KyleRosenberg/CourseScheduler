@@ -177,7 +177,7 @@ def loadsect():
 def favicon():
     return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/contact')
+@app.route('/help')
 @gzipped
 def contact():
     navbar = ""
