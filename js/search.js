@@ -137,9 +137,11 @@ $(document).ready(function(event) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mymap);
-    setTimeout(function(){
-        mymap.invalidateSize();
-    }, 1000);
+    $(".top.menu .item[data-tab='second']").tab({
+        'onVisible':function(){
+            mymap.invalidateSize();
+        }
+    });
 });
 
 function timeToIndex(t){
