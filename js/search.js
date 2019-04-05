@@ -11,6 +11,11 @@ cart = false;
 
 mymap = null;
 
+height = 0
+rows = 0
+row_height = 0
+time_height = 0
+
 $(document).ready(function(event) {
     $('input[name=srcdb]').val(default_srcdb);
     $('#submit_search').click(function() {
@@ -174,6 +179,12 @@ function generateTable() {
         }
         $('.bpcalendar').append(row)
     }
+    height = $('#fixedheight').height()
+    rows = $('#fixedheight tr')
+    row_height = (height-30)/(rows.length-1)
+    time_height = (height-30)/((rows.length-1)/4)
+    $('#fixedheight td').attr('height', Math.floor(row_height));
+    $('#fixedheight td warning').attr('height', Math.floor(row_height));
 }
 
 function getTimes(course) {
@@ -274,6 +285,8 @@ function addClassToCalendar(course) {
             }
         }
     }
+    $('#fixedheight td').attr('height', Math.floor(row_height));
+    $('#fixedheight td warning').attr('height', Math.floor(row_height));
 }
 
 function removeClassFromCalendar(course) {
@@ -326,6 +339,8 @@ function removeClassFromCalendar(course) {
             }
         }
     }
+    $('#fixedheight td').attr('height', Math.floor(row_height));
+    $('#fixedheight td warning').attr('height', Math.floor(row_height));
 }
 
 function toggleShowCourse(div, data = false) {
