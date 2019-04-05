@@ -184,7 +184,7 @@ function generateTable() {
     row_height = (height-30)/(rows.length-1)
     time_height = (height-30)/((rows.length-1)/4)
     $('#fixedheight td').attr('height', Math.floor(row_height));
-    $('#fixedheight td warning').attr('height', Math.floor(row_height));
+    $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
 function getTimes(course) {
@@ -286,7 +286,7 @@ function addClassToCalendar(course) {
         }
     }
     $('#fixedheight td').attr('height', Math.floor(row_height));
-    $('#fixedheight td warning').attr('height', Math.floor(row_height));
+    $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
 function removeClassFromCalendar(course) {
@@ -340,7 +340,7 @@ function removeClassFromCalendar(course) {
         }
     }
     $('#fixedheight td').attr('height', Math.floor(row_height));
-    $('#fixedheight td warning').attr('height', Math.floor(row_height));
+    $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
 function toggleShowCourse(div, data = false) {
