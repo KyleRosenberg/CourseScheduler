@@ -7,7 +7,7 @@ class CourseGrabber:
     def __init__(self):
         pass
 
-    def doSearch(self, fields, semester="2191"):
+    def doSearch(self, fields, semester="2197"):
         url = "https://classes.colorado.edu/api/"
         querystring = {"page":"fose","route":"search"}
         headers = {

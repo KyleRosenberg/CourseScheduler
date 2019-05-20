@@ -212,31 +212,31 @@ body.pushable{
     width: 80%;
 }
 
+.ui.celled.table.bpcalendar thead{
+    height:30px;
+}
+
+.ui.celled.table.bpcalendar tbody{
+    position:relative;
+}
+
+.ui.celled.table.bpcalendar thead tr{
+    height:30px;
+}
+
 .ui.celled.table.bpcalendar tr td{
     padding:0px;
     text-align: center;
     border-left: 1px solid rgba(34,36,38,.1);
-    height:1%; 
 }
 
 .ui.celled.table.bpcalendar tr th{
-    padding:2%;
+    padding:0px;
     text-align: center;
-    height:6%;
 }
 
 #fixedheight {
     table-layout: fixed;
-}
-
-#fixedheight td{
-    line-height: 25%;
-    overflow: hidden;
-}
-
-#fixedheight th{
-    line-height: 25%;
-    overflow: hidden;
 }
 
 #course_item{

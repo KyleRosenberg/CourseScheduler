@@ -11,6 +11,11 @@ cart = false;
 
 mymap = null;
 
+height = 0
+rows = 0
+row_height = 0
+time_height = 0
+
 $(document).ready(function(event) {
     $('input[name=srcdb]').val(default_srcdb);
     $('#submit_search').click(function() {
@@ -174,6 +179,12 @@ function generateTable() {
         }
         $('.bpcalendar').append(row)
     }
+    height = $('#fixedheight').height()
+    rows = $('#fixedheight tr')
+    row_height = (height-30)/(rows.length-1)
+    time_height = (height-30)/((rows.length-1)/4)
+    $('#fixedheight td').attr('height', Math.floor(row_height));
+    $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
 function getTimes(course) {
@@ -274,6 +285,8 @@ function addClassToCalendar(course) {
             }
         }
     }
+    $('#fixedheight td').attr('height', Math.floor(row_height));
+    $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
 function removeClassFromCalendar(course) {
@@ -326,6 +339,8 @@ function removeClassFromCalendar(course) {
             }
         }
     }
+    $('#fixedheight td').attr('height', Math.floor(row_height));
+    $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
 function toggleShowCourse(div, data = false) {
@@ -573,7 +588,7 @@ function showDetails(data, showAll=false) {
     popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
     popup_html += `<span class="info_head">Schedule and Location</span> <p>${data.meeting_html}</p>`;
     popup_html += `<span class="info_head">Instructors</span> <p>${data.instructordetail_html}</p>`;
-    bad_section_element = $.parseHTML(data.all_sections);
+    bad_section_element = $.parseHTML(data.all_sections)[0];
     headers = $($(bad_section_element).children()[0]).children();
     table = '<table class="ui selectable celled table"><thead><tr><th>Saved</th>'
     for (let j = 0; j < headers.length; j++) {
