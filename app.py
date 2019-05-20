@@ -17,6 +17,12 @@ app.secret_key = os.environ.get('flask_key')
 
 fa = FirebaseAuth()
 cg = CourseGrabber()
+def open_template(file):
+    try:
+        with open(file, 'r') as f:
+            return Markup(f.read())
+    except:
+        return "Error loading template %s" % file
 
 def gzipped(f):
     @functools.wraps(f)
@@ -193,9 +199,9 @@ def contact():
         headers=Markup(headers)
     )
 
-@app.route('/')
+@app.route('/grades', methods=['GET'])
 @gzipped
-def default():
+def display_grades():
     navbar = ""
     headers = ""
     with open('templates/navbar.html', 'r') as f:
@@ -204,6 +210,21 @@ def default():
         headers = f.read()
     if navbar=="" or headers=="":
         return "Something went wrong"
+    return render_template('grades.html',
+        navbar=Markup(navbar),
+        headers=Markup(headers)
+    )
+
+@app.route('/grades', methods=['POST'])
+@gzipped
+def activate_grades():
+    return "Coming soon"
+
+@app.route('/')
+@gzipped
+def default():
+    headers = open_template('templates/headers.html')
+    navbar = open_template('templates/navbar.html')
     return render_template('index.html',
         navbar=Markup(navbar),
         headers=Markup(headers)
