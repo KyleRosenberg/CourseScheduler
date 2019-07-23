@@ -10,11 +10,14 @@ calendar_classes = {}
 cart = false;
 
 mymap = null;
+geocoder = null;
+control = null;
 
 height = 0
 rows = 0
 row_height = 0
 time_height = 0
+
 
 $(document).ready(function(event) {
     $('input[name=srcdb]').val(default_srcdb);
@@ -142,6 +145,7 @@ $(document).ready(function(event) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mymap);
+    geocoder = L.Control.Geocoder.nominatim();
     $(".top.menu .item[data-tab='second']").tab({
         'onVisible':function(){
             mymap.invalidateSize();
@@ -219,13 +223,16 @@ function getTimes(course) {
     ind2 = timeToIndex(t2);
     name = course.code;
     if (course.section != '') name += ` - ${course.section}`;
+    url = $(course.meeting_html).find("a").attr("href");
+    bld = url.substring(url.lastIndexOf("=")+1)
     return {
         'start': ind1,
         'end': ind2,
         'days': days,
         'name': name,
         'code': course.code,
-        'crn': course.crn
+        'crn': course.crn,
+        'bldgname': bld
     }
 }
 
@@ -343,6 +350,36 @@ function removeClassFromCalendar(course) {
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
+function addClassToMap(course){
+    c = JSON.parse(course)
+    times = getTimes(c);
+    $.ajax({
+        type: 'POST',
+        url: '/building',
+        data: {
+            'name': times.bldgname
+        },
+        success: function(data) {
+            console.log(data);
+            geocoder.geocode(data, function(result){
+                if (result.length==0){
+                    showError(`OpenStreetMap is bad and couldn't find the address ${data}. Sorry :(`);
+                    return;
+                }
+                coords = result[0].center;
+                L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`,{
+                    permanent: true,
+                    direction: 'right'
+                }).addTo(mymap);
+            });
+        }
+    });
+}
+
+function removeClassFromMap(course){
+    //TODO: Implement
+}
+
 function toggleShowCourse(div, data = false) {
     if (data) {
         crn = JSON.parse(div).crn;
@@ -351,6 +388,7 @@ function toggleShowCourse(div, data = false) {
     }
     if (crn in calendar_classes) {
         removeClassFromCalendar(calendar_classes[crn]);
+        removeClassFromMap(calendar_classes[crn]);
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
@@ -358,6 +396,7 @@ function toggleShowCourse(div, data = false) {
             if (fits) {
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
+                addClassToMap(saved_classes[crn]);
             }
         }
     }
@@ -1087,6 +1126,29 @@ function toggleSaveCourse(course) {
     }
 }
 
+function buildCourseName(v){
+    code = v.code;
+    if (v.hours_text.includes('Lec')) {
+        code += ' - LEC';
+    } else if (v.hours_text.includes('Rec')) {
+        code += ' - REC';
+    } else if (v.hours_text.includes('Lab')) {
+        code += ' - LAB';
+    } else if (v.hours_text.includes('Sem')) {
+        code += ' - SEM';
+    } else if (v.hours_text.includes('Pra')) {
+        code += ' - PRA';
+    }
+    return code;
+}
+
+function buildCourseTime(v){
+    ele = $(v.meeting_html)[0]
+    ele = ele.innerText
+    time = ele.substring(0, ele.indexOf(' in'));
+    return time;
+}
+
 function updateCourseList() {
     dis = $('#save_display');
     dis.children().remove()
@@ -1098,21 +1160,8 @@ function updateCourseList() {
     sorted.sort();
     for (var s in sorted) {
         v = JSON.parse(saved_classes[sorted[s]]);
-        code = v.code;
-        if (v.hours_text.includes('Lec')) {
-            code += ' - LEC';
-        } else if (v.hours_text.includes('Rec')) {
-            code += ' - REC';
-        } else if (v.hours_text.includes('Lab')) {
-            code += ' - LAB';
-        } else if (v.hours_text.includes('Sem')) {
-            code += ' - SEM';
-        } else if (v.hours_text.includes('Pra')) {
-            code += ' - PRA';
-        }
-        ele = $(v.meeting_html)[0]
-        ele = ele.innerText
-        time = ele.substring(0, ele.indexOf(' in'));
+        code = buildCourseName(v)
+        time = buildCourseTime(v);
         html = $(`<div class="item" style="padding:3px;"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
             Toggle</div></div><div id="course_item" class="ui label" style="padding:1px;padding-top:10px;">${code}
             <div class="detail">${time}</div></div></div>`);

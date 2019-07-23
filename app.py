@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template, send_file, send_from_directory, session, Markup, after_this_request
 from cucourses import CourseGrabber
 from users import FirebaseAuth
+from cubuildings import BuildingGrabber
 from io import BytesIO as IO
 import gzip
 import functools
@@ -17,6 +18,8 @@ app.secret_key = os.environ.get('flask_key')
 
 fa = FirebaseAuth()
 cg = CourseGrabber()
+bg = BuildingGrabber()
+
 def open_template(file):
     try:
         with open(file, 'r') as f:
@@ -177,6 +180,11 @@ def loadsect():
             print(e)
             return "Something went wrong"
     return "Unauthorized"
+
+@app.route('/building', methods=['POST'])
+def building():
+    address = bg.getAddressFromCode(request.form['name'])
+    return address
 
 @app.route('/favicon.ico')
 @gzipped
