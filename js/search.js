@@ -360,7 +360,6 @@ function addClassToMap(course){
             'name': times.bldgname
         },
         success: function(data) {
-            console.log(data);
             geocoder.geocode(data, function(result){
                 if (result.length==0){
                     showError(`OpenStreetMap is bad and couldn't find the address ${data}. Sorry :(`);
@@ -434,56 +433,25 @@ function proc_keyword_data(data) {
     if (data == "Unauthorized") {
         return;
     }
-    data = JSON.parse(data)
-    if (data.count <= 0) {
+    data = JSON.parse(data);
+    class_list = data;
+    if (data.length <= 0) {
         alert('No results.')
         $('.search_results .loader').removeClass('active');
         return;
     }
-    class_list = data.results;
     $('.search_results .ui.cards').empty();
-    var i = 0;
-    curr_class = class_list[0].code;
-    while (i < class_list.length) {
-        counts = {}
-        curr_class = class_list[i].code;
-        curr_title = class_list[i].title
-        while (i < class_list.length && class_list[i].code == curr_class) {
-            key = class_list[i].schd
-            if (key in counts) {
-                counts[key] += 1
-            } else {
-                counts[key] = 1
-            }
-            i += 1
-        }
-        //Build card
-        card_html = `<div class="card"><div class="content"><div class="header">${curr_class}</div>`;
-        card_html += `<div class="description">${class_list[i-1].title}</div>`;
+    for (let i = 0; i<data.length; i++){
+        card_html = `<div class="card"><div class="content"><div class="header">${data[i].code}</div>`;
+        card_html += `<div class="description">${data[i].title}</div>`;
         card_html += `<br/>`
         card_html += '<div class="meta">';
-        //TODO: Implement better code mapping
-        if ('LEC' in counts) {
-            card_html += `${counts['LEC']} lectures, `
-        }
-        if ('REC' in counts) {
-            card_html += `${counts['REC']} recitations, `
-        }
-        if ('LAB' in counts) {
-            card_html += `${counts['LAB']} labratories, `
-        }
-        if ('SEM' in counts) {
-            card_html += `${counts['SEM']} seminars, `
-        }
-        if ('PRA' in counts) {
-            card_html += `${counts['PRA']} practicums, `
-        }
-        card_html = card_html.slice(0, -2);
+        card_html += data[i].meeting_types;
         card_html += `</div></div><div class="ui bottom attached button" onclick="view_sections(${i})">View Sections</div></div>`
         card = $.parseHTML(card_html)
         $('.search_results .ui.cards').append(card)
         $(card).popup({
-            html: `<h3>${curr_class} - ${curr_title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
+            html: `<h3>${data[i].code} - ${data[i].title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
             position: 'right center',
             on: 'click',
             target: '.search_bar',
@@ -512,15 +480,9 @@ function proc_keyword_data(data) {
 }
 
 function view_sections(i) {
-    last = i - 1
-    curr_class = class_list[last].code
-    crns = ''
-    ind = last
-    while (ind >= 0 && class_list[ind].code == curr_class) {
-        crns = ',' + class_list[ind].crn + crns
-        ind -= 1
-    }
-    crns = crns.slice(1)
+    curr_class = class_list[i].code
+    crns = class_list[i].crns
+    onecrn = crns.substring(0, crns.indexOf(','));
     if (!cart) curr_class = "";
     $.ajax({
         type: 'POST',
@@ -528,7 +490,7 @@ function view_sections(i) {
         data: {
             'type': 'view_sections',
             'group': `code:${curr_class}`,
-            'key': `crn:${class_list[last].crn}`,
+            'key': `crn:${onecrn}`,
             'matched': `crn:${crns}`,
             'srcdb': srcdb
         },

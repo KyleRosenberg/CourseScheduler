@@ -5,7 +5,13 @@ import json
 class CourseGrabber:
 
     def __init__(self):
-        pass
+        self.MEETING_TYPES = {
+            'LEC': ['lecture', 'lectures'],
+            'REC': ['recitation', 'recitations'],
+            'LAB': ['labratory', 'labratories'],
+            'SEM': ['seminar', 'seminars'],
+            'PRA': ['practicum', 'practicums']
+        }
 
     def doSearch(self, fields, semester="2197"):
         url = "https://classes.colorado.edu/api/"
@@ -29,7 +35,47 @@ class CourseGrabber:
             "criteria": c
         }
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
-        return r.text
+        return self.cleanSearch(r.text)
+
+    def cleanSearch(self, results):
+        big_dict = json.loads(results)
+        small_ret = []
+        if (big_dict['count']==0):
+            return results
+        i = 0
+        while i < len(big_dict['results']):
+            c = big_dict['results'][i]
+            curr_code = c['code']
+            newC = {
+                'code': curr_code, #CSCI 1300
+                'title': c['title'], #Computer Science 1: Intro to Computing
+            }
+            counts = {}
+            j = i
+            crns = ''
+            while j<len(big_dict['results']) and big_dict['results'][j]['code']==curr_code:
+                nc = big_dict['results'][j]
+                crns += nc['crn'] + ','
+                if nc['schd'] in counts:
+                    counts[nc['schd']] += 1
+                else:
+                    counts[nc['schd']] = 1
+                j+=1
+            meeting_types_display = ''
+            for k in self.MEETING_TYPES: #1 lecture, 2 recitations
+                if k in counts:
+                    poss = self.MEETING_TYPES[k]
+                    if counts[k]==1:
+                        meeting_types_display += '1 ' + poss[0]
+                    else:
+                        meeting_types_display += str(counts[k]) + ' ' + poss[1]
+                    meeting_types_display += ', '
+            meeting_types_display = meeting_types_display[0:-2]
+            newC['meeting_types'] = meeting_types_display
+            newC['crns'] = crns #12345, 12346, 12347,
+            small_ret.append(newC)
+            i = j
+        return json.dumps(small_ret)
 
     def getSections(self, fields):
         url = "https://classes.colorado.edu/api/"
