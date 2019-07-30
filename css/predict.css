@@ -1,0 +1,19 @@
+.search_bar{
+    height:100%;
+    width:20%;
+    background-color: #E7E7E7;
+    float:left;
+    text-align:center;
+}
+
+.completed_courses{
+    float:right;
+}
+
+.add .content .ui.input, .add .content .ui.dropdown{
+    width:20%;
+}
+
+.add .content{
+    overflow-y: scroll;
+}
