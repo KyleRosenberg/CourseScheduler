@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    {{ headers }}
+    <link rel="stylesheet" type="text/css" href="css/predict.css">
+    <script src="js/common.js"></script>
+    <script src="js/predict.js"></script>
+
+    <title>Predict</title>
+</head>
+
+<body>
+
+    {{ navbar }}
+
+    <div class="ui search_bar saved_courses" style="overflow-y:scroll;text-align:center;">
+        <div class="search_head">
+            <h2>Saved Courses</h2>
+        </div>
+        <br/>
+        <div id="save_display" class="ui middle aligned divided list">
+            <div class="ui text loader">Loading saved sections...</div>
+        </div>
+    </div>
+
+    <div class="main_view">
+        <button class="ui large button" onclick="tempPredict()">PREDICT</button>
+    </div>
+
+    <div class="ui search_bar completed_courses" style="overflow-y:scroll;text-align:center;">
+        <div class="search_head">
+            <h2>Completed Courses</h2>
+        </div>
+        <br/>
+        <div class="ui button" id="custom_button" onclick="showAdd()">
+            Add <i class="plus icon"></i>
+        </div>
+        <div id="old_display" class="ui middle aligned divided list">
+            <div class="ui text loader">Loading completed courses...</div>
+        </div>
+        <div class="ui button" id="save_button">
+            Save for Later <i class="save icon"></i>
+        </div>
+    </div>
+    <div class="ui modal add" style="width:50%;text-align:center;">
+        <div class="header">Find Course</div>
+        <div class="content">
+            <div class="ui input">
+                <input type="text" placeholder="Subject" id="subject" maxlength=4>
+            </div>
+            <div class="ui input">
+                <input type="number" placeholder="Course" id="course" min="1000" max="9999">
+            </div>
+            <br/>
+            <div class="ui selection dropdown">
+                <input type="hidden" id="term">
+                <div style="color:#000;" class="default text">Choose Term</div>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="item" data-value="Spring">
+                        Spring
+                    </div>
+                    <div class="item" data-value="Summer">
+                        Summer
+                    </div>
+                    <div class="item" data-value="Fall">
+                        Fall
+                    </div>
+                </div>
+            </div>
+            <div class="ui calendar" id="year_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input type="text" placeholder="Year">
+                </div>
+            </div>
+            <div class="ui input">
+                <input type="text" placeholder="Grade" id="grade" maxlength=2>
+            </div>
+            <br/>
+            <div class="ui buttons">
+                <button class="ui negative button ccan">Cancel</button>
+                <div class="or"></div>
+                <button class="ui positive button csav">Search</button>
+            </div>
+            <br/>
+            <div id="predict_results">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

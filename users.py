@@ -134,3 +134,29 @@ class FirebaseAuth:
         except Exception as e:
             print(e)
             return "Something went wrong"
+
+    def loadOldList(self, uid):
+        cur = self.conn.cursor()
+        cur.execute('SELECT * FROM old_courses WHERE uid=%s', [uid])
+        try:
+            res = cur.fetchall()
+            self.conn.commit()
+            ret = [{'Term':r[1], 'Year':r[2], 'Subject':r[3], 'Course':r[4], 'Section':r[5], 'Instructor_Name':r[6], 'Grade':r[7]} for r in res]
+            return ret
+        except Exception as e:
+            print(e)
+            return "Something went wrong"
+
+    def saveOldList(self, uid, saved):
+        saved = json.loads(saved)
+        cur = self.conn.cursor()
+        cur.execute('DELETE FROM old_courses WHERE uid=%s', [uid])
+        self.conn.commit()
+        for s in saved:
+            self.addCourseToSaved(uid, s)
+
+    def addCourseToSaved(self, uid, course):
+        cur = self.conn.cursor()
+        cur.execute('INSERT INTO old_courses (uid, term, year, subject, course, section, instructor, grade) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)',
+                    [uid, course['term'], course['year'], course['subject'], course['course'], course['section'], course['instructor'], course['grade']])
+        self.conn.commit()
