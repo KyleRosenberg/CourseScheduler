@@ -196,7 +196,7 @@ function tempPredict(){
                 data = JSON.parse(data);
 
                 for (let i = 0; i<data.length; i++){
-                    $('.main_view').append(`<p>${data[i].code}: ${data[i].prediction}</p>`);
+                    $('.main_view').append(`<br/><img src="data:image/png;base64, ${data[i].prediction}" alt="Something went wrong lol"/>`);
                 }
             },
             error: function(xhr, st, er){

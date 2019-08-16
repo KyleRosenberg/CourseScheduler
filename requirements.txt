@@ -5,6 +5,8 @@ google-api-core==1.7.0
 google-auth==1.6.2
 gunicorn==19.9.0
 jsonschema==2.6.0
+matplotlib==2.2.2
+numpy==1.14.3
 pandas==0.23.0
 psycopg2==2.7.6.1
 requests==2.21.0
