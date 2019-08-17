@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 from flask import Flask, jsonify, request, render_template, send_file, send_from_directory, session, Markup, after_this_request
 from cucourses import CourseGrabber
 from users import FirebaseAuth
@@ -6,9 +9,6 @@ from cufcq import FCQAnalyzer
 from io import BytesIO as IO
 import gzip
 import functools
-
-import matplotlib
-matplotlib.use('Agg')
 
 import os
 import threading
