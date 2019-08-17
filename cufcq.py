@@ -2,6 +2,8 @@ import pandas as pd
 import statsmodels.api as sm
 import scipy.stats as stats
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -73,13 +75,13 @@ class FCQAnalyzer:
         resultL = model.predict(dfTargetL)
         dfTargetH = pd.DataFrame(toPredict[2], index=[0])
         resultH = model.predict(dfTargetH)
-        return self.getDistributionGraph(resultM, resultL, resultH, model.bse.mean(), cls)
+        return self.getDistributionGraph(resultM, resultL, resultH, model.bse.sum(), cls)
 
     def getDistributionGraph(self, median, lq, uq, std, cls):
         plt.clf()
         median = min(max(0, median[0]), 100)
-        lower = min(max(0, median - std), 100)
-        upper = min(max(0, median + std), 100)
+        lower = min(max(0, median - 3*std), 100)
+        upper = min(max(0, median + 3*std), 100)
         x = np.linspace(lower, upper, 1000)
         y = stats.norm.pdf(x, median, std)
         plt.plot(x, y)
