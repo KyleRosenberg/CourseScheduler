@@ -7,6 +7,9 @@ from io import BytesIO as IO
 import gzip
 import functools
 
+import matplotlib
+matplotlib.use('Agg')
+
 import os
 import threading
 import json
