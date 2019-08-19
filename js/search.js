@@ -154,7 +154,10 @@ $(document).ready(function(event) {
 });
 
 function getShareableLink(){
-    let param = `c=${JSON.stringify(calendar_classes)}`;
+    let cal_string = JSON.stringify(calendar_classes);
+    cal_string.replace(/&amp;/g, "&");
+    console.log(cal_string);
+    let param = `c=${encodeURIComponent(cal_string)}`;
     let url = `${window.location.protocol + "//" + window.location.host + window.location.pathname}?${param}`;
     $('input[name=sharelink]').val(url);
     $('.ui.modal.share').modal('show');
@@ -197,6 +200,7 @@ function generateTable() {
     $('#fixedheight td').attr('height', Math.floor(row_height));
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
     if (temp_dict.length > 5){
+        console.log(temp_dict);
         calendar_classes = JSON.parse(temp_dict);
         for (k in calendar_classes){
             let div = calendar_classes[k];

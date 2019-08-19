@@ -101,6 +101,7 @@ def display_search():
     navbar = ""
     headers = ""
     courses = parseForClasses(str(request.args))
+    print(courses)
     with open('templates/navbar.html', 'r') as f:
         navbar = f.read()
     with open('templates/headers.html', 'r') as f:
@@ -124,7 +125,7 @@ def parseForClasses(dictstring):
     start = "('c', '"
     end = "')"
     ret = nobrackets[len(start):-len(end)]
-    return ret.replace("\\\\", "\\")
+    return ret.replace("\\\\", "\\").replace("\\'), (\\'amp;", "&").replace("\\', \\'", "")
 
 @app.route('/search', methods=['POST'])
 def search():
