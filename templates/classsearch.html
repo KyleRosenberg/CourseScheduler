@@ -18,6 +18,9 @@
     <script src="js/randomColor.js"></script>
     <script src="js/common.js"></script>
     <script src="js/search.js"></script>
+    <script>
+        let temp_dict = JSON.parse(String.raw`{{cal_param | tojson}}`);
+    </script>
 
     <title>Search</title>
 </head>
@@ -555,7 +558,7 @@
                     <col width="18%">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th><a id="share_cal">Share</a></th>
                             <th>Monday</th>
                             <th>Tuesday</th>
                             <th>Wednesday</th>
@@ -614,6 +617,14 @@
         <div class="content">
             You'll need to login with us before continuing.<br />
             <div class="ui blue button" onclick="handleLogin()">Login</div>
+        </div>
+    </div>
+    <div class="ui modal share" style="width:35%;text-align:center;">
+        <div class="header">Share Your Schedule</div>
+        <div class="content">
+            <div class="ui input">
+                <input name="sharelink" type="text">
+            </div>
         </div>
     </div>
     <div class="ui modal create" style="width:50%;text-align:center;">

@@ -100,6 +100,7 @@ def js(filename):
 def display_search():
     navbar = ""
     headers = ""
+    courses = parseForClasses(str(request.args))
     with open('templates/navbar.html', 'r') as f:
         navbar = f.read()
     with open('templates/headers.html', 'r') as f:
@@ -108,8 +109,22 @@ def display_search():
         return "Something went wrong"
     return render_template('classsearch.html',
         navbar=Markup(navbar),
-        headers=Markup(headers)
+        headers=Markup(headers),
+        cal_param=courses
     )
+
+def parseForClasses(dictstring):
+    text = "ImmutableMultiDict"
+    notext = dictstring[dictstring.find(text)+len(text):]
+    noparens = notext[1:-1]
+    if len(noparens)==2:
+        return "{}"
+    nobrackets = noparens[1:-1]
+    #Now just a tuple with key and value
+    start = "('c', '"
+    end = "')"
+    ret = nobrackets[len(start):-len(end)]
+    return ret.replace("\\\\", "\\")
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -203,8 +218,8 @@ def loadsect():
 
 @app.route('/building', methods=['POST'])
 def building():
-    address = hh.bg.getAddressFromCode(request.form['name'])
-    return address
+    coords = hh.bg.getCoordsFromCode(request.form['name'])
+    return jsonify(coords)
 
 @app.route('/favicon.ico')
 @gzipped

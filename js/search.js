@@ -18,7 +18,6 @@ rows = 0
 row_height = 0
 time_height = 0
 
-
 $(document).ready(function(event) {
     $('input[name=srcdb]').val(default_srcdb);
     $('#submit_search').click(function() {
@@ -151,7 +150,15 @@ $(document).ready(function(event) {
             mymap.invalidateSize();
         }
     });
+    $("#share_cal").click(getShareableLink);
 });
+
+function getShareableLink(){
+    let param = `c=${JSON.stringify(calendar_classes)}`;
+    let url = `${window.location.protocol + "//" + window.location.host + window.location.pathname}?${param}`;
+    $('input[name=sharelink]').val(url);
+    $('.ui.modal.share').modal('show');
+}
 
 function timeToIndex(t){
     ind = 0;
@@ -189,6 +196,17 @@ function generateTable() {
     time_height = (height-30)/((rows.length-1)/4)
     $('#fixedheight td').attr('height', Math.floor(row_height));
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
+    if (temp_dict.length > 5){
+        calendar_classes = JSON.parse(temp_dict);
+        for (k in calendar_classes){
+            let div = calendar_classes[k];
+            let fits = fitsOnCalendar(div);
+            if (fits) {
+                addClassToCalendar(div);
+                addClassToMap(div);
+            }
+        }
+    }
 }
 
 function getTimes(course) {
@@ -224,7 +242,12 @@ function getTimes(course) {
     name = course.code;
     if (course.section != '') name += ` - ${course.section}`;
     url = $(course.meeting_html).find("a").attr("href");
-    bld = url.substring(url.lastIndexOf("=")+1)
+    let bld = "C_U_B"
+    try{
+        bld = url.substring(url.lastIndexOf("=")+1)
+    } catch (err) {
+        //pass
+    }
     return {
         'start': ind1,
         'end': ind2,
@@ -351,8 +374,11 @@ function removeClassFromCalendar(course) {
 }
 
 function addClassToMap(course){
-    c = JSON.parse(course)
-    times = getTimes(c);
+    console.log(course);
+    let c = JSON.parse(course);
+    console.log(c);
+    let times = getTimes(c);
+    console.log(times);
     $.ajax({
         type: 'POST',
         url: '/building',
@@ -360,17 +386,12 @@ function addClassToMap(course){
             'name': times.bldgname
         },
         success: function(data) {
-            geocoder.geocode(data, function(result){
-                if (result.length==0){
-                    showError(`OpenStreetMap is bad and couldn't find the address ${data}. Sorry :(`);
-                    return;
-                }
-                coords = result[0].center;
-                L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`,{
-                    permanent: true,
-                    direction: 'right'
-                }).addTo(mymap);
-            });
+            console.log(data);
+            let coords = [Number(data[0]), Number(data[1])+0.00225];
+            L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`,{
+                permanent: true,
+                direction: 'right'
+            }).addTo(mymap);
         }
     });
 }
@@ -671,7 +692,7 @@ function showDetails(data, showAll=false) {
 
 function removeFromCart(data){
     if (!firebase.auth().currentUser){
-        $('.ui.bottom.attached.button').popup('hide all')
+        $('.ui.bottom.attached.button').popup('hide all');
         $('.ui.modal.google').modal('show');
         return;
     }

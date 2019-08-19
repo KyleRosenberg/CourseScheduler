@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 
 class BuildingGrabber:
@@ -7,13 +8,15 @@ class BuildingGrabber:
         self.reloadDataframe()
 
     def reloadDataframe(self):
-        self.building_map = pd.read_excel("https://www.colorado.edu/fm/content/master-building-list-xls-version")
+        self.building_map = {}
+        self.address_map = {}
+        with open("BuildingMap.json", "r") as f:
+            data = json.loads(f.read())
+            self.building_map = data[0]
+            self.address_map = data[1]
 
-    def getAddressFromCode(self, code):
+    def getCoordsFromCode(self, code):
         if self.building_map is None:
             raise Exception("Building map not initialized, something went wrong!")
-        dfBuilding = self.building_map.loc[self.building_map['Bldg \nCode'] == code]
-        if len(dfBuilding) != 1:
-            raise Exception("Building code returned multiple results, something went wrong!")
-        dfB = dfBuilding.iloc[0]
-        return dfB["Address"] + " " + dfB["City"] + " " + dfB["State"] + " " + str(dfB["Zip"])
+        if code in self.building_map:
+            return self.building_map[code]
