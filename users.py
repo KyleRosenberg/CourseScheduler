@@ -180,7 +180,7 @@ class FirebaseAuth:
         try:
             res = cur.fetchall()
             self.conn.commit()
-            ret = {r[1]: json.dumps({'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]}) for r in res}
+            ret = {r[4]: json.dumps({'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]}) for r in res}
             return ret
         except Exeption as e:
             print(e)
