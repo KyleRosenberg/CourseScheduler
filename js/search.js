@@ -154,13 +154,26 @@ $(document).ready(function(event) {
 });
 
 function getShareableLink(){
-    let cal_string = JSON.stringify(calendar_classes);
-    cal_string.replace(/&amp;/g, "&");
-    console.log(cal_string);
-    let param = `c=${encodeURIComponent(cal_string)}`;
-    let url = `${window.location.protocol + "//" + window.location.host + window.location.pathname}?${param}`;
-    $('input[name=sharelink]').val(url);
-    $('.ui.modal.share').modal('show');
+    $.ajax({
+        type: 'POST',
+        url: '/generatelink',
+        data: {
+            'calendar_classes': JSON.stringify(calendar_classes)
+        },
+        success: function(data) {
+            data = JSON.parse(data);
+            if ('success' in data){
+                $('input[name=sharelink]').val(data['success']);
+                $('.ui.modal.share').modal('show');
+            } else {
+                if ('failure' in data){
+                    showError(data['failure'])
+                } else {
+                    showError('An unknown error has occured.')
+                }
+            }
+        }
+    });
 }
 
 function timeToIndex(t){
@@ -200,7 +213,6 @@ function generateTable() {
     $('#fixedheight td').attr('height', Math.floor(row_height));
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
     if (temp_dict.length > 5){
-        console.log(temp_dict);
         calendar_classes = JSON.parse(temp_dict);
         for (k in calendar_classes){
             let div = calendar_classes[k];
@@ -378,11 +390,8 @@ function removeClassFromCalendar(course) {
 }
 
 function addClassToMap(course){
-    console.log(course);
     let c = JSON.parse(course);
-    console.log(c);
     let times = getTimes(c);
-    console.log(times);
     $.ajax({
         type: 'POST',
         url: '/building',
@@ -390,7 +399,6 @@ function addClassToMap(course){
             'name': times.bldgname
         },
         success: function(data) {
-            console.log(data);
             let coords = [Number(data[0]), Number(data[1])+0.00225];
             L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`,{
                 permanent: true,

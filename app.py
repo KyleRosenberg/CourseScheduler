@@ -100,7 +100,10 @@ def js(filename):
 def display_search():
     navbar = ""
     headers = ""
-    courses = parseForClasses(str(request.args))
+    courses = "{}"
+    if 'cal' in request.args:
+        cal_classes = hh.fa.getShareFromUrl(request.url)
+        courses = json.dumps(cal_classes)
     print(courses)
     with open('templates/navbar.html', 'r') as f:
         navbar = f.read()
@@ -113,19 +116,6 @@ def display_search():
         headers=Markup(headers),
         cal_param=courses
     )
-
-def parseForClasses(dictstring):
-    text = "ImmutableMultiDict"
-    notext = dictstring[dictstring.find(text)+len(text):]
-    noparens = notext[1:-1]
-    if len(noparens)==2:
-        return "{}"
-    nobrackets = noparens[1:-1]
-    #Now just a tuple with key and value
-    start = "('c', '"
-    end = "')"
-    ret = nobrackets[len(start):-len(end)]
-    return ret.replace("\\\\", "\\").replace("\\'), (\\'amp;", "&").replace("\\', \\'", "")
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -315,6 +305,19 @@ def load_predict():
             print(e)
             return "Something went wrong"
     return "Unauthorized"
+
+@app.route('/generatelink', methods=['POST'])
+@gzipped
+def generate_link():
+    try:
+        calendar_classes = json.loads(request.form['calendar_classes'])
+        print(calendar_classes)
+        url = hh.fa.makeShareUrl(calendar_classes)
+        print(url)
+        return json.dumps({'success': request.url_root + "search?cal=" + url})
+    except Exception as e:
+        print(e)
+        return json.dumps({'failure': 'Something went wrong.'})
 
 @app.route('/')
 @gzipped
