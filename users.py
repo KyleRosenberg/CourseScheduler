@@ -6,6 +6,7 @@ import psycopg2
 import json
 import datetime
 import os
+import uuid
 
 
 class FirebaseAuth:
@@ -132,5 +133,55 @@ class FirebaseAuth:
             ret = [{'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]} for r in res]
             return ret
         except Exception as e:
+            print(e)
+            return "Something went wrong"
+
+    def loadOldList(self, uid):
+        cur = self.conn.cursor()
+        cur.execute('SELECT * FROM old_courses WHERE uid=%s', [uid])
+        try:
+            res = cur.fetchall()
+            self.conn.commit()
+            ret = [{'Term':r[1], 'Year':r[2], 'Subject':r[3], 'Course':r[4], 'Section':r[5], 'Instructor_Name':r[6], 'Grade':r[7]} for r in res]
+            return ret
+        except Exception as e:
+            print(e)
+            return "Something went wrong"
+
+    def saveOldList(self, uid, saved):
+        saved = json.loads(saved)
+        cur = self.conn.cursor()
+        cur.execute('DELETE FROM old_courses WHERE uid=%s', [uid])
+        self.conn.commit()
+        for s in saved:
+            self.addCourseToSaved(uid, s)
+
+    def addCourseToSaved(self, uid, course):
+        cur = self.conn.cursor()
+        cur.execute('INSERT INTO old_courses (uid, term, year, subject, course, section, instructor, grade) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)',
+                    [uid, course['term'], course['year'], course['subject'], course['course'], course['section'], course['instructor'], course['grade']])
+        self.conn.commit()
+
+    def makeShareUrl(self, courses):
+        guid = uuid.uuid4().hex
+        for co in courses:
+            print(co)
+            c = json.loads(courses[co])
+            cur = self.conn.cursor()
+            cur.execute('INSERT INTO shared_sections (guid, code, meeting_html, hours_text, crn, section) VALUES(%s, %s, %s, %s, %s, %s)',
+                        [guid, c['code'], c['meeting_html'], c['hours_text'], c['crn'], c['section']])
+            self.conn.commit()
+        return guid
+
+    def getShareFromUrl(self, url):
+        guid = url[url.find("cal=")+4:]
+        cur = self.conn.cursor()
+        cur.execute('SELECT * FROM shared_sections WHERE guid=%s', [guid])
+        try:
+            res = cur.fetchall()
+            self.conn.commit()
+            ret = {r[1]: json.dumps({'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]}) for r in res}
+            return ret
+        except Exeption as e:
             print(e)
             return "Something went wrong"

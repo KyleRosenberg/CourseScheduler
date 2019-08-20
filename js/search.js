@@ -10,6 +10,8 @@ calendar_classes = {}
 cart = false;
 
 mymap = null;
+geocoder = null;
+control = null;
 
 height = 0
 rows = 0
@@ -142,12 +144,37 @@ $(document).ready(function(event) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mymap);
+    geocoder = L.Control.Geocoder.nominatim();
     $(".top.menu .item[data-tab='second']").tab({
         'onVisible':function(){
             mymap.invalidateSize();
         }
     });
+    $("#share_cal").click(getShareableLink);
 });
+
+function getShareableLink(){
+    $.ajax({
+        type: 'POST',
+        url: '/generatelink',
+        data: {
+            'calendar_classes': JSON.stringify(calendar_classes)
+        },
+        success: function(data) {
+            data = JSON.parse(data);
+            if ('success' in data){
+                $('input[name=sharelink]').val(data['success']);
+                $('.ui.modal.share').modal('show');
+            } else {
+                if ('failure' in data){
+                    showError(data['failure'])
+                } else {
+                    showError('An unknown error has occured.')
+                }
+            }
+        }
+    });
+}
 
 function timeToIndex(t){
     ind = 0;
@@ -185,6 +212,17 @@ function generateTable() {
     time_height = (height-30)/((rows.length-1)/4)
     $('#fixedheight td').attr('height', Math.floor(row_height));
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
+    if (temp_dict.length > 5){
+        calendar_classes = JSON.parse(temp_dict);
+        for (k in calendar_classes){
+            let div = calendar_classes[k];
+            let fits = fitsOnCalendar(div);
+            if (fits) {
+                addClassToCalendar(div);
+                addClassToMap(div);
+            }
+        }
+    }
 }
 
 function getTimes(course) {
@@ -219,13 +257,21 @@ function getTimes(course) {
     ind2 = timeToIndex(t2);
     name = course.code;
     if (course.section != '') name += ` - ${course.section}`;
+    url = $(course.meeting_html).find("a").attr("href");
+    let bld = "C_U_B"
+    try{
+        bld = url.substring(url.lastIndexOf("=")+1)
+    } catch (err) {
+        //pass
+    }
     return {
         'start': ind1,
         'end': ind2,
         'days': days,
         'name': name,
         'code': course.code,
-        'crn': course.crn
+        'crn': course.crn,
+        'bldgname': bld
     }
 }
 
@@ -343,6 +389,29 @@ function removeClassFromCalendar(course) {
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
+function addClassToMap(course){
+    let c = JSON.parse(course);
+    let times = getTimes(c);
+    $.ajax({
+        type: 'POST',
+        url: '/building',
+        data: {
+            'name': times.bldgname
+        },
+        success: function(data) {
+            let coords = [Number(data[0]), Number(data[1])+0.00225];
+            L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`,{
+                permanent: true,
+                direction: 'right'
+            }).addTo(mymap);
+        }
+    });
+}
+
+function removeClassFromMap(course){
+    //TODO: Implement
+}
+
 function toggleShowCourse(div, data = false) {
     if (data) {
         crn = JSON.parse(div).crn;
@@ -351,6 +420,7 @@ function toggleShowCourse(div, data = false) {
     }
     if (crn in calendar_classes) {
         removeClassFromCalendar(calendar_classes[crn]);
+        removeClassFromMap(calendar_classes[crn]);
         delete calendar_classes[crn];
     } else {
         if (crn in saved_classes) {
@@ -358,6 +428,7 @@ function toggleShowCourse(div, data = false) {
             if (fits) {
                 calendar_classes[crn] = saved_classes[crn];
                 addClassToCalendar(saved_classes[crn]);
+                addClassToMap(saved_classes[crn]);
             }
         }
     }
@@ -395,56 +466,25 @@ function proc_keyword_data(data) {
     if (data == "Unauthorized") {
         return;
     }
-    data = JSON.parse(data)
-    if (data.count <= 0) {
+    data = JSON.parse(data);
+    class_list = data;
+    if (data.length <= 0) {
         alert('No results.')
         $('.search_results .loader').removeClass('active');
         return;
     }
-    class_list = data.results;
     $('.search_results .ui.cards').empty();
-    var i = 0;
-    curr_class = class_list[0].code;
-    while (i < class_list.length) {
-        counts = {}
-        curr_class = class_list[i].code;
-        curr_title = class_list[i].title
-        while (i < class_list.length && class_list[i].code == curr_class) {
-            key = class_list[i].schd
-            if (key in counts) {
-                counts[key] += 1
-            } else {
-                counts[key] = 1
-            }
-            i += 1
-        }
-        //Build card
-        card_html = `<div class="card"><div class="content"><div class="header">${curr_class}</div>`;
-        card_html += `<div class="description">${class_list[i-1].title}</div>`;
+    for (let i = 0; i<data.length; i++){
+        card_html = `<div class="card"><div class="content"><div class="header">${data[i].code}</div>`;
+        card_html += `<div class="description">${data[i].title}</div>`;
         card_html += `<br/>`
         card_html += '<div class="meta">';
-        //TODO: Implement better code mapping
-        if ('LEC' in counts) {
-            card_html += `${counts['LEC']} lectures, `
-        }
-        if ('REC' in counts) {
-            card_html += `${counts['REC']} recitations, `
-        }
-        if ('LAB' in counts) {
-            card_html += `${counts['LAB']} labratories, `
-        }
-        if ('SEM' in counts) {
-            card_html += `${counts['SEM']} seminars, `
-        }
-        if ('PRA' in counts) {
-            card_html += `${counts['PRA']} practicums, `
-        }
-        card_html = card_html.slice(0, -2);
+        card_html += data[i].meeting_types;
         card_html += `</div></div><div class="ui bottom attached button" onclick="view_sections(${i})">View Sections</div></div>`
         card = $.parseHTML(card_html)
         $('.search_results .ui.cards').append(card)
         $(card).popup({
-            html: `<h3>${curr_class} - ${curr_title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
+            html: `<h3>${data[i].code} - ${data[i].title}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
             position: 'right center',
             on: 'click',
             target: '.search_bar',
@@ -473,15 +513,9 @@ function proc_keyword_data(data) {
 }
 
 function view_sections(i) {
-    last = i - 1
-    curr_class = class_list[last].code
-    crns = ''
-    ind = last
-    while (ind >= 0 && class_list[ind].code == curr_class) {
-        crns = ',' + class_list[ind].crn + crns
-        ind -= 1
-    }
-    crns = crns.slice(1)
+    curr_class = class_list[i].code
+    crns = class_list[i].crns
+    onecrn = crns.substring(0, crns.indexOf(','));
     if (!cart) curr_class = "";
     $.ajax({
         type: 'POST',
@@ -489,7 +523,7 @@ function view_sections(i) {
         data: {
             'type': 'view_sections',
             'group': `code:${curr_class}`,
-            'key': `crn:${class_list[last].crn}`,
+            'key': `crn:${onecrn}`,
             'matched': `crn:${crns}`,
             'srcdb': srcdb
         },
@@ -670,7 +704,7 @@ function showDetails(data, showAll=false) {
 
 function removeFromCart(data){
     if (!firebase.auth().currentUser){
-        $('.ui.bottom.attached.button').popup('hide all')
+        $('.ui.bottom.attached.button').popup('hide all');
         $('.ui.modal.google').modal('show');
         return;
     }
@@ -1087,44 +1121,6 @@ function toggleSaveCourse(course) {
     }
 }
 
-function updateCourseList() {
-    dis = $('#save_display');
-    dis.children().remove()
-    dis.append('<div class="ui text loader">Loading saved sections...</div>');
-    var sorted = [];
-    for (var key in saved_classes) {
-        sorted[sorted.length] = key;
-    }
-    sorted.sort();
-    for (var s in sorted) {
-        v = JSON.parse(saved_classes[sorted[s]]);
-        code = v.code;
-        if (v.hours_text.includes('Lec')) {
-            code += ' - LEC';
-        } else if (v.hours_text.includes('Rec')) {
-            code += ' - REC';
-        } else if (v.hours_text.includes('Lab')) {
-            code += ' - LAB';
-        } else if (v.hours_text.includes('Sem')) {
-            code += ' - SEM';
-        } else if (v.hours_text.includes('Pra')) {
-            code += ' - PRA';
-        }
-        ele = $(v.meeting_html)[0]
-        ele = ele.innerText
-        time = ele.substring(0, ele.indexOf(' in'));
-        html = $(`<div class="item" style="padding:3px;"><div class="right floated content"><div name="${v.crn}" class="ui mini toggle button" style="padding:10px;" onclick="toggleShowCourse(this)">
-            Toggle</div></div><div id="course_item" class="ui label" style="padding:1px;padding-top:10px;">${code}
-            <div class="detail">${time}</div></div></div>`);
-        dis.append(html);
-        if (v.crn in calendar_classes) {
-            $(html).css('background-color', '#C5C5C5')
-        } else { //TODO fiv color stuff ^ v
-            $(html).css('background-color', 'transparent')
-        }
-    }
-}
-
 function saveSections(){
     if (!firebase.auth().currentUser){
         $('.ui.modal.google').modal('show');
@@ -1160,35 +1156,6 @@ function saveSections(){
             }
         });
     }).catch(function(error) {
-        showError(error);
-    });
-}
-
-function loadSections(){
-    $('#save_display .loader').addClass('active');
-    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-        $.ajax({
-            type: 'POST',
-            url: '/loadsect',
-            data: {
-                'uid':firebase.auth().currentUser.uid,
-                'token':idToken
-            },
-            success: function(data){
-                saved_classes = {}
-                for (let i = 0; i<data.length; i++){
-                    let d = data[i];
-                    saved_classes[d['crn']] = JSON.stringify(d)
-                }
-                updateCourseList();
-            },
-            error: function(xhr, st, er){
-                $('#save_display .loader').removeClass('active')
-                showError('There was an error loading your saved sections.');
-            }
-        });
-    }).catch(function(error) {
-        $('#save_display .loader').removeClass('active')
         showError(error);
     });
 }

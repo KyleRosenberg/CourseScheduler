@@ -14,8 +14,13 @@
         integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
         crossorigin="">
     </script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="js/randomColor.js"></script>
+    <script src="js/common.js"></script>
     <script src="js/search.js"></script>
+    <script>
+        let temp_dict = JSON.parse(String.raw`{{cal_param | tojson}}`);
+    </script>
 
     <title>Search</title>
 </head>
@@ -52,7 +57,7 @@
                     <div class="field">
                         <div class="ui fluid selection dropdown">
                             <input type="hidden" name="srcdb">
-                            <div style="color:#000)" class="default text">Fall 2019</div>
+                            <div style="color:#000;" class="default text">Fall 2019</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="2197">
@@ -541,7 +546,7 @@
             </div>
             <div class="ui top attached tabular menu" style="margin-top:0px;">
                 <a class="active item" data-tab="first">Calendar View</a>
-                <a class="item" data-tab="second">Map View</a>
+                <a class="item" data-tab="second">Map View (Beta)</a>
             </div>
             <div class="ui bottom attached active tab segment" data-tab="first" style="height:90%;">
                 <table class="ui yellow celled table bpcalendar" id="fixedheight" style="height:100%;width:100%;">
@@ -553,7 +558,7 @@
                     <col width="18%">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th><a id="share_cal">Share</a></th>
                             <th>Monday</th>
                             <th>Tuesday</th>
                             <th>Wednesday</th>
@@ -612,6 +617,14 @@
         <div class="content">
             You'll need to login with us before continuing.<br />
             <div class="ui blue button" onclick="handleLogin()">Login</div>
+        </div>
+    </div>
+    <div class="ui modal share" style="width:35%;text-align:center;">
+        <div class="header">Share Your Schedule</div>
+        <div class="content">
+            <div class="ui input">
+                <input name="sharelink" type="text">
+            </div>
         </div>
     </div>
     <div class="ui modal create" style="width:50%;text-align:center;">
