@@ -36,7 +36,7 @@ class HelperHandler:
         self.fa = FirebaseAuth()
         self.cg = CourseGrabber()
         self.bg = BuildingGrabber()
-        self.fcq = FCQAnalyzer()
+        #self.fcq = FCQAnalyzer()
 
 hh = HelperHandler()
 
@@ -257,6 +257,7 @@ def activate_grades():
 @app.route('/predict', methods=['GET'])
 @gzipped
 def display_predict():
+    return "Temporarily Unavailable"
     headers = open_template('templates/headers.html')
     navbar = open_template('templates/navbar.html')
     return render_template('predict.html',
@@ -266,6 +267,7 @@ def display_predict():
 
 @app.route('/predict', methods=['POST'])
 def analyze_predict():
+    return "Temporarily Unavailable"
     if hh.fcq:
         if hh.fa.verifyToken(request.form['token'], request.form['uid']):
             oldList = hh.fa.loadOldList(request.form['uid'])
@@ -278,6 +280,7 @@ def analyze_predict():
 @app.route('/predictsearch', methods=['POST'])
 @gzipped
 def search_predict():
+    return "Temporarily Unavailable"
     if hh.fcq:
         return hh.fcq.getRows(request.form['subject'], request.form['course'], request.form['term'], request.form['year'])
     else:
@@ -286,6 +289,7 @@ def search_predict():
 @app.route('/predictsave', methods=['POST'])
 @gzipped
 def save_predict():
+    return "Temporarily Unavailable"
     if hh.fa.verifyToken(request.form['token'], request.form['uid']):
         try:
             hh.fa.saveOldList(request.form['uid'], request.form['saved'])
@@ -298,6 +302,7 @@ def save_predict():
 @app.route('/predictload', methods=['POST'])
 @gzipped
 def load_predict():
+    return "Temporarily Unavailable"
     if (hh.fa.verifyToken(request.form['token'], request.form['uid'])):
         try:
             return jsonify(hh.fa.loadOldList(request.form['uid']))
