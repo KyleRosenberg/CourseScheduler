@@ -38,6 +38,9 @@ class FirebaseAuth:
         }
         self.conn = psycopg2.connect(host=self.config['host'], database=self.config['database'], user=self.config['user'], password=self.config['password'])
 
+    def __del__(self):
+        self.conn.close()
+
     #Verify the Google token is for the UID and valid
     def verifyToken(self, token, uid):
         dec_tok = auth.verify_id_token(token)
@@ -53,6 +56,7 @@ class FirebaseAuth:
             self.conn.commit()
             return res[1]==token
         except:
+            self.conn.rollback()
             return False
 
     #Return the cu id matching the cu token from the database
@@ -64,6 +68,7 @@ class FirebaseAuth:
             self.conn.commit()
             return res[3]
         except:
+            self.conn.rollback()
             return None
 
     #Set the cu token and expiration for the UID
@@ -89,6 +94,7 @@ class FirebaseAuth:
             self.conn.commit()
             return res
         except:
+            self.conn.rollback()
             return None
 
     #Check if uid has a nonexpired token to prevent spending time acquiring a new one
@@ -105,6 +111,7 @@ class FirebaseAuth:
             return False
         except Exception as e:
             print(e)
+            self.conn.rollback()
             return False
 
     #Delete all section entries for uid, and write new ones
@@ -134,6 +141,7 @@ class FirebaseAuth:
             return ret
         except Exception as e:
             print(e)
+            self.conn.rollback()
             return "Something went wrong"
 
     def loadOldList(self, uid):
@@ -146,6 +154,7 @@ class FirebaseAuth:
             return ret
         except Exception as e:
             print(e)
+            self.conn.rollback()
             return "Something went wrong"
 
     def saveOldList(self, uid, saved):
@@ -165,7 +174,6 @@ class FirebaseAuth:
     def makeShareUrl(self, courses):
         guid = uuid.uuid4().hex
         for co in courses:
-            print(co)
             c = json.loads(courses[co])
             cur = self.conn.cursor()
             cur.execute('INSERT INTO shared_sections (guid, code, meeting_html, hours_text, crn, section) VALUES(%s, %s, %s, %s, %s, %s)',
@@ -184,4 +192,5 @@ class FirebaseAuth:
             return ret
         except Exeption as e:
             print(e)
+            self.conn.rollback()
             return "Something went wrong"
