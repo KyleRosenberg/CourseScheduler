@@ -265,12 +265,18 @@
                     </div>
                     <div class="field">
                         <div class="ui fluid selection dropdown">
-                            <input type="hidden" name="career">
-                            <div style="color:#000" class="default text">Any Career</div>
+                            <input type="hidden" name="career_or_level">
+                            <div style="color:#000" class="default text">Any Career/Course Level</div>
                             <i class="dropdown icon"></i>
                             <div class="menu">
                                 <div class="item" data-value="">
-                                    Any Career
+                                    Any Career/Course Level
+                                </div>
+                                <div class="item" data-value="UGRD_LOWER">
+                                    Undergrad Lower Division
+                                </div>
+                                <div class="item" data-value="UGRD_UPPER">
+                                    Undergrad Upper Division
                                 </div>
                                 <div class="item" data-value="GRAD">
                                     Graduate
@@ -280,30 +286,6 @@
                                 </div>
                                 <div class="item" data-value="NOCR">
                                     Non-Credit
-                                </div>
-                                <div class="item" data-value="UGRD">
-                                    Undergraduate
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="ui fluid selection dropdown">
-                            <input type="hidden" name="course_level">
-                            <div style="color:#000" class="default text">Any Course Level</div>
-                            <i class="dropdown icon"></i>
-                            <div class="menu">
-                                <div class="item" data-value="">
-                                    Any Course Level
-                                </div>
-                                <div class="item" data-value="<3">
-                                    Undergrad Lower Division
-                                </div>
-                                <div class="item" data-value="3::4">
-                                    Undergrad Upper Division
-                                </div>
-                                <div class="item" data-value=">=5">
-                                    Graduate
                                 </div>
                             </div>
                         </div>
