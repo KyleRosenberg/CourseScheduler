@@ -131,7 +131,6 @@ function saveCourses(){
         saved.push(s)
     }
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-        console.log(saved);
         $.ajax({
             type: 'POST',
             url: '/predictsave',
@@ -192,7 +191,6 @@ function tempPredict(){
                 'token':idToken
             },
             success: function(data){
-                console.log(data);
                 data = JSON.parse(data);
 
                 for (let i = 0; i<data.length; i++){
