@@ -42,7 +42,8 @@ class FCQAnalyzer:
 
     def reloadDataframe(self):
         print('Loading fcqs...')
-        self.fcq_data = pd.read_excel("fcq/fcq_2010-2019.xlsx")
+        self.fcq_data = pd.read_csv("fcq/fcq_2010-2019.csv")
+        self.fcq_means = pd.read_csv("fcq/fcq_means.csv")
         print('Loading fcqs done.')
 
     def getRows(self, subject, course, term, year):
@@ -92,7 +93,7 @@ class FCQAnalyzer:
         return ret.decode('utf8')
 
     def getAvgStats(self, courseDict):
-        dfCourseHistory = self.fcq_data.loc[(self.fcq_data['Subject'].astype(str)==courseDict['Subject'])&(self.fcq_data['Course'].astype(str)==str(courseDict['Course']))]
+        dfCourseHistory = self.fcq_means.loc[(self.fcq_means['Subject'].astype(str)==courseDict['Subject'])&(self.fcq_means['Course'].astype(str)==str(courseDict['Course']))]
         #dfInstructorHistory = self.fcq_data.loc[self.fcq_data['Instructor_Name'].astype(str)==courseDict['Instructor_Name']]
         dfRelevantCourse = dfCourseHistory[['AvgHrsPerWk', 'AvgPriorInt', 'AvgChallenge', 'AvgLearned', 'AvgCourse', 'Std_Dev_Course']]
         #dfRelevantInstructor = dfInstructorHistory[['AvgHrsPerWk', 'AvgInstrEffect', 'AvgAvailability', 'AvgChallenge', 'AvgLearned', 'AvgInstrRespect', 'AvgInstructor', 'Std_Dev_Instr']]
