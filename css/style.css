@@ -225,18 +225,17 @@ body.pushable{
 }
 
 .ui.celled.table.bpcalendar tr td{
-    padding:0px;
     text-align: center;
     border-left: 1px solid rgba(34,36,38,.1);
 }
 
 .ui.celled.table.bpcalendar tr th{
-    padding:0px;
     text-align: center;
 }
 
 #fixedheight {
     table-layout: fixed;
+    max-height: 100%;
 }
 
 #course_item{
@@ -265,7 +264,7 @@ body.pushable{
 .event{
     background-color: var(--color);
     /*color:white;*/
-    display:block;
+    display:inline-table;
     width:100%;
     height:100%;
     border-radius: 5px;

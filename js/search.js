@@ -24,28 +24,28 @@ $(document).ready(function(event) {
         cart = false;
         finputs = $('form[name=search_form] input')
         dat = {
-            'type':'keyword'
+            'type': 'keyword'
         }
         valid = false
-        for (let i = 0; i<finputs.length; i++){
+        for (let i = 0; i < finputs.length; i++) {
             inp = finputs[i]
             if ($(inp).hasClass('search')) continue;
-            if (inp.name=='srcdb'){
+            if (inp.name == 'srcdb') {
                 srcdb = inp.value;
                 dat[inp.name] = inp.value;
-            }else if (inp.value!=''){
+            } else if (inp.value != '') {
                 dat[inp.name] = inp.value;
                 valid = true;
             }
         }
         finputs = $('#advanced_search input')
-        for (let i = 0; i<finputs.length; i++){
+        for (let i = 0; i < finputs.length; i++) {
             inp = finputs[i]
             if ($(inp).hasClass('search')) continue;
-            if (inp.name=='srcdb'){
+            if (inp.name == 'srcdb') {
                 srcdb = inp.value;
                 dat[inp.name] = inp.value;
-            }else if (inp.value!=''){
+            } else if (inp.value != '') {
                 dat[inp.name] = inp.value;
                 valid = true;
             }
@@ -90,12 +90,12 @@ $(document).ready(function(event) {
         position: 'right center',
         target: '.search_bar',
     });
-    $('.ccan').click(function(){
+    $('.ccan').click(function() {
         $('.create input').val('');
         $('.modal.create .checkbox').checkbox('uncheck');
         $('.ui.modal.create').modal('hide');
     });
-    $('.csav').click(function(){
+    $('.csav').click(function() {
         let title = $('#custom_title').val()
         let st = $('#start_time input').val().replace(' ', '').toLowerCase()
         let et = $('#end_time input').val().replace(' ', '').toLowerCase()
@@ -104,16 +104,16 @@ $(document).ready(function(event) {
         let ds = $('#custom_days').children()
         let dvs = ['M', 'T', 'W', 'Th', 'F'];
         let days = "";
-        for (var i = 0; i<ds.length; i++){
-        	if ($(ds[i].children[0]).checkbox('is checked')){
+        for (var i = 0; i < ds.length; i++) {
+            if ($(ds[i].children[0]).checkbox('is checked')) {
                 days += dvs[i];
             }
         }
-        if (days==""){
+        if (days == "") {
             showError('Must include at least one day of the week.')
             return false;
         }
-        if (t1 >= t2){
+        if (t1 >= t2) {
             showError('End time must be after start time and more than 5 minutes apart.')
             return false;
         }
@@ -138,7 +138,7 @@ $(document).ready(function(event) {
         $('.ui.modal.create').modal('hide');
     });
     mymap = L.map('cumap', {
-        center: [40.007581,-105.2681304],
+        center: [40.007581, -105.2681304],
         zoom: 20
     });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -146,14 +146,14 @@ $(document).ready(function(event) {
     }).addTo(mymap);
     geocoder = L.Control.Geocoder.nominatim();
     $(".top.menu .item[data-tab='second']").tab({
-        'onVisible':function(){
+        'onVisible': function() {
             mymap.invalidateSize();
         }
     });
     $("#share_cal").click(getShareableLink);
 });
 
-function getShareableLink(){
+function getShareableLink() {
     $.ajax({
         type: 'POST',
         url: '/generatelink',
@@ -162,11 +162,11 @@ function getShareableLink(){
         },
         success: function(data) {
             data = JSON.parse(data);
-            if ('success' in data){
+            if ('success' in data) {
                 $('input[name=sharelink]').val(data['success']);
                 $('.ui.modal.share').modal('show');
             } else {
-                if ('failure' in data){
+                if ('failure' in data) {
                     showError(data['failure'])
                 } else {
                     showError('An unknown error has occured.')
@@ -176,7 +176,7 @@ function getShareableLink(){
     });
 }
 
-function timeToIndex(t){
+function timeToIndex(t) {
     ind = 0;
     off = 0;
     if (t.search(':') > -1) {
@@ -206,15 +206,19 @@ function generateTable() {
         }
         $('.bpcalendar').append(row)
     }
-    height = $('#fixedheight').height()
+    $('.bpcalendar tr td').css('padding', '11px');
+    console.log($('#fixedheight').height(), $('.active.tab.segment').height())
+    height = Math.min($('#fixedheight').height(), $('.active.tab.segment').height());
+    console.log(height)
     rows = $('#fixedheight tr')
-    row_height = (height-30)/(rows.length-1)
-    time_height = (height-30)/((rows.length-1)/4)
+    row_height = (height - 30) / (rows.length - 1)
+    time_height = (height - 30) / ((rows.length - 1) / 4)
+    console.log(rows);
     $('#fixedheight td').attr('height', Math.floor(row_height));
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
-    if (temp_dict.length > 5){
+    if (temp_dict.length > 5) {
         calendar_classes = JSON.parse(temp_dict);
-        for (k in calendar_classes){
+        for (k in calendar_classes) {
             let div = calendar_classes[k];
             let fits = fitsOnCalendar(div);
             if (fits) {
@@ -259,8 +263,8 @@ function getTimes(course) {
     if (course.section != '') name += ` - ${course.section}`;
     url = $(course.meeting_html).find("a").attr("href");
     let bld = "C_U_B"
-    try{
-        bld = url.substring(url.lastIndexOf("=")+1)
+    try {
+        bld = url.substring(url.lastIndexOf("=") + 1)
     } catch (err) {
         //pass
     }
@@ -299,7 +303,7 @@ function addClassToCalendar(course) {
             if (i == times.start) {
                 cell.attr('rowspan', times.end - times.start);
                 cell.append(`<div class="event" style="--color:${rcol}" onclick="viewSection(${times.crn}, '${times.code}')">${times.name}</div>`)
-                if (times.crn.toString().length<=5){
+                if (times.crn.toString().length <= 5) {
                     $(cell).popup({
                         html: `<h3>${times.code}</h3><div id="popup_temp" class="ui active text loader">Getting Details...</div>`,
                         position: 'right center',
@@ -389,7 +393,7 @@ function removeClassFromCalendar(course) {
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
 }
 
-function addClassToMap(course){
+function addClassToMap(course) {
     let c = JSON.parse(course);
     let times = getTimes(c);
     $.ajax({
@@ -399,8 +403,8 @@ function addClassToMap(course){
             'name': times.bldgname
         },
         success: function(data) {
-            let coords = [Number(data[0]), Number(data[1])+0.00225];
-            L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`,{
+            let coords = [Number(data[0]), Number(data[1]) + 0.00225];
+            L.marker(coords).bindTooltip(`${buildCourseName(c)}<br/>${buildCourseTime(c)}`, {
                 permanent: true,
                 direction: 'right'
             }).addTo(mymap);
@@ -408,7 +412,7 @@ function addClassToMap(course){
     });
 }
 
-function removeClassFromMap(course){
+function removeClassFromMap(course) {
     //TODO: Implement
 }
 
@@ -435,7 +439,7 @@ function toggleShowCourse(div, data = false) {
     updateCourseList()
 }
 
-function fitsOnCalendar(course){
+function fitsOnCalendar(course) {
     course = JSON.parse(course);
     times = getTimes(course);
     for (i = times.start; i < times.end; i++) {
@@ -449,7 +453,7 @@ function fitsOnCalendar(course){
             for (k = 0; k < row.cells.length; k++) {
                 cellk = $(row.cells[k]);
                 if (cellk.attr('name') == (j + 1).toString()) {
-                    if (cellk[0].innerHTML != ""){
+                    if (cellk[0].innerHTML != "") {
                         return false;
                     }
                 } else {
@@ -474,7 +478,7 @@ function proc_keyword_data(data) {
         return;
     }
     $('.search_results .ui.cards').empty();
-    for (let i = 0; i<data.length; i++){
+    for (let i = 0; i < data.length; i++) {
         card_html = `<div class="card"><div class="content"><div class="header">${data[i].code}</div>`;
         card_html += `<div class="description">${data[i].title}</div>`;
         card_html += `<br/>`
@@ -533,8 +537,8 @@ function view_sections(i) {
     });
 }
 
-function viewSection(crn, code){
-    if (crn.toString().length>5){
+function viewSection(crn, code) {
+    if (crn.toString().length > 5) {
         showCreate(crn);
         return;
     }
@@ -554,35 +558,35 @@ function viewSection(crn, code){
     });
 }
 
-function crnInCart(crn){
+function crnInCart(crn) {
     dict = JSON.parse(window.sessionStorage.getItem('dict'))
     if (!dict) return false;
     let cart = dict['cart']
     if (!cart) return false;
-    for (let i = 0; i<cart.length; i++){
-        if (cart[i].split('|')[2]==crn){
+    for (let i = 0; i < cart.length; i++) {
+        if (cart[i].split('|')[2] == crn) {
             return true;
         }
     }
     return false;
 }
 
-function crnInReg(crn){
+function crnInReg(crn) {
     dict = JSON.parse(window.sessionStorage.getItem('dict'))
     if (!dict) return false;
     let cart = dict['reg'][srcdb]
     if (!cart) return false;
-    for (let i = 0; i<cart.length; i++){
-        if (cart[i].split('|')[1]==crn){
+    for (let i = 0; i < cart.length; i++) {
+        if (cart[i].split('|')[1] == crn) {
             return true;
         }
     }
     return false;
 }
 
-function courseInCartOrReg(data){
+function courseInCartOrReg(data) {
     crns = data.split('crn:')
-    for (let i = 1; i<crns.length; i++){
+    for (let i = 1; i < crns.length; i++) {
         crn = crns[i].substr(0, 5);
         if (crnInCart(crn))
             return true
@@ -592,8 +596,8 @@ function courseInCartOrReg(data){
     return false
 }
 
-function showDetails(data, showAll=false) {
-    if (!showAll){
+function showDetails(data, showAll = false) {
+    if (!showAll) {
         cart_class = courseInCartOrReg(data);
     } else {
         cart_class = false;
@@ -610,10 +614,10 @@ function showDetails(data, showAll=false) {
     popup_html += `<span>${data.seats}</span><br/>`
     if (data.restrict_info != "")
         popup_html += `<span class="info_head">Registration Restrictions</span> <p>${data.restrict_info}</p>`
-    if (data.crn!='Varies by section'){
-        if (crnInCart(data.crn)){
+    if (data.crn != 'Varies by section') {
+        if (crnInCart(data.crn)) {
             popup_html += `<span class="info_head">Registration Notes</span> <p>This class is in your cart.</p>`
-        } else if (crnInReg(data.crn)){
+        } else if (crnInReg(data.crn)) {
             popup_html += `<span class="info_head">Registration Notes</span> <p>You are registered for this class.</p>`
         }
     }
@@ -635,7 +639,7 @@ function showDetails(data, showAll=false) {
         id = cells[0].innerText
         id = id.substring(id.indexOf(':') + 1).trim()
         if (cart_class) {
-            if (!crnInCart(id) && !crnInReg(id)){
+            if (!crnInCart(id) && !crnInReg(id)) {
                 continue;
             }
         }
@@ -654,26 +658,26 @@ function showDetails(data, showAll=false) {
     }
     table += '</table>'
     popup_html += table
-    if (data.crn!='Varies by section'){
-        popup_html +=  `<div style="text-align:right;">`
-        if (!courseInCartOrReg('crn:'+data.crn)){
+    if (data.crn != 'Varies by section') {
+        popup_html += `<div style="text-align:right;">`
+        if (!courseInCartOrReg('crn:' + data.crn)) {
             popup_html += `<div class="field">
                 <div class="ui selection dropdown">
                     <input type="hidden" name="gmod" value="LTR">
                     <div style="color:rgb(0, 0, 0)" class="default text">Letter</div>
                     <i class="dropdown icon"></i>
                     <div class="menu">`;
-            if (data.gmods.indexOf('LTR')>=0){
+            if (data.gmods.indexOf('LTR') >= 0) {
                 popup_html += `<div class="item" data-value="LTR">
                     Letter
                 </div>`;
             }
-            if (data.gmods.indexOf('NOC')>=0){
+            if (data.gmods.indexOf('NOC') >= 0) {
                 popup_html += `<div class="item" data-value="NOC">
                     No Credit Basis (Audit)
                 </div>`;
             }
-            if (data.gmods.indexOf('PF4')>=0)
+            if (data.gmods.indexOf('PF4') >= 0)
                 popup_html += `<div class="item" data-value="PF4">
                     Pass/Fail
                 </div>`;
@@ -681,11 +685,11 @@ function showDetails(data, showAll=false) {
                 </div>
             </div>`;
         }
-        if (crnInCart(data.crn)){
+        if (crnInCart(data.crn)) {
             popup_html += `<button class="ui secondary button" onclick="removeFromCart(['${data.gmods}', '${data.crn}'])">
                         Remove from Cart
                         </button><div id="cart_load" class="ui text loader">Removing...</div></div>`;
-        } else if (!crnInReg(data.crn)){
+        } else if (!crnInReg(data.crn)) {
             popup_html += `<button class="ui secondary button" onclick="addToCart(['${data.gmods}', '${data.crn}'])">
                         Add to Cart
                         </button><div id="cart_load" class="ui text loader">Adding...</div></div>`;
@@ -702,17 +706,17 @@ function showDetails(data, showAll=false) {
     $('#popup_temp').remove();
 }
 
-function removeFromCart(data){
-    if (!firebase.auth().currentUser){
+function removeFromCart(data) {
+    if (!firebase.auth().currentUser) {
         $('.ui.bottom.attached.button').popup('hide all');
         $('.ui.modal.google').modal('show');
         return;
     }
     params = {
-        'p_term_code':srcdb,
-        'p_crn':data[1],
-        'uid':firebase.auth().currentUser.uid,
-        'cutoken':window.sessionStorage.getItem('token'),
+        'p_term_code': srcdb,
+        'p_crn': data[1],
+        'uid': firebase.auth().currentUser.uid,
+        'cutoken': window.sessionStorage.getItem('token'),
     }
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         params['token'] = idToken;
@@ -721,25 +725,25 @@ function removeFromCart(data){
             type: 'POST',
             url: '/removecart',
             data: params,
-            success: function(data){
+            success: function(data) {
                 $('#cart_load').removeClass('active');
-                if (data=="Unauthorized"){
+                if (data == "Unauthorized") {
                     showError("You are not authorized to use this function.")
                     $('.search_results .loader').removeClass('active')
                     return;
                 }
                 data = JSON.parse(data.slice(8, -3))
                 data = data['cart']
-                for (i = 0; i<data.length; i++){
+                for (i = 0; i < data.length; i++) {
                     c = data[i]
                     yr = c.split('|')[0]
-                    if (yr!=srcdb){
+                    if (yr != srcdb) {
                         data.splice(i, 1)
                         i--
                     }
                 }
                 bad = JSON.parse(window.sessionStorage.getItem('dict'))
-                bad['cart']=data; //Not bad anymore lol
+                bad['cart'] = data; //Not bad anymore lol
                 window.sessionStorage.setItem('dict', JSON.stringify(bad))
                 window.sessionStorage.setItem('updated_cart', true)
                 $('.ui.bottom.attached.button').popup('hide all')
@@ -752,8 +756,8 @@ function removeFromCart(data){
     });
 }
 
-function addToCart(data){
-    if (!firebase.auth().currentUser){
+function addToCart(data) {
+    if (!firebase.auth().currentUser) {
         $('.ui.bottom.attached.button').popup('hide all')
         $('.ui.modal.google').modal('show');
         return;
@@ -764,11 +768,11 @@ function addToCart(data){
         return;
     }
     params = {
-        'p_term_code':srcdb,
-        'p_crn':data[1],
-        'p_gmod':$('input[name=gmod]')[0].value,
-        'uid':firebase.auth().currentUser.uid,
-        'cutoken':window.sessionStorage.getItem('token'),
+        'p_term_code': srcdb,
+        'p_crn': data[1],
+        'p_gmod': $('input[name=gmod]')[0].value,
+        'uid': firebase.auth().currentUser.uid,
+        'cutoken': window.sessionStorage.getItem('token'),
     }
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         params['token'] = idToken;
@@ -777,25 +781,25 @@ function addToCart(data){
             type: 'POST',
             url: '/addcart',
             data: params,
-            success: function(data){
+            success: function(data) {
                 $('#cart_load').removeClass('active');
-                if (data=="Unauthorized"){
+                if (data == "Unauthorized") {
                     showError("You are not authorized to use this function.")
                     $('.search_results .loader').removeClass('active')
                     return;
                 }
                 data = JSON.parse(data.slice(8, -3))
                 data = data['cart']
-                for (i = 0; i<data.length; i++){
+                for (i = 0; i < data.length; i++) {
                     c = data[i]
                     yr = c.split('|')[0]
-                    if (yr!=srcdb){
+                    if (yr != srcdb) {
                         data.splice(i, 1)
                         i--
                     }
                 }
                 bad = JSON.parse(window.sessionStorage.getItem('dict'))
-                bad['cart']=data; //Not bad anymore lol
+                bad['cart'] = data; //Not bad anymore lol
                 window.sessionStorage.setItem('dict', JSON.stringify(bad))
                 window.sessionStorage.setItem('updated_cart', true)
                 $('.ui.bottom.attached.button').popup('hide all')
@@ -816,7 +820,7 @@ function class_saved(id) {
     return false;
 }
 
-function showCreate(crn=null){
+function showCreate(crn = null) {
     curr_edit = crn;
     $('.ui.modal.create').modal({
         closable: false
@@ -829,8 +833,8 @@ function showCreate(crn=null){
     maxDate.setMinutes(45);
     $('#start_time').calendar({
         type: 'time',
-        minDate:minDate,
-        maxDate:maxDate
+        minDate: minDate,
+        maxDate: maxDate
     });
     minDate = new Date();
     maxDate = new Date();
@@ -840,12 +844,12 @@ function showCreate(crn=null){
     maxDate.setMinutes(0);
     $('#end_time').calendar({
         type: 'time',
-        minDate:minDate,
-        maxDate:maxDate
+        minDate: minDate,
+        maxDate: maxDate
     });
-    if (crn!=null){
+    if (crn != null) {
         crn = crn.toString()
-        if (crn in saved_classes){
+        if (crn in saved_classes) {
             course = saved_classes[crn]
             course = JSON.parse(course)
             ele = $(course.meeting_html)[0]
@@ -882,16 +886,15 @@ function showCreate(crn=null){
     }
 }
 
-function showCULogin(action = console.log, params=null) {
+function showCULogin(action = console.log, params = null) {
     $('.ui.bottom.attached.button').popup('hide all')
     $('.ui.modal.login').modal({
         closable: false,
-        selector : {
+        selector: {
             deny: '.cclose',
             approve: '.clogin'
         },
-        onDeny: function() {
-        },
+        onDeny: function() {},
         onApprove: function() {
             submitCULogin(action, params);
             return false;
@@ -899,11 +902,11 @@ function showCULogin(action = console.log, params=null) {
     }).modal('show');
 }
 
-function showDisclaimer(){
+function showDisclaimer() {
     $('.disclaimer').css('display', '');
 }
 
-function submitCULogin(action, params=null, showerror=true){
+function submitCULogin(action, params = null, showerror = true) {
     $('.ui.modal.login .loader').text('Logging In...');
     $('.ui.modal.login .segment').css('display', 'block');
     username = $('.ui.modal.login input[type="text"]').val();
@@ -911,7 +914,7 @@ function submitCULogin(action, params=null, showerror=true){
     getCUAuthToken(username, password, action, params, showerror);
 }
 
-function getCUAuthToken(username, password, action, params=null, showerror=true) {
+function getCUAuthToken(username, password, action, params = null, showerror = true) {
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
         $.ajax({
             type: 'POST',
@@ -923,11 +926,11 @@ function getCUAuthToken(username, password, action, params=null, showerror=true)
                 'token': idToken
             },
             success: function(data) {
-                if (data=="Auth Fail"){
+                if (data == "Auth Fail") {
                     $('.ui.modal.login .segment').css('display', 'none');
                     if (showerror)
                         showError('Your user token is expired. Try logging out and logging back in.')
-                } else if (data=="Invalid credentials"){
+                } else if (data == "Invalid credentials") {
                     $('.ui.modal.login .segment').css('display', 'none');
                     if (showerror)
                         showError('CU Login failed. The username and/or password are likely incorrect.')
@@ -943,7 +946,7 @@ function getCUAuthToken(username, password, action, params=null, showerror=true)
                     action(params)
                 }
             },
-            error: function(data){
+            error: function(data) {
                 $('.ui.modal.login .segment').css('display', 'none');
                 if (showerror)
                     showError(data);
@@ -954,15 +957,15 @@ function getCUAuthToken(username, password, action, params=null, showerror=true)
     });
 }
 
-function getCartCrns(){
+function getCartCrns() {
     bad = JSON.parse(window.sessionStorage.getItem('dict'))
     crns = ''
-    for (i = 0; i<bad['cart'].length; i++){
+    for (i = 0; i < bad['cart'].length; i++) {
         crn = bad['cart'][i].split('|')[2]
         crns += (crn + ',')
     }
-    if (srcdb in bad['reg']){
-        for (i = 0; i<bad['reg'][srcdb].length; i++){
+    if (srcdb in bad['reg']) {
+        for (i = 0; i < bad['reg'][srcdb].length; i++) {
             crn = bad['reg'][srcdb][i].split('|')[1]
             crns += (crn + ',')
         }
@@ -971,7 +974,7 @@ function getCartCrns(){
 }
 
 function getCart() {
-    if (!firebase.auth().currentUser){
+    if (!firebase.auth().currentUser) {
         $('.ui.modal.google').modal('show');
         return;
     }
@@ -983,14 +986,14 @@ function getCart() {
     srcdb = $('input[name=srcdb]').val()
     $('.search_results .loader').addClass('active')
     firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-        if (window.sessionStorage.getItem('updated_cart')=="true"){
+        if (window.sessionStorage.getItem('updated_cart') == "true") {
             dict = JSON.parse(window.sessionStorage.getItem('dict'))
             let cart = dict['cart']
             reg = dict['reg'][srcdb]
-            for (i = 0; i<cart.length; i++){
+            for (i = 0; i < cart.length; i++) {
                 c = cart[i]
                 yr = c.split('|')[0]
-                if (yr!=srcdb){
+                if (yr != srcdb) {
                     cart.splice(i, 1)
                     i--
                 }
@@ -1000,16 +1003,16 @@ function getCart() {
                 type: 'POST',
                 url: '/getcrns',
                 data: {
-                    'uid':firebase.auth().currentUser.uid,
-                    'token':idToken,
-                    'cutoken':token,
-                    'srcdb':srcdb,
+                    'uid': firebase.auth().currentUser.uid,
+                    'token': idToken,
+                    'cutoken': token,
+                    'srcdb': srcdb,
                     'crns': crns
                 },
-                success: function(data){
+                success: function(data) {
                     proc_keyword_data(data)
                 },
-                error: function(xhr, st, er){
+                error: function(xhr, st, er) {
                     showError("There was an error loading classes from your cart.")
                     $('.search_results .loader').removeClass('active')
                 }
@@ -1019,27 +1022,27 @@ function getCart() {
                 type: 'POST',
                 url: '/getcart',
                 data: {
-                    'uid':firebase.auth().currentUser.uid,
-                    'token':idToken,
-                    'cutoken':token,
-                    'srcdb':srcdb
+                    'uid': firebase.auth().currentUser.uid,
+                    'token': idToken,
+                    'cutoken': token,
+                    'srcdb': srcdb
                 },
-                success: function(data){
-                    if (data=="Unauthorized"){
+                success: function(data) {
+                    if (data == "Unauthorized") {
                         showError("You are not authorized to use this function.")
                         $('.search_results .loader').removeClass('active')
                         return;
                     }
                     data = data.split("'").join('"')
                     data = JSON.parse(data)
-                    for (i = 0; i<data.length; i++){
-                        if (data[i].split('|')[0]!=srcdb){
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].split('|')[0] != srcdb) {
                             data.splice(i, 1)
                             i--
                         }
                     }
                     bad = JSON.parse(window.sessionStorage.getItem('dict'))
-                    bad['cart']=data; //Not bad anymore lol
+                    bad['cart'] = data; //Not bad anymore lol
                     window.sessionStorage.setItem('dict', JSON.stringify(bad))
                     window.sessionStorage.setItem('updated_cart', true)
                     crns = getCartCrns()
@@ -1047,22 +1050,22 @@ function getCart() {
                         type: 'POST',
                         url: '/getcrns',
                         data: {
-                            'uid':firebase.auth().currentUser.uid,
-                            'token':idToken,
-                            'cutoken':token,
-                            'srcdb':srcdb,
+                            'uid': firebase.auth().currentUser.uid,
+                            'token': idToken,
+                            'cutoken': token,
+                            'srcdb': srcdb,
                             'crns': crns
                         },
-                        success: function(data){
+                        success: function(data) {
                             proc_keyword_data(data)
                         },
-                        error: function(xhr, st, er){
+                        error: function(xhr, st, er) {
                             showError(er)
                             $('.search_results .loader').removeClass('active')
                         }
                     });
                 },
-                error: function(xhr, st, er){
+                error: function(xhr, st, er) {
                     showError(er)
                     $('.search_results .loader').removeClass('active')
                 }
@@ -1121,13 +1124,13 @@ function toggleSaveCourse(course) {
     }
 }
 
-function saveSections(){
-    if (!firebase.auth().currentUser){
+function saveSections() {
+    if (!firebase.auth().currentUser) {
         $('.ui.modal.google').modal('show');
         return;
     }
     saved = []
-    for (var k in saved_classes){
+    for (var k in saved_classes) {
         sc = JSON.parse(saved_classes[k])
         s = {}
         s['code'] = sc.code
@@ -1142,16 +1145,16 @@ function saveSections(){
             type: 'POST',
             url: '/savesect',
             data: {
-                'uid':firebase.auth().currentUser.uid,
-                'token':idToken,
-                'saved':JSON.stringify(saved)
+                'uid': firebase.auth().currentUser.uid,
+                'token': idToken,
+                'saved': JSON.stringify(saved)
             },
-            success: function(data){
-                if (data!='Success'){
+            success: function(data) {
+                if (data != 'Success') {
                     showError('I don\'t know how you managed this, but this should literally never happen.');
                 }
             },
-            error: function(xhr, st, er){
+            error: function(xhr, st, er) {
                 showError('There was an error saving your sections.');
             }
         });

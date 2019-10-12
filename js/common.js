@@ -62,6 +62,7 @@ function updateCourseList(showAll=true) {
             $(html).css('background-color', 'transparent')
         }
     }
+    $('.bpcalendar tr td').css('padding', "0px");
 }
 
 function buildCourseName(v){
