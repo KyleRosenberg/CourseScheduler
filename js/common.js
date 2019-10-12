@@ -23,11 +23,9 @@ function loadSections(showAll=true){
             error: function(xhr, st, er){
                 $('#save_display .loader').removeClass('active')
                 showError('There was an error loading your saved sections.');
-            },
-            always: function(){
-                console.log('HERE')
-                $('.bpcalendar tr td').css('padding', "0px");
             }
+        }).always(function(){
+            $('.bpcalendar tr td').css('padding', "0px");
         });
     }).catch(function(error) {
         $('#save_display .loader').removeClass('active')
