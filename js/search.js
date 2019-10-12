@@ -74,6 +74,8 @@ $(document).ready(function(event) {
         if (user) {
             loadSections();
             submitCULogin(console.log, null, false)
+        } else {
+            $('.bpcalendar tr td').css('padding', "0px");
         }
     });
     $('#save_button').click(saveSections);
@@ -206,14 +208,10 @@ function generateTable() {
         }
         $('.bpcalendar').append(row)
     }
-    $('.bpcalendar tr td').css('padding', '11px');
-    console.log($('#fixedheight').height(), $('.active.tab.segment').height())
     height = Math.min($('#fixedheight').height(), $('.active.tab.segment').height());
-    console.log(height)
     rows = $('#fixedheight tr')
     row_height = (height - 30) / (rows.length - 1)
     time_height = (height - 30) / ((rows.length - 1) / 4)
-    console.log(rows);
     $('#fixedheight td').attr('height', Math.floor(row_height));
     $('#fixedheight td.warning').attr('height', Math.floor(time_height));
     if (temp_dict.length > 5) {

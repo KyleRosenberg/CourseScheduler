@@ -104,7 +104,6 @@ def display_search():
     if 'cal' in request.args:
         cal_classes = hh.fa.getShareFromUrl(request.url)
         courses = json.dumps(cal_classes)
-    print(courses)
     with open('templates/navbar.html', 'r') as f:
         navbar = f.read()
     with open('templates/headers.html', 'r') as f:

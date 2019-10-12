@@ -23,6 +23,10 @@ function loadSections(showAll=true){
             error: function(xhr, st, er){
                 $('#save_display .loader').removeClass('active')
                 showError('There was an error loading your saved sections.');
+            },
+            always: function(){
+                console.log('HERE')
+                $('.bpcalendar tr td').css('padding', "0px");
             }
         });
     }).catch(function(error) {
@@ -62,7 +66,6 @@ function updateCourseList(showAll=true) {
             $(html).css('background-color', 'transparent')
         }
     }
-    $('.bpcalendar tr td').css('padding', "0px");
 }
 
 function buildCourseName(v){
