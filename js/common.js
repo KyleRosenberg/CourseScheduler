@@ -10,9 +10,13 @@ function loadSections(showAll=true){
             },
             success: function(data){
                 saved_classes = {}
-                for (let i = 0; i<data.length; i++){
-                    let d = data[i];
-                    saved_classes[d['crn']] = JSON.stringify(d)
+                if (data.length==0){
+                    saved_classes = {...calendar_classes};
+                } else {
+                    for (let i = 0; i<data.length; i++){
+                        let d = data[i];
+                        saved_classes[d['crn']] = JSON.stringify(d)
+                    }
                 }
                 updateCourseList(showAll);
             },
