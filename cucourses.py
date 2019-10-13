@@ -21,6 +21,7 @@ class CourseGrabber:
             'Content-Type': "application/json",
             'cache-control': "no-cache"
         }
+        sc = "asgened"
         c = []
         ignore = ['srcdb', 'type']
         for f in fields:
@@ -29,6 +30,8 @@ class CourseGrabber:
             if f=="hours":
                 c.append({"field":f, "value":">="+str(fields[f])})
                 c.append({"field":"hours_min", "value":"<="+str(fields[f])})
+            elif f[:len(sc)]==sc:
+                c.append({"field":str(fields[f]), "value":"Y"})
             else:
                 c.append({"field":f, "value":fields[f]})
         payload = {
