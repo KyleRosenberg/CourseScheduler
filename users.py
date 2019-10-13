@@ -50,8 +50,8 @@ class FirebaseAuth:
     #Verify the cu token matches the one in the database => user can only be logged in one place at a time, maybe not neccesary
     def checkToken(self, token, uid):
         cur = self.conn.cursor()
-        cur.execute('select * from tokens where uid=%s', [uid])
         try:
+            cur.execute('select * from tokens where uid=%s', [uid])
             res = cur.fetchall()[0]
             self.conn.commit()
             return res[1]==token
@@ -62,8 +62,8 @@ class FirebaseAuth:
     #Return the cu id matching the cu token from the database
     def getCIDToken(self, token):
         cur = self.conn.cursor()
-        cur.execute('select * from tokens where cu_token=%s', [token])
         try:
+            cur.execute('select * from tokens where cu_token=%s', [token])
             res = cur.fetchall()[0]
             self.conn.commit()
             return res[3]
@@ -74,22 +74,25 @@ class FirebaseAuth:
     #Set the cu token and expiration for the UID
     def addTokenToDatabase(self, token, uid, cuid):
         cur = self.conn.cursor()
-        cur.execute('select exists(select 1 from tokens where uid=%s)', [uid])
-        chckusr = cur.fetchall()
-        exptime = datetime.datetime.now()+datetime.timedelta(seconds=7149)
-        if chckusr[0][0]:
-            print('Updating user token')
-            cur.execute('UPDATE tokens SET cu_token=%s, cu_expire=%s WHERE uid=%s', [token, exptime, uid])
-        else:
-            print('Inserting new token')
-            cur.execute('INSERT INTO tokens (uid, cu_token, cu_expire, cu_uid) VALUES(%s, %s, %s, %s)', [uid, token, exptime, cuid])
-        self.conn.commit()
+        try:
+            cur.execute('select exists(select 1 from tokens where uid=%s)', [uid])
+            chckusr = cur.fetchall()
+            exptime = datetime.datetime.now()+datetime.timedelta(seconds=7149)
+            if chckusr[0][0]:
+                print('Updating user token')
+                cur.execute('UPDATE tokens SET cu_token=%s, cu_expire=%s WHERE uid=%s', [token, exptime, uid])
+            else:
+                print('Inserting new token')
+                cur.execute('INSERT INTO tokens (uid, cu_token, cu_expire, cu_uid) VALUES(%s, %s, %s, %s)', [uid, token, exptime, cuid])
+            self.conn.commit()
+        except:
+            self.conn.rollback()
 
     #Return database row for UID
     def getCUInfo(self, uid):
         cur = self.conn.cursor()
-        cur.execute('SELECT * FROM tokens WHERE uid=%s', [uid])
         try:
+            cur.execute('SELECT * FROM tokens WHERE uid=%s', [uid])
             res = cur.fetchall()[0]
             self.conn.commit()
             return res
@@ -100,8 +103,8 @@ class FirebaseAuth:
     #Check if uid has a nonexpired token to prevent spending time acquiring a new one
     def checkCUTokenExpire(self, uid):
         cur = self.conn.cursor()
-        cur.execute('select * from tokens where uid=%s', [uid])
         try:
+            cur.execute('select * from tokens where uid=%s', [uid])
             res = cur.fetchall()[0]
             self.conn.commit()
             tk = res[1]
@@ -118,10 +121,13 @@ class FirebaseAuth:
     def saveSectList(self, uid, saved):
         saved = json.loads(saved)
         cur = self.conn.cursor()
-        cur.execute('DELETE FROM saved_sections WHERE uid=%s', [uid])
-        self.conn.commit()
-        for s in saved:
-            self.addSectionToSaved(uid, s)
+        try:
+            cur.execute('DELETE FROM saved_sections WHERE uid=%s', [uid])
+            self.conn.commit()
+            for s in saved:
+                self.addSectionToSaved(uid, s)
+        except:
+            self.conn.rollback()
 
     #Write one section entry
     def addSectionToSaved(self, uid, sect):
@@ -133,8 +139,8 @@ class FirebaseAuth:
     #Read and return all section entries for uid
     def loadSectList(self, uid):
         cur = self.conn.cursor()
-        cur.execute('SELECT * FROM saved_sections WHERE uid=%s', [uid])
         try:
+            cur.execute('SELECT * FROM saved_sections WHERE uid=%s', [uid])
             res = cur.fetchall()
             self.conn.commit()
             ret = [{'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]} for r in res]
@@ -146,8 +152,8 @@ class FirebaseAuth:
 
     def loadOldList(self, uid):
         cur = self.conn.cursor()
-        cur.execute('SELECT * FROM old_courses WHERE uid=%s', [uid])
         try:
+            cur.execute('SELECT * FROM old_courses WHERE uid=%s', [uid])
             res = cur.fetchall()
             self.conn.commit()
             ret = [{'Term':r[1], 'Year':r[2], 'Subject':r[3], 'Course':r[4], 'Section':r[5], 'Instructor_Name':r[6], 'Grade':r[7]} for r in res]
@@ -184,8 +190,8 @@ class FirebaseAuth:
     def getShareFromUrl(self, url):
         guid = url[url.find("cal=")+4:]
         cur = self.conn.cursor()
-        cur.execute('SELECT * FROM shared_sections WHERE guid=%s', [guid])
         try:
+            cur.execute('SELECT * FROM shared_sections WHERE guid=%s', [guid])
             res = cur.fetchall()
             self.conn.commit()
             ret = {r[4]: json.dumps({'code':r[1], 'meeting_html':r[2], 'hours_text':r[3], 'crn':r[4], 'section':r[5]}) for r in res}

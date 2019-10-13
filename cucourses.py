@@ -10,7 +10,8 @@ class CourseGrabber:
             'REC': ['recitation', 'recitations'],
             'LAB': ['labratory', 'labratories'],
             'SEM': ['seminar', 'seminars'],
-            'PRA': ['practicum', 'practicums']
+            'PRA': ['practicum', 'practicums'],
+            'STU': ['studio', 'studios']
         }
 
     def doSearch(self, fields, semester="2197"):
