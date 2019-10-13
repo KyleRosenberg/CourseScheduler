@@ -17,3 +17,11 @@
 .add .content{
     overflow-y: scroll;
 }
+
+.main_view{
+    float:right;
+    position:absolute;
+    left:20%;
+    height:100%;
+    width: 60%;
+}

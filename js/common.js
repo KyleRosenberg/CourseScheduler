@@ -10,9 +10,13 @@ function loadSections(showAll=true){
             },
             success: function(data){
                 saved_classes = {}
-                for (let i = 0; i<data.length; i++){
-                    let d = data[i];
-                    saved_classes[d['crn']] = JSON.stringify(d)
+                if (data.length==0){
+                    saved_classes = {...calendar_classes};
+                } else {
+                    for (let i = 0; i<data.length; i++){
+                        let d = data[i];
+                        saved_classes[d['crn']] = JSON.stringify(d)
+                    }
                 }
                 updateCourseList(showAll);
             },
@@ -20,6 +24,8 @@ function loadSections(showAll=true){
                 $('#save_display .loader').removeClass('active')
                 showError('There was an error loading your saved sections.');
             }
+        }).always(function(){
+            $('.bpcalendar tr td').css('padding', "0px");
         });
     }).catch(function(error) {
         $('#save_display .loader').removeClass('active')
