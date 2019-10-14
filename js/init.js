@@ -92,3 +92,23 @@ function showError(message){
         }
     })
 }
+
+function showSuccess(message){
+    error = $.parseHTML(`<div class="ui transition hidden positive message">
+        <div class="header">
+            Success!
+        </div>
+        ${message}
+    </div>`);
+    console.log(error)
+    $('body').append(error)
+    $(error).transition({
+        animation: 'vertical flip in'
+    }).transition({
+        animation: 'vertical flip out',
+        interval: 5000,
+        onComplete: function(){
+            $(error).remove();
+        }
+    })
+}

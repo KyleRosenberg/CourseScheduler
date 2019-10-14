@@ -878,6 +878,37 @@ function showCreate(crn = null) {
             $('#custom_title').val(course.code)
             $('#start_time input').val(t1)
             $('#end_time input').val(t2)
+        } else if (crn in calendar_classes) {
+            course = calendar_classes[crn]
+            course = JSON.parse(course)
+            ele = $(course.meeting_html)[0]
+            ele = ele.innerText
+            time = ele.substring(0, ele.indexOf(' in'));
+            if (time.search('F') > -1) {
+                time = time.replace('F', '')
+                $($('#custom_days .checkbox')[4]).checkbox('check')
+            }
+            if (time.search('Th') > -1) {
+                time = time.replace('Th', '')
+                $($('#custom_days .checkbox')[3]).checkbox('check')
+            }
+            if (time.search('W') > -1) {
+                time = time.replace('W', '')
+                $($('#custom_days .checkbox')[2]).checkbox('check')
+            }
+            if (time.search('T') > -1) {
+                time = time.replace('T', '')
+                $($('#custom_days .checkbox')[1]).checkbox('check')
+            }
+            if (time.search('M') > -1) {
+                time = time.replace('M', '')
+                $($('#custom_days .checkbox')[0]).checkbox('check')
+            }
+            t1 = time.substring(1, time.indexOf('-')).replace('AM', ' AM').replace('PM', ' PM')
+            t2 = time.substring(time.indexOf('-') + 1).replace('AM', ' AM').replace('PM', ' PM')
+            $('#custom_title').val(course.code)
+            $('#start_time input').val(t1)
+            $('#end_time input').val(t2)
         } else {
             showError('Please report this to the developers - this event is not known as a saved event.')
         }
@@ -1150,6 +1181,8 @@ function saveSections() {
             success: function(data) {
                 if (data != 'Success') {
                     showError('I don\'t know how you managed this, but this should literally never happen.');
+                } else {
+                    showSuccess('Sections saved for later!');
                 }
             },
             error: function(xhr, st, er) {

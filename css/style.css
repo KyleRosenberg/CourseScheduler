@@ -60,7 +60,7 @@ body.pushable{
 }
 
 
-.ui.error.message{
+.ui.error.message,.ui.positive.message{
     bottom:0px;
     position:absolute;
     margin-left: auto;
