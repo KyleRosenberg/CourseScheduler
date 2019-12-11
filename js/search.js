@@ -624,6 +624,9 @@ function showDetails(data, showAll = false) {
     popup_html += `<span class="info_head">Course Description</span> <p>${data.description}</p>`
     popup_html += `<span class="info_head">Schedule and Location</span> <p>${data.meeting_html}</p>`;
     popup_html += `<span class="info_head">Instructors</span> <p>${data.instructordetail_html}</p>`;
+    if (data.matches != null){
+        popup_html += `<span class="info_head">Similar Courses at CU</span> <p>${data.matches}</p>`;
+    }
     bad_section_element = $.parseHTML(data.all_sections)[0];
     headers = $($(bad_section_element).children()[0]).children();
     table = '<table class="ui selectable celled table"><thead><tr><th>Saved</th>'

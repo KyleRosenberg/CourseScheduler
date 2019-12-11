@@ -14,8 +14,11 @@ class CourseGrabber:
             'STU': ['studio', 'studios'],
             'WKS': ['workshop', 'workshops']
         }
+        self.recs = {}
+        with open('rec.json', 'r') as f:
+            self.recs = json.loads(f.read())
 
-    def doSearch(self, fields, semester="2197"):
+    def doSearch(self, fields, semester="2201"):
         url = "https://classes.colorado.edu/api/"
         querystring = {"page":"fose","route":"search"}
         headers = {
@@ -97,7 +100,11 @@ class CourseGrabber:
             c[f] = fields[f]
         payload = c
         r = requests.post(url, headers=headers, params = querystring, data=json.dumps(payload))
-        return r.text
+        d = json.loads(r.text)
+        code = d['code']
+        if code in self.recs and len(self.recs[code])>0:
+            d['matches'] = self.recs[code]
+        return json.dumps(d)
 
     def handleLoginPage(self, session, post_page_text, username, password, count=0):
         postURL = post_page_text.split('fm-login" name="login" action="')[1].split('"')[0]
