@@ -625,7 +625,15 @@ function showDetails(data, showAll = false) {
     popup_html += `<span class="info_head">Schedule and Location</span> <p>${data.meeting_html}</p>`;
     popup_html += `<span class="info_head">Instructors</span> <p>${data.instructordetail_html}</p>`;
     if (data.matches != null){
-        popup_html += `<span class="info_head">Similar Courses at CU</span> <p>${data.matches}</p>`;
+        popup_html += `<span class="info_head">Similar Courses at CU</span>`;
+        let matches = data.matches.split(', ')
+        let commaSpan = '<span>, </span>';
+        for (i in matches){
+            let m = matches[i];
+            popup_html += `<a href="#" onClick="showCourseByCode('${m}')">${m}</a>${commaSpan}`;
+        }
+        // Remove last ", "
+        popup_html = popup_html.substring(0, popup_html.length-commaSpan.length);
     }
     bad_section_element = $.parseHTML(data.all_sections)[0];
     headers = $($(bad_section_element).children()[0]).children();
@@ -1194,5 +1202,24 @@ function saveSections() {
         });
     }).catch(function(error) {
         showError(error);
+    });
+}
+
+function showCourseByCode(code){
+    if (crn.toString().length > 5) {
+        showCreate(crn);
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url: '/search',
+        data: {
+            'type': 'view_sections',
+            'group': `code:${code}`,
+            'srcdb': srcdb
+        },
+        success: function(data) {
+            showDetails(data, !cart);
+        }
     });
 }
