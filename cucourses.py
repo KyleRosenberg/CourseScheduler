@@ -15,7 +15,7 @@ class CourseGrabber:
             'WKS': ['workshop', 'workshops']
         }
         self.recs = {}
-        with open('rec.json', 'r') as f:
+        with open('rec_final.json', 'r') as f:
             self.recs = json.loads(f.read())
 
     def doSearch(self, fields, semester="2201"):
